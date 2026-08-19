@@ -76,6 +76,16 @@ class OnboardingClarityScreen extends StatelessWidget {
               color: Color(0xFF6B6B6B),
             ),
           ),
+          const SizedBox(height: 60),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              _buildDot(false),
+              _buildDot(false),
+              _buildDot(false),
+              _buildDot(true),
+            ],
+          ),
           const SizedBox(height: 40),
           SizedBox(
             width: double.infinity,
@@ -163,6 +173,18 @@ class OnboardingClarityScreen extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildDot(bool isActive) {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 4),
+      width: isActive ? 24 : 8,
+      height: 8,
+      decoration: BoxDecoration(
+        color: isActive ? const Color(0xFFA88143) : const Color(0xFFD6D6D6),
+        borderRadius: BorderRadius.circular(4),
       ),
     );
   }

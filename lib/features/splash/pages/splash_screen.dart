@@ -15,9 +15,7 @@ class SplashScreen extends StatelessWidget {
           builder: (context, constraints) {
             return SingleChildScrollView(
               child: ConstrainedBox(
-                constraints: BoxConstraints(
-                  minHeight: constraints.maxHeight,
-                ),
+                constraints: BoxConstraints(minHeight: constraints.maxHeight),
                 child: IntrinsicHeight(
                   child: Column(
                     children: [
@@ -31,7 +29,11 @@ class SplashScreen extends StatelessWidget {
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              SvgPicture.asset('assets/splash.svg', width: 100, height: 100),
+                              SvgPicture.asset(
+                                'assets/splash.svg',
+                                width: 100,
+                                height: 100,
+                              ),
                               const SizedBox(height: 8),
                               FittedBox(
                                 fit: BoxFit.scaleDown,
@@ -46,11 +48,15 @@ class SplashScreen extends StatelessWidget {
                                     children: [
                                       TextSpan(
                                         text: 'DIGITAL ',
-                                        style: TextStyle(color: Color(0xFF11141A)),
+                                        style: TextStyle(
+                                          color: Color(0xFF11141A),
+                                        ),
                                       ),
                                       TextSpan(
                                         text: 'KUNDALI',
-                                        style: TextStyle(color: Color(0xFFA88143)),
+                                        style: TextStyle(
+                                          color: Color(0xFFA88143),
+                                        ),
                                       ),
                                     ],
                                   ),
@@ -68,8 +74,12 @@ class SplashScreen extends StatelessWidget {
                                       decoration: BoxDecoration(
                                         gradient: LinearGradient(
                                           colors: [
-                                            const Color(0xFFA88143).withOpacity(0.0),
-                                            const Color(0xFFA88143).withOpacity(0.5),
+                                            const Color(
+                                              0xFFA88143,
+                                            ).withValues(alpha: 0.0),
+                                            const Color(
+                                              0xFFA88143,
+                                            ).withValues(alpha: 0.5),
                                           ],
                                           begin: Alignment.centerLeft,
                                           end: Alignment.centerRight,
@@ -77,11 +87,15 @@ class SplashScreen extends StatelessWidget {
                                       ),
                                     ),
                                     Padding(
-                                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 10,
+                                      ),
                                       child: SizedBox(
                                         width: 10,
                                         height: 10,
-                                        child: CustomPaint(painter: _SparklePainter()),
+                                        child: CustomPaint(
+                                          painter: _SparklePainter(),
+                                        ),
                                       ),
                                     ),
                                     Container(
@@ -90,8 +104,12 @@ class SplashScreen extends StatelessWidget {
                                       decoration: BoxDecoration(
                                         gradient: LinearGradient(
                                           colors: [
-                                            const Color(0xFFA88143).withOpacity(0.5),
-                                            const Color(0xFFA88143).withOpacity(0.0),
+                                            const Color(
+                                              0xFFA88143,
+                                            ).withValues(alpha: 0.5),
+                                            const Color(
+                                              0xFFA88143,
+                                            ).withValues(alpha: 0.0),
                                           ],
                                           begin: Alignment.centerLeft,
                                           end: Alignment.centerRight,
@@ -119,7 +137,11 @@ class SplashScreen extends StatelessWidget {
                       const SizedBox(height: 34),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16),
-                        child: Container(width: 280, height: 1, color: const Color(0xFFEAE6DF)),
+                        child: Container(
+                          width: 280,
+                          height: 1,
+                          color: const Color(0xFFEAE6DF),
+                        ),
                       ),
                       const SizedBox(height: 25),
                       const Text(
@@ -137,7 +159,11 @@ class SplashScreen extends StatelessWidget {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Container(width: 40, height: 1, color: const Color(0xFFDFD8CB)),
+                            Container(
+                              width: 40,
+                              height: 1,
+                              color: const Color(0xFFDFD8CB),
+                            ),
                             const SizedBox(width: 14),
                             const Text(
                               'CALCULATED WITH PRECISION',
@@ -150,7 +176,11 @@ class SplashScreen extends StatelessWidget {
                               ),
                             ),
                             const SizedBox(width: 14),
-                            Container(width: 40, height: 1, color: const Color(0xFFDFD8CB)),
+                            Container(
+                              width: 40,
+                              height: 1,
+                              color: const Color(0xFFDFD8CB),
+                            ),
                           ],
                         ),
                       ),
