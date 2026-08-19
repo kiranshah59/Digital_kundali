@@ -340,20 +340,6 @@ class OnboardingInsightsScreen extends StatelessWidget {
                             ),
                           ),
                         ),
-                        const SizedBox(height: 32),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: [
-                            _buildNavItem(Icons.grid_view, 'Home', false),
-                            _buildNavItem(Icons.auto_graph, 'Charts', false),
-                            _buildNavItem(Icons.school, 'Guru', true),
-                            _buildNavItem(
-                              Icons.people_outline,
-                              'Family',
-                              false,
-                            ),
-                          ],
-                        ),
                         const SizedBox(height: 20),
                       ],
                     ),
@@ -426,35 +412,5 @@ class OnboardingInsightsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildNavItem(IconData icon, String label, bool isActive) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          decoration: isActive
-              ? BoxDecoration(
-                  color: const Color(0xFFFDF7E7),
-                  borderRadius: BorderRadius.circular(20),
-                )
-              : null,
-          child: Icon(
-            icon,
-            color: isActive ? const Color(0xFFA88143) : const Color(0xFFB0B0B0),
-            size: 20,
-          ),
-        ),
-        const SizedBox(height: 4),
-        Text(
-          label,
-          style: TextStyle(
-            fontFamily: 'Inter',
-            fontSize: 10,
-            fontWeight: isActive ? FontWeight.w600 : FontWeight.w500,
-            color: isActive ? const Color(0xFFA88143) : const Color(0xFFB0B0B0),
-          ),
-        ),
-      ],
-    );
-  }
+
 }

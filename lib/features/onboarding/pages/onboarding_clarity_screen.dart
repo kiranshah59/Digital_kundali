@@ -8,111 +8,102 @@ class OnboardingClarityScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       color: const Color(0xFFFAF9F5),
-      padding: const EdgeInsets.symmetric(horizontal: 24),
-      child: Column(
-        children: [
-          const SizedBox(height: 60),
-          Row(
-            children: [
-              const Icon(Icons.copy, size: 14, color: Color(0xFF8A8A8A)),
-              const SizedBox(width: 6),
-              const Text(
-                'Onboarding: Clarity',
-                style: TextStyle(
-                  fontFamily: 'Inter',
-                  fontSize: 12,
-                  color: Color(0xFF8A8A8A),
-                  fontWeight: FontWeight.w500,
+      child: SafeArea(
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            return SingleChildScrollView(
+              physics: const BouncingScrollPhysics(),
+              child: ConstrainedBox(
+                constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                child: IntrinsicHeight(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    child: Column(
+                      children: [
+                        const SizedBox(height: 60),
+                        SizedBox(
+                          width: 240,
+                          height: 240,
+                          child: CustomPaint(painter: GeometricIllustrationPainter()),
+                        ),
+                        const SizedBox(height: 40),
+                        _buildInfoCard(
+                          true,
+                          'CAREER PATH',
+                          'You are naturally drawn to leadership roles requiring deep analytical focus and strategic planning.',
+                        ),
+                        const SizedBox(height: 12),
+                        _buildInfoCard(
+                          true,
+                          'PERSONAL GROWTH',
+                          'The current planetary shift suggests a period of internal reflection and creative renewal.',
+                        ),
+                        const SizedBox(height: 80),
+                        const Text(
+                          'Read with Clarity',
+                          style: TextStyle(
+                            fontFamily: 'Georgia',
+                            fontSize: 26,
+                            fontWeight: FontWeight.w600,
+                            color: Color(0xFF11141A),
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        const Text(
+                          'No mystical jargon. Just plain English\nreadings grounded in your actual chart\ndata.',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontFamily: 'Inter',
+                            fontSize: 13,
+                            height: 1.6,
+                            color: Color(0xFF6B6B6B),
+                          ),
+                        ),
+                        const Spacer(), // Use Spacer to push bottom elements
+                        const SizedBox(height: 60),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            _buildDot(false),
+                            _buildDot(false),
+                            _buildDot(false),
+                            _buildDot(true),
+                          ],
+                        ),
+                        const SizedBox(height: 40),
+                        SizedBox(
+                          width: double.infinity,
+                          height: 56,
+                          child: ElevatedButton(
+                            onPressed: () {},
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xFF0A0A0C),
+                              foregroundColor: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              elevation: 0,
+                            ),
+                            child: const Text(
+                              'NEXT',
+                              style: TextStyle(
+                                fontFamily: 'Inter',
+                                fontSize: 13,
+                                fontWeight: FontWeight.w700,
+                                letterSpacing: 1,
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 40),
+                      ],
+                    ),
+                  ),
                 ),
               ),
-              const Spacer(),
-              const Text(
-                'Skip',
-                style: TextStyle(
-                  fontFamily: 'Inter',
-                  fontSize: 12,
-                  color: Color(0xFF11141A),
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 40),
-          SizedBox(
-            width: 240,
-            height: 240,
-            child: CustomPaint(painter: GeometricIllustrationPainter()),
-          ),
-          const SizedBox(height: 40),
-          _buildInfoCard(
-            true,
-            'CAREER PATH',
-            'You are naturally drawn to leadership roles requiring deep analytical focus and strategic planning.',
-          ),
-          const SizedBox(height: 12),
-          _buildInfoCard(
-            false,
-            'PERSONAL GROWTH',
-            'The current planetary shift suggests a period of internal reflection and creative renewal.',
-          ),
-          const Spacer(),
-          const Text(
-            'Read with Clarity',
-            style: TextStyle(
-              fontFamily: 'Georgia',
-              fontSize: 26,
-              fontWeight: FontWeight.w600,
-              color: Color(0xFF11141A),
-            ),
-          ),
-          const SizedBox(height: 16),
-          const Text(
-            'No mystical jargon. Just plain English\nreadings grounded in your actual chart\ndata.',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontFamily: 'Inter',
-              fontSize: 13,
-              height: 1.6,
-              color: Color(0xFF6B6B6B),
-            ),
-          ),
-          const SizedBox(height: 60),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              _buildDot(false),
-              _buildDot(false),
-              _buildDot(false),
-              _buildDot(true),
-            ],
-          ),
-          const SizedBox(height: 40),
-          SizedBox(
-            width: double.infinity,
-            height: 56,
-            child: ElevatedButton(
-              onPressed: () {},
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF0A0A0C),
-                foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                elevation: 0,
-              ),
-              child: const Text(
-                'NEXT',
-                style: TextStyle(
-                  fontFamily: 'Inter',
-                  fontSize: 13,
-                  fontWeight: FontWeight.w700,
-                  letterSpacing: 1,
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(height: 40),
-        ],
+            );
+          },
+        ),
       ),
     );
   }
