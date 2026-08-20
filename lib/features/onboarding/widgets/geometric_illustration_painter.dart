@@ -20,6 +20,15 @@ class GeometricIllustrationPainter extends CustomPainter {
     final double w = size.width;
     final double h = size.height;
 
+    final double sqSize = w * 0.4;
+    final Rect centerRect = Rect.fromCenter(center: Offset(cx, cy), width: sqSize, height: sqSize);
+    
+    final Paint paintBoxFill = Paint()
+      ..color = const Color(0xFFF5F2EA)
+      ..style = PaintingStyle.fill;
+      
+    canvas.drawRect(centerRect, paintBoxFill);
+
     final Path diamond = Path()
       ..moveTo(cx, 0)
       ..lineTo(w, cy)
@@ -41,11 +50,7 @@ class GeometricIllustrationPainter extends CustomPainter {
       paintThin,
     );
 
-    final double sqSize = w * 0.4;
-    canvas.drawRect(
-      Rect.fromCenter(center: Offset(cx, cy), width: sqSize, height: sqSize),
-      paintGold,
-    );
+    canvas.drawRect(centerRect, paintGold);
 
     canvas.drawCircle(Offset(cx, cy), 12, paintGoldFill);
 

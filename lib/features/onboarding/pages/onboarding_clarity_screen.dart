@@ -20,10 +20,10 @@ class OnboardingClarityScreen extends StatelessWidget {
                   padding: EdgeInsets.symmetric(horizontal: 24.w),
                   child: Column(
                     children: [
-                      SizedBox(height: 60.h),
+                      SizedBox(height: 50.h),
                       SizedBox(
-                        width: 240.w,
-                        height: 240.h,
+                        width: 350.w,
+                        height: 350.h,
                         child: CustomPaint(
                           painter: GeometricIllustrationPainter(),
                         ),
@@ -40,7 +40,7 @@ class OnboardingClarityScreen extends StatelessWidget {
                         'PERSONAL GROWTH',
                         'The current planetary shift suggests a period of internal reflection and creative renewal.',
                       ),
-                      SizedBox(height: 80.h),
+                      SizedBox(height: 50.h),
                       Text(
                         'Read with Clarity',
                         style: TextStyle(
@@ -175,6 +175,7 @@ class OnboardingClarityScreen extends StatelessWidget {
       ),
     );
   }
+
   Widget _buildDot(bool isActive) {
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 4.w),

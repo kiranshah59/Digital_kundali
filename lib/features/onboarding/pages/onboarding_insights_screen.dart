@@ -44,9 +44,9 @@ class OnboardingInsightsScreen extends StatelessWidget {
                       Container(
                         padding: EdgeInsets.all(16.w),
                         decoration: BoxDecoration(
-                          color: Colors.white,
+                          color: const Color(0xFFFAF9F5),
                           borderRadius: BorderRadius.circular(16.r),
-                          border: Border.all(color: Colors.white, width: 1.5),
+                          border: Border.all(color: const Color(0xFFFAF9F5), width: 1.5),
                           boxShadow: [
                             BoxShadow(
                               color: Colors.black.withValues(alpha: 0.08),
@@ -126,7 +126,7 @@ class OnboardingInsightsScreen extends StatelessWidget {
                                 ),
                               ],
                             ),
-                            SizedBox(height: 12.h),
+                            SizedBox(height: 20.h),
                             Container(
                               height: 1,
                               color: const Color(0xFFF0EFEA),
@@ -135,7 +135,7 @@ class OnboardingInsightsScreen extends StatelessWidget {
                             Container(
                               padding: EdgeInsets.all(12.w),
                               decoration: BoxDecoration(
-                                color: const Color(0xFFF8F7F3),
+                                color: const Color(0xFFE3E2DD),
                                 borderRadius: BorderRadius.circular(12.r),
                               ),
                               child: Text(
@@ -180,7 +180,7 @@ class OnboardingInsightsScreen extends StatelessWidget {
                                 vertical: 10,
                               ),
                               decoration: BoxDecoration(
-                                color: const Color(0xFFF8F7F3),
+                                color: const Color(0xFFE3E2DD),
                                 borderRadius: BorderRadius.circular(20.r),
                               ),
                               child: Row(
@@ -235,7 +235,7 @@ class OnboardingInsightsScreen extends StatelessWidget {
                                 vertical: 12,
                               ),
                               decoration: BoxDecoration(
-                                color: const Color(0xFFF8F7F3),
+                                color: const Color(0xFFE3E2DD),
                                 borderRadius: BorderRadius.circular(12.r),
                               ),
                               child: Row(
@@ -250,9 +250,9 @@ class OnboardingInsightsScreen extends StatelessWidget {
                                   ),
                                   Spacer(),
                                   Icon(
-                                    Icons.send_rounded,
-                                    size: 16.sp,
-                                    color: Color(0xFF8A8A8A),
+                                    Icons.send_outlined,
+                                    size: 20.sp,
+                                    color: Color(0xFF11141A),
                                   ),
                                 ],
                               ),
