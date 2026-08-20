@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class SplashScreen extends StatelessWidget {
@@ -21,27 +22,27 @@ class SplashScreen extends StatelessWidget {
                     children: [
                       const Spacer(flex: 3),
                       Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        padding: EdgeInsets.symmetric(horizontal: 16.w),
                         child: Container(
-                          width: 290,
-                          height: 280,
+                          width: 290.w,
+                          height: 280.h,
                           color: Colors.white,
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               SvgPicture.asset(
                                 'assets/splash.svg',
-                                width: 100,
-                                height: 100,
+                                width: 100.w,
+                                height: 100.h,
                               ),
-                              const SizedBox(height: 8),
+                              SizedBox(height: 8.h),
                               FittedBox(
                                 fit: BoxFit.scaleDown,
                                 child: RichText(
-                                  text: const TextSpan(
+                                  text: TextSpan(
                                     style: TextStyle(
                                       fontFamily: 'Inter',
-                                      fontSize: 18,
+                                      fontSize: 18.sp,
                                       fontWeight: FontWeight.normal,
                                       letterSpacing: 6.5,
                                     ),
@@ -62,14 +63,14 @@ class SplashScreen extends StatelessWidget {
                                   ),
                                 ),
                               ),
-                              const SizedBox(height: 12),
+                              SizedBox(height: 12.h),
                               FittedBox(
                                 fit: BoxFit.scaleDown,
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     Container(
-                                      width: 120,
+                                      width: 120.w,
                                       height: 1,
                                       decoration: BoxDecoration(
                                         gradient: LinearGradient(
@@ -87,19 +88,19 @@ class SplashScreen extends StatelessWidget {
                                       ),
                                     ),
                                     Padding(
-                                      padding: const EdgeInsets.symmetric(
+                                      padding: EdgeInsets.symmetric(
                                         horizontal: 10,
                                       ),
                                       child: SizedBox(
-                                        width: 10,
-                                        height: 10,
+                                        width: 10.w,
+                                        height: 10.h,
                                         child: CustomPaint(
                                           painter: _SparklePainter(),
                                         ),
                                       ),
                                     ),
                                     Container(
-                                      width: 120,
+                                      width: 120.w,
                                       height: 1,
                                       decoration: BoxDecoration(
                                         gradient: LinearGradient(
@@ -119,12 +120,12 @@ class SplashScreen extends StatelessWidget {
                                   ],
                                 ),
                               ),
-                              const SizedBox(height: 12),
-                              const Text(
+                              SizedBox(height: 12.h),
+                              Text(
                                 'YOUR BIRTH CHART, READ WITH CLARITY',
                                 style: TextStyle(
                                   fontFamily: 'Inter',
-                                  fontSize: 6,
+                                  fontSize: 6.sp,
                                   fontWeight: FontWeight.w600,
                                   letterSpacing: 1.5,
                                   color: Color(0xFF11141A),
@@ -134,22 +135,22 @@ class SplashScreen extends StatelessWidget {
                           ),
                         ),
                       ),
-                      const SizedBox(height: 34),
+                      SizedBox(height: 34.h),
                       Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        padding: EdgeInsets.symmetric(horizontal: 16.w),
                         child: Container(
-                          width: 280,
+                          width: 280.w,
                           height: 1,
                           color: const Color(0xFFEAE6DF),
                         ),
                       ),
-                      const SizedBox(height: 25),
-                      const Text(
+                      SizedBox(height: 25.h),
+                      Text(
                         'Your birth chart, read with clarity.',
                         style: TextStyle(
                           fontFamily: 'Georgia',
                           fontStyle: FontStyle.italic,
-                          fontSize: 20,
+                          fontSize: 20.sp,
                           color: Color(0xFF4A4A4A),
                         ),
                       ),
@@ -160,39 +161,39 @@ class SplashScreen extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Container(
-                              width: 40,
+                              width: 40.w,
                               height: 1,
                               color: const Color(0xFFDFD8CB),
                             ),
-                            const SizedBox(width: 14),
-                            const Text(
+                            SizedBox(width: 14.w),
+                            Text(
                               'CALCULATED WITH PRECISION',
                               style: TextStyle(
                                 fontFamily: 'Inter',
-                                fontSize: 9,
+                                fontSize: 9.sp,
                                 fontWeight: FontWeight.w600,
                                 letterSpacing: 1.5,
                                 color: Color(0xFFC2A878),
                               ),
                             ),
-                            const SizedBox(width: 14),
+                            SizedBox(width: 14.w),
                             Container(
-                              width: 40,
+                              width: 40.w,
                               height: 1,
                               color: const Color(0xFFDFD8CB),
                             ),
                           ],
                         ),
                       ),
-                      const SizedBox(height: 16),
+                      SizedBox(height: 16.h),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: List.generate(
                           3,
                           (index) => Container(
-                            margin: const EdgeInsets.symmetric(horizontal: 3),
-                            width: 4,
-                            height: 4,
+                            margin: EdgeInsets.symmetric(horizontal: 3.w),
+                            width: 4.w,
+                            height: 4.h,
                             decoration: const BoxDecoration(
                               color: Color(0xFFD1D1D1),
                               shape: BoxShape.circle,
@@ -200,7 +201,7 @@ class SplashScreen extends StatelessWidget {
                           ),
                         ),
                       ),
-                      const SizedBox(height: 60),
+                      SizedBox(height: 60.h),
                     ],
                   ),
                 ),

@@ -4,6 +4,7 @@ import '../../splash/pages/splash_screen.dart';
 import 'onboarding_screen.dart';
 import 'onboarding_insights_screen.dart';
 import 'onboarding_clarity_screen.dart';
+import '../../auth/pages/sign_up_screen.dart';
 
 class MainPageView extends StatefulWidget {
   const MainPageView({super.key});
@@ -22,6 +23,12 @@ class _MainPageViewState extends State<MainPageView> {
     );
   }
 
+  void _finishOnboarding() {
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(builder: (_) => const SignUpScreen()),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -32,7 +39,7 @@ class _MainPageViewState extends State<MainPageView> {
           SplashScreen(onNext: _goToNext),
           OnboardingScreen(onNext: _goToNext),
           OnboardingInsightsScreen(onNext: _goToNext),
-          const OnboardingClarityScreen(),
+          OnboardingClarityScreen(onNext: _finishOnboarding),
         ],
       ),
     );
