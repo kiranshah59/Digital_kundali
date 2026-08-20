@@ -72,20 +72,12 @@ class OnboardingScreen extends StatelessWidget {
           SizedBox(height: 16.h),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: List.generate(
-              4,
-              (index) => Container(
-                margin: EdgeInsets.symmetric(horizontal: 4.w),
-                width: 6.w,
-                height: 6.h,
-                decoration: BoxDecoration(
-                  color: index == 0
-                      ? const Color(0xFF947239)
-                      : const Color(0xFFD6D6D6),
-                  shape: BoxShape.circle,
-                ),
-              ),
-            ),
+            children: [
+              _buildDot(false),
+              _buildDot(true),
+              _buildDot(false),
+              _buildDot(false),
+            ],
           ),
           SizedBox(height: 25.h),
           SizedBox(
@@ -135,6 +127,18 @@ class OnboardingScreen extends StatelessWidget {
           ),
           SizedBox(height: 12.h),
         ],
+      ),
+    );
+  }
+
+  Widget _buildDot(bool isActive) {
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 4.w),
+      width: isActive ? 24.w : 8.w,
+      height: 8.h,
+      decoration: BoxDecoration(
+        color: isActive ? const Color(0xFFA88143) : const Color(0xFFD6D6D6),
+        borderRadius: BorderRadius.circular(4.r),
       ),
     );
   }

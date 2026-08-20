@@ -189,7 +189,7 @@ class SplashScreen extends StatelessWidget {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: List.generate(
-                          3,
+                          4,
                           (index) => Container(
                             margin: EdgeInsets.symmetric(horizontal: 3.w),
                             width: 4.w,
