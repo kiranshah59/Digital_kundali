@@ -8,7 +8,9 @@ import '../widgets/life_area_forecast_grid.dart';
 import '../widgets/ask_guru_banner.dart';
 
 class DashboardScreen extends StatelessWidget {
-  const DashboardScreen({super.key});
+  final String? userName;
+
+  const DashboardScreen({super.key, this.userName});
 
   @override
   Widget build(BuildContext context) {
@@ -50,14 +52,10 @@ class DashboardScreen extends StatelessWidget {
       titleSpacing: 24.w,
       title: Row(
         children: [
-          Icon(
-            Icons.star,
-            color: const Color(0xFFA88143),
-            size: 20.sp,
-          ),
+          Icon(Icons.star, color: const Color(0xFFA88143), size: 20.sp),
           SizedBox(width: 8.w),
           Text(
-            'Digital Kundali',
+            userName != null ? 'Welcome, $userName' : 'Digital Kundali',
             style: TextStyle(
               fontFamily: 'Georgia',
               fontSize: 18.sp,
@@ -81,11 +79,7 @@ class DashboardScreen extends StatelessWidget {
           child: CircleAvatar(
             radius: 16.r,
             backgroundColor: const Color(0xFFEAE6DF),
-            child: Icon(
-              Icons.person,
-              size: 20.sp,
-              color: Colors.grey,
-            ),
+            child: Icon(Icons.person, size: 20.sp, color: Colors.grey),
           ),
         ),
       ],

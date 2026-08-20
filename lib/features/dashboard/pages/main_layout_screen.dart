@@ -3,7 +3,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'dashboard_screen.dart';
 
 class MainLayoutScreen extends StatefulWidget {
-  const MainLayoutScreen({super.key});
+  final String? userName;
+
+  const MainLayoutScreen({super.key, this.userName});
 
   @override
   State<MainLayoutScreen> createState() => _MainLayoutScreenState();
@@ -12,8 +14,8 @@ class MainLayoutScreen extends StatefulWidget {
 class _MainLayoutScreenState extends State<MainLayoutScreen> {
   int _currentIndex = 0;
 
-  final List<Widget> _screens = [
-    const DashboardScreen(),
+  List<Widget> get _screens => [
+    DashboardScreen(userName: widget.userName),
     const Scaffold(body: Center(child: Text('Charts'))),
     const Scaffold(body: Center(child: Text('Insights'))),
     const Scaffold(body: Center(child: Text('Guru'))),
