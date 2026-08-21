@@ -16,7 +16,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _confirmPasswordController = TextEditingController();
+  final TextEditingController _confirmPasswordController =
+      TextEditingController();
 
   bool _agreeToTerms = false;
   bool _isLoading = false;
@@ -36,17 +37,20 @@ class _SignUpScreenState extends State<SignUpScreen> {
     final password = _passwordController.text;
     final confirmPassword = _confirmPasswordController.text;
 
-    if (name.isEmpty || email.isEmpty || password.isEmpty || confirmPassword.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please fill all fields')),
-      );
+    if (name.isEmpty ||
+        email.isEmpty ||
+        password.isEmpty ||
+        confirmPassword.isEmpty) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Please fill all fields')));
       return;
     }
 
     if (password != confirmPassword) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Passwords do not match')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Passwords do not match')));
       return;
     }
 
@@ -87,9 +91,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
     } else {
       // Show error
       final errorMessage = result['message'] ?? 'Registration failed';
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(errorMessage)),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(errorMessage)));
     }
   }
 
@@ -106,21 +110,22 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 constraints: BoxConstraints(minHeight: constraints.maxHeight),
                 child: IntrinsicHeight(
                   child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 24.h),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 24.w,
+                      vertical: 24.h,
+                    ),
                     child: Column(
                       children: [
                         // Real Logo inside a square box
                         Container(
                           width: 160.w,
                           height: 160.h,
-                          decoration: const BoxDecoration(
-                            color: Colors.white,
-                          ),
+                          decoration: const BoxDecoration(color: Colors.white),
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               SvgPicture.asset(
-                                'assets/images/splash.svg',
+                                'assets/splash.svg',
                                 width: 50.w,
                                 height: 50.h,
                               ),
@@ -130,11 +135,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                   children: [
                                     TextSpan(
                                       text: 'DIGITAL ',
-                                      style: TextStyle(color: Color(0xFF0A1B28)),
+                                      style: TextStyle(
+                                        color: Color(0xFF0A1B28),
+                                      ),
                                     ),
                                     TextSpan(
                                       text: 'KUNDALI',
-                                      style: TextStyle(color: Color(0xFFA88143)),
+                                      style: TextStyle(
+                                        color: Color(0xFFA88143),
+                                      ),
                                     ),
                                   ],
                                 ),
@@ -149,12 +158,26 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Container(width: 30.w, height: 0.5.h, color: const Color(0xFFEAE6DF)),
-                                  Padding(
-                                    padding: EdgeInsets.symmetric(horizontal: 4.w),
-                                    child: Icon(Icons.star, size: 6.sp, color: const Color(0xFFA88143)),
+                                  Container(
+                                    width: 30.w,
+                                    height: 0.5.h,
+                                    color: const Color(0xFFEAE6DF),
                                   ),
-                                  Container(width: 30.w, height: 0.5.h, color: const Color(0xFFEAE6DF)),
+                                  Padding(
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: 4.w,
+                                    ),
+                                    child: Icon(
+                                      Icons.star,
+                                      size: 6.sp,
+                                      color: const Color(0xFFA88143),
+                                    ),
+                                  ),
+                                  Container(
+                                    width: 30.w,
+                                    height: 0.5.h,
+                                    color: const Color(0xFFEAE6DF),
+                                  ),
                                 ],
                               ),
                               SizedBox(height: 6.h),
@@ -213,13 +236,31 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              _buildInputField('Full Name', 'Aries Native', _nameController),
+                              _buildInputField(
+                                'Full Name',
+                                'Aries Native',
+                                _nameController,
+                              ),
                               SizedBox(height: 20.h),
-                              _buildInputField('Email', 'native@cosmos.com', _emailController),
+                              _buildInputField(
+                                'Email',
+                                'native@cosmos.com',
+                                _emailController,
+                              ),
                               SizedBox(height: 20.h),
-                              _buildInputField('Password', '••••••••', _passwordController, obscureText: true),
+                              _buildInputField(
+                                'Password',
+                                '••••••••',
+                                _passwordController,
+                                obscureText: true,
+                              ),
                               SizedBox(height: 20.h),
-                              _buildInputField('Confirm Password', '••••••••', _confirmPasswordController, obscureText: true),
+                              _buildInputField(
+                                'Confirm Password',
+                                '••••••••',
+                                _confirmPasswordController,
+                                obscureText: true,
+                              ),
                               SizedBox(height: 24.h),
                               // Checkbox row
                               Row(
@@ -236,9 +277,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                         });
                                       },
                                       shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(4.r),
+                                        borderRadius: BorderRadius.circular(
+                                          4.r,
+                                        ),
                                       ),
-                                      side: const BorderSide(color: Color(0xFFEAE6DF)),
+                                      side: const BorderSide(
+                                        color: Color(0xFFEAE6DF),
+                                      ),
                                     ),
                                   ),
                                   SizedBox(width: 12.w),
@@ -280,7 +325,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 width: double.infinity,
                                 height: 52.h,
                                 child: ElevatedButton(
-                                  onPressed: _isLoading ? null : _handleRegister,
+                                  onPressed: _isLoading
+                                      ? null
+                                      : _handleRegister,
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: const Color(0xFF0A0A0C),
                                     foregroundColor: Colors.white,
@@ -293,10 +340,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                       ? SizedBox(
                                           width: 24.w,
                                           height: 24.w,
-                                          child: const CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
+                                          child:
+                                              const CircularProgressIndicator(
+                                                color: Colors.white,
+                                                strokeWidth: 2,
+                                              ),
                                         )
                                       : Row(
-                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
                                           children: [
                                             Text(
                                               'Create Account',
@@ -307,7 +359,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                               ),
                                             ),
                                             SizedBox(width: 8.w),
-                                            Icon(Icons.arrow_forward, size: 16.sp),
+                                            Icon(
+                                              Icons.arrow_forward,
+                                              size: 16.sp,
+                                            ),
                                           ],
                                         ),
                                 ),
@@ -316,9 +371,16 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               // OR JOIN WITH
                               Row(
                                 children: [
-                                  Expanded(child: Container(height: 1, color: const Color(0xFFEAE6DF))),
+                                  Expanded(
+                                    child: Container(
+                                      height: 1,
+                                      color: const Color(0xFFEAE6DF),
+                                    ),
+                                  ),
                                   Padding(
-                                    padding: EdgeInsets.symmetric(horizontal: 16.w),
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: 16.w,
+                                    ),
                                     child: Text(
                                       'OR JOIN WITH',
                                       style: TextStyle(
@@ -330,7 +392,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                       ),
                                     ),
                                   ),
-                                  Expanded(child: Container(height: 1, color: const Color(0xFFEAE6DF))),
+                                  Expanded(
+                                    child: Container(
+                                      height: 1,
+                                      color: const Color(0xFFEAE6DF),
+                                    ),
+                                  ),
                                 ],
                               ),
                               SizedBox(height: 24.h),
@@ -371,7 +438,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             GestureDetector(
                               onTap: () {
                                 Navigator.of(context).pushReplacement(
-                                  MaterialPageRoute(builder: (_) => const LoginScreen()),
+                                  MaterialPageRoute(
+                                    builder: (_) => const LoginScreen(),
+                                  ),
                                 );
                               },
                               child: Text(
@@ -399,7 +468,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
     );
   }
 
-  Widget _buildInputField(String label, String hint, TextEditingController controller, {bool obscureText = false}) {
+  Widget _buildInputField(
+    String label,
+    String hint,
+    TextEditingController controller, {
+    bool obscureText = false,
+  }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

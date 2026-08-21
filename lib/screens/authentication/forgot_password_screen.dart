@@ -19,7 +19,10 @@ class ForgotPasswordScreen extends StatelessWidget {
                 constraints: BoxConstraints(minHeight: constraints.maxHeight),
                 child: IntrinsicHeight(
                   child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 24.h),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 24.w,
+                      vertical: 24.h,
+                    ),
                     child: Column(
                       children: [
                         // Top bar: Back and Logo
@@ -30,7 +33,11 @@ class ForgotPasswordScreen extends StatelessWidget {
                               onTap: () => Navigator.pop(context),
                               child: Row(
                                 children: [
-                                  Icon(Icons.arrow_back, size: 18.sp, color: Color(0xFF4A4A4A)),
+                                  Icon(
+                                    Icons.arrow_back,
+                                    size: 18.sp,
+                                    color: Color(0xFF4A4A4A),
+                                  ),
                                   SizedBox(width: 8.w),
                                   Text(
                                     'BACK',
@@ -49,7 +56,7 @@ class ForgotPasswordScreen extends StatelessWidget {
                           ],
                         ),
                         SizedBox(height: 32),
-                        
+
                         // Logo Box
                         Container(
                           width: 140.w,
@@ -62,7 +69,7 @@ class ForgotPasswordScreen extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               SvgPicture.asset(
-                                'assets/images/splash.svg',
+                                'assets/splash.svg',
                                 width: 44.w,
                                 height: 44,
                               ),
@@ -72,11 +79,15 @@ class ForgotPasswordScreen extends StatelessWidget {
                                   children: [
                                     TextSpan(
                                       text: 'DIGITAL ',
-                                      style: TextStyle(color: Color(0xFF0A1B28)),
+                                      style: TextStyle(
+                                        color: Color(0xFF0A1B28),
+                                      ),
                                     ),
                                     TextSpan(
                                       text: 'KUNDALI',
-                                      style: TextStyle(color: Color(0xFFA88143)),
+                                      style: TextStyle(
+                                        color: Color(0xFFA88143),
+                                      ),
                                     ),
                                   ],
                                 ),
@@ -91,12 +102,26 @@ class ForgotPasswordScreen extends StatelessWidget {
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Container(width: 24.w, height: 0.5, color: const Color(0xFFEAE6DF)),
-                                  Padding(
-                                    padding: EdgeInsets.symmetric(horizontal: 4.w),
-                                    child: Icon(Icons.star, size: 5.sp, color: Color(0xFFA88143)),
+                                  Container(
+                                    width: 24.w,
+                                    height: 0.5,
+                                    color: const Color(0xFFEAE6DF),
                                   ),
-                                  Container(width: 24.w, height: 0.5, color: const Color(0xFFEAE6DF)),
+                                  Padding(
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: 4.w,
+                                    ),
+                                    child: Icon(
+                                      Icons.star,
+                                      size: 5.sp,
+                                      color: Color(0xFFA88143),
+                                    ),
+                                  ),
+                                  Container(
+                                    width: 24.w,
+                                    height: 0.5,
+                                    color: const Color(0xFFEAE6DF),
+                                  ),
                                 ],
                               ),
                               SizedBox(height: 4),
@@ -113,9 +138,9 @@ class ForgotPasswordScreen extends StatelessWidget {
                             ],
                           ),
                         ),
-                        
+
                         SizedBox(height: 32),
-                        
+
                         // Headings
                         Text(
                           'Reset Password',
@@ -138,16 +163,16 @@ class ForgotPasswordScreen extends StatelessWidget {
                             height: 1.5,
                           ),
                         ),
-                        
+
                         SizedBox(height: 40),
-                        
+
                         // Email Field
                         _buildLabel('EMAIL ADDRESS'),
                         SizedBox(height: 4),
                         _buildTextField('name@example.com'),
-                        
+
                         SizedBox(height: 32),
-                        
+
                         // Button
                         SizedBox(
                           width: double.infinity,
@@ -180,21 +205,27 @@ class ForgotPasswordScreen extends StatelessWidget {
                             ),
                           ),
                         ),
-                        
+
                         SizedBox(height: 32),
-                        
+
                         // Back to Login
                         GestureDetector(
                           onTap: () {
                             Navigator.pushReplacement(
                               context,
-                              MaterialPageRoute(builder: (context) => const LoginScreen()),
+                              MaterialPageRoute(
+                                builder: (context) => const LoginScreen(),
+                              ),
                             );
                           },
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Icon(Icons.login, size: 16.sp, color: Color(0xFF6B6B6B)),
+                              Icon(
+                                Icons.login,
+                                size: 16.sp,
+                                color: Color(0xFF6B6B6B),
+                              ),
                               SizedBox(width: 8.w),
                               Text(
                                 'Back to Login',
@@ -208,10 +239,10 @@ class ForgotPasswordScreen extends StatelessWidget {
                             ],
                           ),
                         ),
-                        
+
                         const Spacer(),
                         SizedBox(height: 32),
-                        
+
                         // Footer
                         SizedBox(height: 24),
                         Text(

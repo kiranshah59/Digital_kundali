@@ -31,9 +31,9 @@ class _LoginScreenState extends State<LoginScreen> {
     final password = _passwordController.text;
 
     if (email.isEmpty || password.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please fill all fields')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Please fill all fields')));
       return;
     }
 
@@ -41,10 +41,7 @@ class _LoginScreenState extends State<LoginScreen> {
       _isLoading = true;
     });
 
-    final result = await AuthService.login(
-      email: email,
-      password: password,
-    );
+    final result = await AuthService.login(email: email, password: password);
 
     if (!mounted) return;
 
@@ -54,7 +51,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
     if (result['success']) {
       final String? userName = result['data']?['data']?['user']?['name'];
-      
+
       Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(
           builder: (context) => MainLayoutScreen(userName: userName),
@@ -63,9 +60,9 @@ class _LoginScreenState extends State<LoginScreen> {
       );
     } else {
       final errorMessage = result['message'] ?? 'Login failed';
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(errorMessage)),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(errorMessage)));
     }
   }
 
@@ -82,21 +79,22 @@ class _LoginScreenState extends State<LoginScreen> {
                 constraints: BoxConstraints(minHeight: constraints.maxHeight),
                 child: IntrinsicHeight(
                   child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 24.h),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 24.w,
+                      vertical: 24.h,
+                    ),
                     child: Column(
                       children: [
                         // White box for logo
                         Container(
                           width: 160.w,
                           height: 160.h,
-                          decoration: const BoxDecoration(
-                            color: Colors.white,
-                          ),
+                          decoration: const BoxDecoration(color: Colors.white),
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               SvgPicture.asset(
-                                'assets/images/splash.svg',
+                                'assets/splash.svg',
                                 width: 50.w,
                                 height: 50.h,
                               ),
@@ -106,11 +104,15 @@ class _LoginScreenState extends State<LoginScreen> {
                                   children: [
                                     TextSpan(
                                       text: 'DIGITAL ',
-                                      style: TextStyle(color: Color(0xFF0A1B28)),
+                                      style: TextStyle(
+                                        color: Color(0xFF0A1B28),
+                                      ),
                                     ),
                                     TextSpan(
                                       text: 'KUNDALI',
-                                      style: TextStyle(color: Color(0xFFA88143)),
+                                      style: TextStyle(
+                                        color: Color(0xFFA88143),
+                                      ),
                                     ),
                                   ],
                                 ),
@@ -125,12 +127,26 @@ class _LoginScreenState extends State<LoginScreen> {
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Container(width: 30.w, height: 0.5, color: const Color(0xFFEAE6DF)),
-                                  Padding(
-                                    padding: EdgeInsets.symmetric(horizontal: 4.w),
-                                    child: Icon(Icons.star, size: 6.sp, color: const Color(0xFFA88143)),
+                                  Container(
+                                    width: 30.w,
+                                    height: 0.5,
+                                    color: const Color(0xFFEAE6DF),
                                   ),
-                                  Container(width: 30.w, height: 0.5, color: const Color(0xFFEAE6DF)),
+                                  Padding(
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: 4.w,
+                                    ),
+                                    child: Icon(
+                                      Icons.star,
+                                      size: 6.sp,
+                                      color: const Color(0xFFA88143),
+                                    ),
+                                  ),
+                                  Container(
+                                    width: 30.w,
+                                    height: 0.5,
+                                    color: const Color(0xFFEAE6DF),
+                                  ),
                                 ],
                               ),
                               SizedBox(height: 6.h),
@@ -179,9 +195,9 @@ class _LoginScreenState extends State<LoginScreen> {
                         _buildLabel('EMAIL ADDRESS'),
                         SizedBox(height: 8.h),
                         _buildTextField('your@email.com', _emailController),
-                        
+
                         SizedBox(height: 20.h),
-                        
+
                         // Password Field
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -192,7 +208,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => const ForgotPasswordScreen(),
+                                    builder: (context) =>
+                                        const ForgotPasswordScreen(),
                                   ),
                                 );
                               },
@@ -209,10 +226,14 @@ class _LoginScreenState extends State<LoginScreen> {
                           ],
                         ),
                         SizedBox(height: 8.h),
-                        _buildTextField('••••••••', _passwordController, obscureText: true),
-                        
+                        _buildTextField(
+                          '••••••••',
+                          _passwordController,
+                          obscureText: true,
+                        ),
+
                         SizedBox(height: 32.h),
-                        
+
                         // Sign In Button
                         SizedBox(
                           width: double.infinity,
@@ -220,7 +241,9 @@ class _LoginScreenState extends State<LoginScreen> {
                           child: ElevatedButton(
                             onPressed: _isLoading ? null : _handleLogin,
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xFF050B14), // Very dark navy/black
+                              backgroundColor: const Color(
+                                0xFF050B14,
+                              ), // Very dark navy/black
                               foregroundColor: Colors.white,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(4.r),
@@ -231,7 +254,10 @@ class _LoginScreenState extends State<LoginScreen> {
                                 ? SizedBox(
                                     width: 24.w,
                                     height: 24.w,
-                                    child: const CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
+                                    child: const CircularProgressIndicator(
+                                      color: Colors.white,
+                                      strokeWidth: 2,
+                                    ),
                                   )
                                 : Text(
                                     'SIGN IN',
@@ -244,12 +270,14 @@ class _LoginScreenState extends State<LoginScreen> {
                                   ),
                           ),
                         ),
-                        
+
                         SizedBox(height: 32.h),
                         // OR CONTINUE WITH
                         Row(
                           children: [
-                            const Expanded(child: Divider(color: Color(0xFFEAE6DF))),
+                            const Expanded(
+                              child: Divider(color: Color(0xFFEAE6DF)),
+                            ),
                             Padding(
                               padding: EdgeInsets.symmetric(horizontal: 16.w),
                               child: Text(
@@ -263,10 +291,12 @@ class _LoginScreenState extends State<LoginScreen> {
                                 ),
                               ),
                             ),
-                            const Expanded(child: Divider(color: Color(0xFFEAE6DF))),
+                            const Expanded(
+                              child: Divider(color: Color(0xFFEAE6DF)),
+                            ),
                           ],
                         ),
-                        
+
                         SizedBox(height: 24.h),
                         // Google Button
                         SizedBox(
@@ -285,7 +315,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 SvgPicture.asset(
-                                  'assets/icons/google.svg',
+                                  'assets/images/google.svg',
                                   width: 20.w,
                                   height: 20.h,
                                 ),
@@ -303,14 +333,16 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                           ),
                         ),
-                        
+
                         const Spacer(),
                         SizedBox(height: 32.h),
                         // Sign Up text
                         GestureDetector(
                           onTap: () {
                             Navigator.of(context).pushReplacement(
-                              MaterialPageRoute(builder: (_) => const SignUpScreen()),
+                              MaterialPageRoute(
+                                builder: (_) => const SignUpScreen(),
+                              ),
                             );
                           },
                           child: Text.rich(
@@ -362,7 +394,11 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  Widget _buildTextField(String hint, TextEditingController controller, {bool obscureText = false}) {
+  Widget _buildTextField(
+    String hint,
+    TextEditingController controller, {
+    bool obscureText = false,
+  }) {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -385,7 +421,10 @@ class _LoginScreenState extends State<LoginScreen> {
             color: const Color(0xFFB0B0B0),
           ),
           border: InputBorder.none,
-          contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+          contentPadding: EdgeInsets.symmetric(
+            horizontal: 16.w,
+            vertical: 16.h,
+          ),
         ),
       ),
     );

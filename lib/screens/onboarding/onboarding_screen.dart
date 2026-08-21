@@ -42,7 +42,7 @@ class OnboardingScreen extends StatelessWidget {
             ),
             alignment: Alignment.center,
             child: SvgPicture.asset(
-              'assets/images/onboarding.svg',
+              'assets/onboarding.svg',
               width: 220.w,
               height: 220.h,
             ),
