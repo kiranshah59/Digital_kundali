@@ -83,7 +83,7 @@ class LifeAreaForecastGrid extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(16.w),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: const Color(0xFFFDFCF9),
         borderRadius: BorderRadius.circular(16.r),
         border: Border.all(color: const Color(0xFFEAE6DF), width: 1),
       ),

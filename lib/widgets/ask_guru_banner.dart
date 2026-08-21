@@ -23,7 +23,7 @@ class AskGuruBanner extends StatelessWidget {
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: const Color(0xFFFDFCF9),
           borderRadius: BorderRadius.circular(10.r), // Slightly smaller to fit inside
         ),
         child: Row(

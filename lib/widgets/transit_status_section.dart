@@ -87,7 +87,7 @@ class TransitStatusSection extends StatelessWidget {
       width: 110.w,
       padding: EdgeInsets.symmetric(vertical: 12.h, horizontal: 8.w),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: const Color(0xFFFDFCF9),
         borderRadius: BorderRadius.circular(12.r),
         border: Border.all(color: const Color(0xFFEAE6DF), width: 1),
       ),

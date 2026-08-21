@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-import '../../splash/pages/splash_screen.dart';
+import '../splash/splash_screen.dart';
 import 'onboarding_screen.dart';
 import 'onboarding_insights_screen.dart';
 import 'onboarding_clarity_screen.dart';
-import '../../auth/pages/sign_up_screen.dart';
+import '../authentication/sign_up_screen.dart';
 
 class MainPageView extends StatefulWidget {
   const MainPageView({super.key});

@@ -1,16 +1,44 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import '../../core/services/profile_service.dart';
 
-import '../widgets/birth_profiles_section.dart';
-import '../widgets/transit_status_section.dart';
-import '../widgets/daily_guidance_card.dart';
-import '../widgets/life_area_forecast_grid.dart';
-import '../widgets/ask_guru_banner.dart';
+import '../../widgets/birth_profiles_section.dart';
+import '../../widgets/transit_status_section.dart';
+import '../../widgets/daily_guidance_card.dart';
+import '../../widgets/life_area_forecast_grid.dart';
+import '../../widgets/ask_guru_banner.dart';
 
-class DashboardScreen extends StatelessWidget {
+class DashboardScreen extends StatefulWidget {
   final String? userName;
 
   const DashboardScreen({super.key, this.userName});
+
+  @override
+  State<DashboardScreen> createState() => _DashboardScreenState();
+}
+
+class _DashboardScreenState extends State<DashboardScreen> {
+  List<dynamic> _profiles = [];
+  bool _isLoadingProfiles = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchProfiles();
+  }
+
+  Future<void> _fetchProfiles() async {
+    setState(() => _isLoadingProfiles = true);
+    final response = await ProfileService.getProfiles();
+    if (mounted) {
+      setState(() {
+        _isLoadingProfiles = false;
+        if (response['success']) {
+          _profiles = response['data'] ?? [];
+        }
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +53,11 @@ class DashboardScreen extends StatelessWidget {
               padding: EdgeInsets.symmetric(vertical: 16.h),
               sliver: SliverList(
                 delegate: SliverChildListDelegate([
-                  const BirthProfilesSection(),
+                  BirthProfilesSection(
+                    profiles: _profiles,
+                    isLoading: _isLoadingProfiles,
+                    onRefresh: _fetchProfiles,
+                  ),
                   SizedBox(height: 32.h),
                   const TransitStatusSection(),
                   SizedBox(height: 32.h),
@@ -54,13 +86,16 @@ class DashboardScreen extends StatelessWidget {
         children: [
           Icon(Icons.star, color: const Color(0xFFA88143), size: 20.sp),
           SizedBox(width: 8.w),
-          Text(
-            userName != null ? 'Welcome, $userName' : 'Digital Kundali',
-            style: TextStyle(
-              fontFamily: 'Georgia',
-              fontSize: 18.sp,
-              fontWeight: FontWeight.w600,
-              color: const Color(0xFF11141A),
+          Expanded(
+            child: Text(
+              widget.userName != null ? 'Welcome, ${widget.userName}' : 'Digital Kundali',
+              style: TextStyle(
+                fontFamily: 'Georgia',
+                fontSize: 18.sp,
+                fontWeight: FontWeight.w600,
+                color: const Color(0xFF11141A),
+              ),
+              overflow: TextOverflow.ellipsis,
             ),
           ),
         ],

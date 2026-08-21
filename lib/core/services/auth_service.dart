@@ -3,6 +3,8 @@ import 'package:http/http.dart' as http;
 
 class AuthService {
   static const String baseUrl = 'https://api.digitalkundali.com/api';
+  static String? token; // Store token for API requests
+  
 
   static Future<Map<String, dynamic>> register({
     required String name,
@@ -30,6 +32,8 @@ class AuthService {
       final decodedData = jsonDecode(response.body);
 
       if (response.statusCode >= 200 && response.statusCode < 300) {
+        // Assuming API returns token in data.token or token
+        token = decodedData['token'] ?? decodedData['data']?['token'] ?? token;
         return {
           'success': true,
           'data': decodedData,
@@ -70,6 +74,9 @@ class AuthService {
       final decodedData = jsonDecode(response.body);
 
       if (response.statusCode >= 200 && response.statusCode < 300) {
+        print('LOGIN RESPONSE: $decodedData'); // Added for debugging
+        token = decodedData['token'] ?? decodedData['access_token'] ?? decodedData['data']?['token'] ?? decodedData['data']?['access_token'] ?? token;
+        print('EXTRACTED TOKEN: $token');
         return {
           'success': true,
           'data': decodedData,

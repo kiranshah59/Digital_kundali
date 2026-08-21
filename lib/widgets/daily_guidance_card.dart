@@ -10,7 +10,7 @@ class DailyGuidanceCard extends StatelessWidget {
       margin: EdgeInsets.symmetric(horizontal: 24.w),
       padding: EdgeInsets.all(24.w),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: const Color(0xFFFDFCF9),
         borderRadius: BorderRadius.circular(16.r),
         boxShadow: [
           BoxShadow(
@@ -22,25 +22,7 @@ class DailyGuidanceCard extends StatelessWidget {
       ),
       child: Stack(
         children: [
-          // Subtle glow effect in the top right (mocked with a faint gradient circle)
-          Positioned(
-            right: -20,
-            top: -20,
-            child: Container(
-              width: 100.w,
-              height: 100.w,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                gradient: RadialGradient(
-                  colors: [
-                    const Color(0xFFA88143).withValues(alpha: 0.08),
-                    Colors.transparent,
-                  ],
-                  stops: const [0.2, 1.0],
-                ),
-              ),
-            ),
-          ),
+
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'features/onboarding/pages/main_page_view.dart';
-import 'features/dashboard/pages/main_layout_screen.dart';
+import 'screens/onboarding/main_page_view.dart';
+
 
 void main() {
   runApp(const DigitalKundaliApp());

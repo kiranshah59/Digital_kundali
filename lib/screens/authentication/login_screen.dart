@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import '../../dashboard/pages/main_layout_screen.dart';
-import '../services/auth_service.dart';
+import '../home/main_layout_screen.dart';
+import '../../core/services/auth_service.dart';
 import 'sign_up_screen.dart';
 import 'forgot_password_screen.dart';
 
