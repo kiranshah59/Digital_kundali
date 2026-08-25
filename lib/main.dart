@@ -4,6 +4,9 @@ import 'screens/onboarding/main_page_view.dart';
 
 
 void main() {
+
+  // widgetsFlutterBinding.ensureInitialized();
+
   runApp(const DigitalKundaliApp());
 }
 

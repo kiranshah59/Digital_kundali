@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import '../../models/nepali_kundali_model.dart';
 
 class KundaliPainter extends CustomPainter {
+  final NepaliKundaliModel? kundaliData;
+  final bool showEnglish;
+
+  KundaliPainter({this.kundaliData, this.showEnglish = true});
+
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
@@ -51,19 +57,72 @@ class KundaliPainter extends CustomPainter {
       );
     }
 
-    // Draw House Numbers (golden)
-    drawText('5', Offset(w / 2, h * 0.08), isNumber: true); // Top diamond top
-    drawText('2', Offset(w * 0.92, h / 2), isNumber: true); // Right diamond right
-    drawText('11', Offset(w / 2, h * 0.92), isNumber: true); // Bottom diamond bottom
-    drawText('8', Offset(w * 0.08, h / 2), isNumber: true); // Left diamond left
-    
-    // Draw Planets (black bold)
-    drawText('Su, Me', Offset(w * 0.25, h * 0.25)); // Top Left house
-    drawText('Ma', Offset(w * 0.75, h * 0.25)); // Top Right house
-    drawText('Ve', Offset(w * 0.25, h * 0.75)); // Bottom Left house
-    drawText('Mo', Offset(w * 0.75, h * 0.75)); // Bottom Right house
+    if (kundaliData == null || kundaliData!.houses.isEmpty) {
+      // Fallback/Loading state
+      drawText('...', Offset(w / 2, h / 2));
+      return;
+    }
+
+    // Map the 12 houses to their visual positions
+    // In North Indian style:
+    // House 1 is top diamond. Houses go counter-clockwise.
+    final housePositions = {
+      1: Offset(w / 2, h * 0.25),
+      2: Offset(w * 0.25, h * 0.08),
+      3: Offset(w * 0.08, h * 0.25),
+      4: Offset(w * 0.25, h / 2),
+      5: Offset(w * 0.08, h * 0.75),
+      6: Offset(w * 0.25, h * 0.92),
+      7: Offset(w / 2, h * 0.75),
+      8: Offset(w * 0.75, h * 0.92),
+      9: Offset(w * 0.92, h * 0.75),
+      10: Offset(w * 0.75, h / 2),
+      11: Offset(w * 0.92, h * 0.25),
+      12: Offset(w * 0.75, h * 0.08),
+    };
+
+    final numberPositions = {
+      1: Offset(w / 2, h * 0.08),
+      2: Offset(w * 0.35, h * 0.15),
+      3: Offset(w * 0.15, h * 0.35),
+      4: Offset(w * 0.35, h / 2),
+      5: Offset(w * 0.15, h * 0.65),
+      6: Offset(w * 0.35, h * 0.85),
+      7: Offset(w / 2, h * 0.92),
+      8: Offset(w * 0.65, h * 0.85),
+      9: Offset(w * 0.85, h * 0.65),
+      10: Offset(w * 0.65, h / 2),
+      11: Offset(w * 0.85, h * 0.35),
+      12: Offset(w * 0.65, h * 0.15),
+    };
+
+    for (var house in kundaliData!.houses) {
+      int houseNum = house.house;
+      if (houseNum >= 1 && houseNum <= 12) {
+        // Draw House Number
+        // If showEnglish is true, display house number (as a string).
+        // The API returns sign_devanagari, which in Kundali shows the sign number in that house.
+        // Actually, the number written in the house is the Zodiac Sign number. 
+        // We will just use the sign_devanagari as it usually represents the sign number in North Indian chart.
+        // Alternatively we can use the English sign name or a mapped number.
+        // For simplicity, let's just use what the API gives.
+        String signLabel = showEnglish ? house.signEn.substring(0, 3).toUpperCase() : house.signDevanagari;
+        drawText(signLabel, numberPositions[houseNum]!, isNumber: true);
+
+        // Draw Planets
+        if (house.planets.isNotEmpty) {
+          String planetsStr = house.planets.map((p) {
+            String pName = showEnglish ? p.key.substring(0, 1).toUpperCase() + p.key.substring(1, 2) : p.nameDevanagari;
+            return pName;
+          }).join(', ');
+          drawText(planetsStr, housePositions[houseNum]!);
+        }
+      }
+    }
   }
 
   @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+  bool shouldRepaint(covariant KundaliPainter oldDelegate) {
+    return oldDelegate.kundaliData != kundaliData || oldDelegate.showEnglish != showEnglish;
+  }
 }

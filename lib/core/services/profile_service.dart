@@ -51,6 +51,7 @@ class ProfileService {
     
     // Create the profile map to be used either by API or locally
     final newProfile = {
+      'id': DateTime.now().millisecondsSinceEpoch,
       'full_name': fullName,
       'relationship': 'self',
       'gender': 'female',

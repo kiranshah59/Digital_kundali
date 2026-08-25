@@ -1,18 +1,87 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../widgets/kundali_painter.dart';
+import '../../core/services/chart_service.dart';
+import '../../models/chart_model.dart';
+import '../../models/nepali_kundali_model.dart';
+import 'lagna_chart_screen.dart';
+import 'insights_screen.dart';
+import 'rashi_screen.dart';
 
-class BirthChartDetailScreen extends StatelessWidget {
+class BirthChartDetailScreen extends StatefulWidget {
   final dynamic profileData;
 
   const BirthChartDetailScreen({super.key, this.profileData});
 
   @override
+  State<BirthChartDetailScreen> createState() => _BirthChartDetailScreenState();
+}
+
+class _BirthChartDetailScreenState extends State<BirthChartDetailScreen> {
+  bool _isLoading = true;
+  String? _errorMessage;
+  ChartModel? _chartModel;
+  NepaliKundaliModel? _nepaliKundaliModel;
+  bool _showEnglish = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchChartData();
+  }
+
+  Future<void> _fetchChartData() async {
+    final String fullName = widget.profileData?['full_name'] ?? 'Unknown';
+    final profileId = widget.profileData?['id'] ?? fullName.hashCode.abs();
+    
+    if (profileId == null) {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+          _errorMessage = 'Invalid profile data (Missing ID)';
+        });
+      }
+      return;
+    }
+
+    var chartRes = await ChartService.getChart(profileId);
+    
+    if (!chartRes['success'] && chartRes['statusCode'] == 404) {
+      chartRes = await ChartService.generateChart(profileId);
+    }
+
+    if (!chartRes['success']) {
+      if (mounted) {
+        setState(() {
+          _errorMessage = chartRes['message'];
+          _isLoading = false;
+        });
+      }
+      return;
+    }
+
+    final ChartModel chartModel = chartRes['data'];
+    _chartModel = chartModel;
+
+    final nepaliRes = await ChartService.getNepaliKundali(chartModel.id);
+    
+    if (mounted) {
+      setState(() {
+        if (nepaliRes['success']) {
+          _nepaliKundaliModel = nepaliRes['data'];
+        } else {
+          _errorMessage = nepaliRes['message'];
+        }
+        _isLoading = false;
+      });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final String fullName = profileData?['full_name'] ?? 'Unknown User';
+    final String fullName = widget.profileData?['full_name'] ?? 'Unknown User';
     final String firstName = fullName.split(' ').first;
     
-    // Get initials (up to 2 chars)
     final List<String> nameParts = fullName.split(' ').where((p) => p.isNotEmpty).toList();
     String initials = 'U';
     if (nameParts.isNotEmpty) {
@@ -24,6 +93,10 @@ class BirthChartDetailScreen extends StatelessWidget {
     }
     
     final String initialLetter = fullName.isNotEmpty ? fullName[0].toUpperCase() : 'U';
+
+    final risingSign = _chartModel?.chartData.ascendant.sign ?? 'N/A';
+    final sunSign = _chartModel?.chartData.planets['sun']?.sign ?? 'N/A';
+    final moonSign = _chartModel?.chartData.planets['moon']?.sign ?? 'N/A';
 
     return Scaffold(
       backgroundColor: const Color(0xFFFAF9F5),
@@ -68,156 +141,234 @@ class BirthChartDetailScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        physics: const BouncingScrollPhysics(),
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 16.h),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              // Avatar box
-              Stack(
-                alignment: Alignment.bottomRight,
-                children: [
-                  Container(
-                    width: 80.w,
-                    height: 80.w,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(16.r),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.03),
-                          blurRadius: 10,
-                          offset: const Offset(0, 4),
+      body: _isLoading
+          ? Center(
+              child: CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(const Color(0xFFA88143)),
+              ),
+            )
+          : _errorMessage != null
+              ? Center(
+                  child: Padding(
+                    padding: EdgeInsets.all(24.w),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.error_outline, color: const Color(0xFFD35555), size: 48.sp),
+                        SizedBox(height: 16.h),
+                        Text(
+                          _errorMessage!,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(fontFamily: 'Inter', fontSize: 14.sp, color: const Color(0xFF11141A)),
                         ),
+                        SizedBox(height: 24.h),
+                        ElevatedButton(
+                          onPressed: () {
+                            setState(() {
+                              _isLoading = true;
+                              _errorMessage = null;
+                            });
+                            _fetchChartData();
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFFA88143),
+                          ),
+                          child: const Text('Retry'),
+                        )
                       ],
                     ),
-                    child: Center(
-                      child: Text(
-                        initialLetter,
-                        style: TextStyle(
-                          fontFamily: 'Georgia',
-                          fontSize: 40.sp,
-                          color: const Color(0xFF11141A),
+                  ),
+                )
+              : SingleChildScrollView(
+                  physics: const BouncingScrollPhysics(),
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 16.h),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        // Avatar box
+                        Stack(
+                          alignment: Alignment.bottomRight,
+                          children: [
+                            Container(
+                              width: 80.w,
+                              height: 80.w,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(16.r),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withValues(alpha: 0.03),
+                                    blurRadius: 10,
+                                    offset: const Offset(0, 4),
+                                  ),
+                                ],
+                              ),
+                              child: Center(
+                                child: Text(
+                                  initialLetter,
+                                  style: TextStyle(
+                                    fontFamily: 'Georgia',
+                                    fontSize: 40.sp,
+                                    color: const Color(0xFF11141A),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Positioned(
+                              right: -4,
+                              bottom: -4,
+                              child: Container(
+                                padding: EdgeInsets.all(4.w),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFFF7C353),
+                                  shape: BoxShape.circle,
+                                  border: Border.all(color: Colors.white, width: 2),
+                                ),
+                                child: Icon(Icons.star, size: 10.sp, color: const Color(0xFF11141A)),
+                              ),
+                            ),
+                          ],
                         ),
-                      ),
+                        SizedBox(height: 16.h),
+                        Text(
+                          fullName,
+                          style: TextStyle(
+                            fontFamily: 'Georgia',
+                            fontSize: 22.sp,
+                            fontWeight: FontWeight.w600,
+                            color: const Color(0xFF11141A),
+                          ),
+                        ),
+                        SizedBox(height: 4.h),
+                        Text(
+                          '${risingSign.toUpperCase()} DOMINANT',
+                          style: TextStyle(
+                            fontFamily: 'Inter',
+                            fontSize: 10.sp,
+                            fontWeight: FontWeight.w700,
+                            letterSpacing: 1.5,
+                            color: const Color(0xFFA88143),
+                          ),
+                        ),
+                        SizedBox(height: 24.h),
+                        
+                        // Tabs
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => LagnaChartScreen(profileData: widget.profileData),
+                                  ),
+                                );
+                              },
+                              child: _buildTab('Charts', true),
+                            ),
+                            SizedBox(width: 8.w),
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => InsightsScreen(profileData: widget.profileData),
+                                  ),
+                                );
+                              },
+                              child: _buildTab('Insights', false),
+                            ),
+                            SizedBox(width: 8.w),
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => RashiScreen(profileData: widget.profileData),
+                                  ),
+                                );
+                              },
+                              child: _buildTab('Rashi', false),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 32.h),
+                        
+                        // Key Placements
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            _buildPlacement('RISING', risingSign),
+                            Container(width: 1, height: 24.h, color: const Color(0xFFEAE6DF), margin: EdgeInsets.symmetric(horizontal: 16.w)),
+                            _buildPlacement('SUN', sunSign),
+                            Container(width: 1, height: 24.h, color: const Color(0xFFEAE6DF), margin: EdgeInsets.symmetric(horizontal: 16.w)),
+                            _buildPlacement('MOON', moonSign),
+                          ],
+                        ),
+                        SizedBox(height: 32.h),
+                        
+                        // Natal Parameters Card
+                        _buildNatalParametersCard(widget.profileData),
+                        SizedBox(height: 32.h),
+                        
+                        // Lagna Chart (D1)
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'Lagna Chart (D1)',
+                              style: TextStyle(
+                                fontFamily: 'Georgia',
+                                fontSize: 14.sp,
+                                color: const Color(0xFF11141A),
+                              ),
+                            ),
+                            Row(
+                              children: [
+                                _buildToggle('EN', _showEnglish, () => setState(() => _showEnglish = true)),
+                                _buildToggle('NE', !_showEnglish, () => setState(() => _showEnglish = false)),
+                              ],
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 16.h),
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => LagnaChartScreen(profileData: widget.profileData),
+                              ),
+                            );
+                          },
+                          child: _buildChartBox(),
+                        ),
+                        SizedBox(height: 32.h),
+                        
+                        // Planetary Alignment Table
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            'Planetary Alignment',
+                            style: TextStyle(
+                              fontFamily: 'Georgia',
+                              fontSize: 14.sp,
+                              color: const Color(0xFF11141A),
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: 16.h),
+                        _buildPlanetaryTable(),
+                        SizedBox(height: 32.h),
+                        
+                        // Celestial Persona Card
+                        _buildPersonaCard(firstName, risingSign, sunSign, moonSign),
+                      ],
                     ),
                   ),
-                  Positioned(
-                    right: -4,
-                    bottom: -4,
-                    child: Container(
-                      padding: EdgeInsets.all(4.w),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFF7C353),
-                        shape: BoxShape.circle,
-                        border: Border.all(color: Colors.white, width: 2),
-                      ),
-                      child: Icon(Icons.star, size: 10.sp, color: const Color(0xFF11141A)),
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(height: 16.h),
-              Text(
-                fullName,
-                style: TextStyle(
-                  fontFamily: 'Georgia',
-                  fontSize: 22.sp,
-                  fontWeight: FontWeight.w600,
-                  color: const Color(0xFF11141A),
                 ),
-              ),
-              SizedBox(height: 4.h),
-              Text(
-                'ARIES DOMINANT',
-                style: TextStyle(
-                  fontFamily: 'Inter',
-                  fontSize: 10.sp,
-                  fontWeight: FontWeight.w700,
-                  letterSpacing: 1.5,
-                  color: const Color(0xFFA88143),
-                ),
-              ),
-              SizedBox(height: 24.h),
-              
-              // Tabs
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  _buildTab('Charts', true),
-                  SizedBox(width: 8.w),
-                  _buildTab('Insights', false),
-                  SizedBox(width: 8.w),
-                  _buildTab('Rashi', false),
-                ],
-              ),
-              SizedBox(height: 32.h),
-              
-              // Key Placements
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  _buildPlacement('RISING', 'Leo'),
-                  Container(width: 1, height: 24.h, color: const Color(0xFFEAE6DF), margin: EdgeInsets.symmetric(horizontal: 16.w)),
-                  _buildPlacement('SUN', 'Leo'),
-                  Container(width: 1, height: 24.h, color: const Color(0xFFEAE6DF), margin: EdgeInsets.symmetric(horizontal: 16.w)),
-                  _buildPlacement('MOON', 'Virgo'),
-                ],
-              ),
-              SizedBox(height: 32.h),
-              
-              // Natal Parameters Card
-              _buildNatalParametersCard(profileData),
-              SizedBox(height: 32.h),
-              
-              // Lagna Chart (D1)
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'Lagna Chart (D1)',
-                    style: TextStyle(
-                      fontFamily: 'Georgia',
-                      fontSize: 14.sp,
-                      color: const Color(0xFF11141A),
-                    ),
-                  ),
-                  Row(
-                    children: [
-                      _buildToggle('EN', true),
-                      _buildToggle('NE', false),
-                    ],
-                  ),
-                ],
-              ),
-              SizedBox(height: 16.h),
-              _buildChartBox(),
-              SizedBox(height: 32.h),
-              
-              // Planetary Alignment Table
-              Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  'Planetary Alignment',
-                  style: TextStyle(
-                    fontFamily: 'Georgia',
-                    fontSize: 14.sp,
-                    color: const Color(0xFF11141A),
-                  ),
-                ),
-              ),
-              SizedBox(height: 16.h),
-              _buildPlanetaryTable(),
-              SizedBox(height: 32.h),
-              
-              // Celestial Persona Card
-              _buildPersonaCard(firstName),
-            ],
-          ),
-        ),
-      ),
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
           boxShadow: [
@@ -406,20 +557,23 @@ class BirthChartDetailScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildToggle(String text, bool isActive) {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
-      decoration: BoxDecoration(
-        color: isActive ? const Color(0xFF0A0A0C) : Colors.white,
-        border: Border.all(color: isActive ? Colors.transparent : const Color(0xFFEAE6DF)),
-      ),
-      child: Text(
-        text,
-        style: TextStyle(
-          fontFamily: 'Inter',
-          fontSize: 10.sp,
-          fontWeight: FontWeight.w600,
-          color: isActive ? Colors.white : const Color(0xFF11141A),
+  Widget _buildToggle(String text, bool isActive, VoidCallback onTap) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
+        decoration: BoxDecoration(
+          color: isActive ? const Color(0xFF0A0A0C) : Colors.white,
+          border: Border.all(color: isActive ? Colors.transparent : const Color(0xFFEAE6DF)),
+        ),
+        child: Text(
+          text,
+          style: TextStyle(
+            fontFamily: 'Inter',
+            fontSize: 10.sp,
+            fontWeight: FontWeight.w600,
+            color: isActive ? Colors.white : const Color(0xFF11141A),
+          ),
         ),
       ),
     );
@@ -439,7 +593,10 @@ class BirthChartDetailScreen extends StatelessWidget {
             width: 250.w,
             height: 250.w,
             child: CustomPaint(
-              painter: KundaliPainter(),
+              painter: KundaliPainter(
+                kundaliData: _nepaliKundaliModel,
+                showEnglish: _showEnglish,
+              ),
             ),
           ),
           SizedBox(height: 24.h),
@@ -468,6 +625,12 @@ class BirthChartDetailScreen extends StatelessWidget {
   }
 
   Widget _buildPlanetaryTable() {
+    if (_chartModel == null || _chartModel!.chartData.planets.isEmpty) {
+      return Container();
+    }
+    
+    final planets = _chartModel!.chartData.planets.entries.toList();
+
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
@@ -492,13 +655,14 @@ class BirthChartDetailScreen extends StatelessWidget {
             ),
           ),
           // Rows
-          _buildTableRow('Sun', 'Leo', '14° 22\'', isEven: false),
-          _buildTableRow('Moon', 'Virgo', '02° 45\'', isEven: true),
-          _buildTableRow('Mars', 'Taurus', '21° 10\'', isEven: false),
-          _buildTableRow('Mercury', 'Leo', '28° 56\'', isEven: true),
-          _buildTableRow('Jupiter', 'Cancer', '05° 12\'', isEven: false),
-          _buildTableRow('Venus', 'Cancer', '18° 33\'', isEven: true),
-          _buildTableRow('Saturn', 'Capricorn', '26° 09\'', isEven: false, isLast: true),
+          for (int i = 0; i < planets.length; i++)
+            _buildTableRow(
+              planets[i].key.toUpperCase(),
+              planets[i].value.sign,
+              '${planets[i].value.degree.toStringAsFixed(2)}°',
+              isEven: i % 2 != 0,
+              isLast: i == planets.length - 1,
+            )
         ],
       ),
     );
@@ -549,7 +713,7 @@ class BirthChartDetailScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildPersonaCard(String firstName) {
+  Widget _buildPersonaCard(String firstName, String risingSign, String sunSign, String moonSign) {
     return Container(
       width: double.infinity,
       padding: EdgeInsets.all(24.w),
@@ -577,7 +741,7 @@ class BirthChartDetailScreen extends StatelessWidget {
           ),
           SizedBox(height: 16.h),
           Text(
-            'With a dominant Leo placement in both Rising and Sun, $firstName possesses a magnetic, authoritative presence and a deep-seated need for creative self-expression. The moon in Virgo acts as a vital anchor, grounding this fiery vitality with meticulous precision and an analytical emotional core. This rare combination suggests a path defined by leadership that is both visionary and pragmatically executed. In the current Mahadasha, the focus shifts toward internal consolidation and professional mastery through structured discipline.',
+            'With a dominant $risingSign placement in Rising and $sunSign Sun, $firstName possesses a magnetic, authoritative presence and a deep-seated need for creative self-expression. The moon in $moonSign acts as a vital anchor, grounding this fiery vitality with meticulous precision and an analytical emotional core. This rare combination suggests a path defined by leadership that is both visionary and pragmatically executed.',
             style: TextStyle(
               fontFamily: 'Inter',
               fontSize: 12.sp,
