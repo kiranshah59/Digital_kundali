@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'lagna_chart_screen.dart';
 import 'rashi_screen.dart';
+import '../../core/services/chart_service.dart';
+import '../../models/chart_model.dart';
+import '../../models/insight_model.dart';
 
 class InsightsScreen extends StatefulWidget {
   final dynamic profileData;
@@ -15,6 +17,86 @@ class InsightsScreen extends StatefulWidget {
 class _InsightsScreenState extends State<InsightsScreen> {
   bool _isDetailed = false;
   bool _showEnglish = true;
+  
+  bool _isLoading = true;
+  String? _errorMessage;
+  InsightModel? _insightModel;
+  int? _chartId;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchInsightData();
+  }
+
+  Future<void> _fetchInsightData() async {
+    setState(() { _isLoading = true; _errorMessage = null; });
+    
+    final String fullName = widget.profileData?['full_name'] ?? 'Unknown';
+    final profileId = widget.profileData?['id'] ?? fullName.hashCode.abs();
+
+    if (_chartId == null) {
+      final chartRes = await ChartService.getChart(profileId);
+      if (chartRes['success']) {
+        _chartId = (chartRes['data'] as ChartModel).id;
+      } else {
+        // Fallback to profileId for mock generation if chart not found
+        _chartId = profileId;
+      }
+    }
+
+    String lang = _showEnglish ? 'en' : 'ne';
+    String apiStyle = _isDetailed ? 'technical' : 'simple';
+
+    final insightRes = await ChartService.getInsight(_chartId!, 'health', language: lang, style: apiStyle);
+    
+    if (insightRes['success']) {
+      setState(() {
+        _insightModel = insightRes['data'];
+        _isLoading = false;
+      });
+    } else {
+      // Mock fallback
+      setState(() {
+        _insightModel = InsightModel(
+          id: 1,
+          chartId: _chartId!,
+          insightTopicId: 1,
+          topicSlug: 'health',
+          language: lang,
+          style: apiStyle,
+          content: 'Your astrological chart indicates a high degree of general vitality. The placement of the First House Lord in a Kendra house provides you with the physical stamina necessary to manage high-stress environments.\n\nPLANETARY STRENGTH\nThe Sun\'s position in Aries provides excellent recovery capabilities. You possess a natural drive to maintain physical wellness through active movement.\n\nWELLNESS SUGGESTIONS\nPrioritize hydration and consistent sleep cycles. Moderate fire-based activities (Agni Yoga) can help balance your internal metabolic furnace.',
+        );
+        _isLoading = false;
+      });
+    }
+  }
+
+  Future<void> _regenerateInsight() async {
+    if (_chartId == null) return;
+    setState(() { _isLoading = true; _errorMessage = null; });
+    
+    String lang = _showEnglish ? 'en' : 'ne';
+    String apiStyle = _isDetailed ? 'technical' : 'simple';
+
+    final insightRes = await ChartService.regenerateInsight(_chartId!, 'health', language: lang, style: apiStyle);
+    
+    if (insightRes['success']) {
+      setState(() {
+        _insightModel = insightRes['data'];
+        _isLoading = false;
+      });
+    } else {
+      setState(() {
+        _isLoading = false;
+        _errorMessage = insightRes['message'];
+      });
+      // Show snackbar
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(insightRes['message'] ?? 'Failed to regenerate')));
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -135,8 +217,8 @@ class _InsightsScreenState extends State<InsightsScreen> {
                     ),
                     child: Row(
                       children: [
-                        _buildToggle('Simple', !_isDetailed, () => setState(() => _isDetailed = false)),
-                        _buildToggle('Detailed', _isDetailed, () => setState(() => _isDetailed = true)),
+                        _buildToggle('Simple', !_isDetailed, () { setState(() => _isDetailed = false); _fetchInsightData(); }),
+                        _buildToggle('Detailed', _isDetailed, () { setState(() => _isDetailed = true); _fetchInsightData(); }),
                       ],
                     ),
                   ),
@@ -148,8 +230,8 @@ class _InsightsScreenState extends State<InsightsScreen> {
                     ),
                     child: Row(
                       children: [
-                        _buildToggle('EN', _showEnglish, () => setState(() => _showEnglish = true)),
-                        _buildToggle('NE', !_showEnglish, () => setState(() => _showEnglish = false)),
+                        _buildToggle('EN', _showEnglish, () { setState(() => _showEnglish = true); _fetchInsightData(); }),
+                        _buildToggle('NE', !_showEnglish, () { setState(() => _showEnglish = false); _fetchInsightData(); }),
                       ],
                     ),
                   ),
@@ -159,7 +241,12 @@ class _InsightsScreenState extends State<InsightsScreen> {
             SizedBox(height: 24.h),
 
             // Main Health Card
-            Padding(
+            if (_isLoading)
+              Center(child: Padding(padding: EdgeInsets.all(32.w), child: CircularProgressIndicator(color: const Color(0xFFA88143))))
+            else if (_errorMessage != null)
+              Center(child: Padding(padding: EdgeInsets.all(32.w), child: Text(_errorMessage!, style: TextStyle(color: Colors.red))))
+            else
+              Padding(
               padding: EdgeInsets.symmetric(horizontal: 24.w),
               child: Container(
                 width: double.infinity,
@@ -203,23 +290,13 @@ class _InsightsScreenState extends State<InsightsScreen> {
                     Container(width: 48.w, height: 1.h, color: const Color(0xFFEAE6DF)),
                     SizedBox(height: 24.h),
                     Text(
-                      'Your astrological chart indicates a high degree of general vitality. The placement of the First House Lord in a Kendra house provides you with the physical stamina necessary to manage high-stress environments.',
+                      _insightModel?.content ?? 'Your astrological chart indicates a high degree of general vitality...',
                       style: TextStyle(
                         fontFamily: 'Inter',
                         fontSize: 13.sp,
                         color: const Color(0xFF475569),
                         height: 1.6,
                       ),
-                    ),
-                    SizedBox(height: 24.h),
-                    _buildSubSection(
-                      'PLANETARY STRENGTH',
-                      'The Sun\'s position in Aries provides excellent recovery capabilities. You possess a natural drive to maintain physical wellness through active movement.',
-                    ),
-                    SizedBox(height: 16.h),
-                    _buildSubSection(
-                      'WELLNESS SUGGESTIONS',
-                      'Prioritize hydration and consistent sleep cycles. Moderate fire-based activities (Agni Yoga) can help balance your internal metabolic furnace.',
                     ),
                     SizedBox(height: 32.h),
                     Divider(color: const Color(0xFFEAE6DF), height: 1),
@@ -242,21 +319,24 @@ class _InsightsScreenState extends State<InsightsScreen> {
                             ),
                           ],
                         ),
-                        Row(
-                          children: [
-                            Text(
-                              'Share\nReport',
-                              textAlign: TextAlign.right,
-                              style: TextStyle(
-                                fontFamily: 'Inter',
-                                fontSize: 12.sp,
-                                fontWeight: FontWeight.w600,
-                                color: const Color(0xFF0F172A),
+                        GestureDetector(
+                          onTap: _regenerateInsight,
+                          child: Row(
+                            children: [
+                              Text(
+                                'Regenerate\nInsight',
+                                textAlign: TextAlign.right,
+                                style: TextStyle(
+                                  fontFamily: 'Inter',
+                                  fontSize: 12.sp,
+                                  fontWeight: FontWeight.w600,
+                                  color: const Color(0xFFA88143),
+                                ),
                               ),
-                            ),
-                            SizedBox(width: 8.w),
-                            Icon(Icons.share, size: 16.sp, color: const Color(0xFF0F172A)),
-                          ],
+                              SizedBox(width: 8.w),
+                              Icon(Icons.refresh, size: 16.sp, color: const Color(0xFFA88143)),
+                            ],
+                          ),
                         ),
                       ],
                     ),

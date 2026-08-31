@@ -76,43 +76,49 @@ class BirthProfilesSection extends StatelessWidget {
           child: isLoading
               ? Center(
                   child: CircularProgressIndicator(
-                    valueColor: AlwaysStoppedAnimation<Color>(const Color(0xFFA88143)),
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                      const Color(0xFFA88143),
+                    ),
                   ),
                 )
               : profiles.isEmpty
-                  ? Center(
-                      child: Text(
-                        'No profiles added yet. Tap "Add New" to get started.',
-                        style: TextStyle(
-                          fontFamily: 'Inter',
-                          fontSize: 12.sp,
-                          color: const Color(0xFF8A8A8A),
-                        ),
-                      ),
-                    )
-                  : ListView.separated(
-                      scrollDirection: Axis.horizontal,
-                      padding: EdgeInsets.symmetric(horizontal: 24.w),
-                      physics: const BouncingScrollPhysics(),
-                      itemCount: profiles.length,
-                      separatorBuilder: (context, index) => SizedBox(width: 12.w),
-                      itemBuilder: (context, index) {
-                        final profile = profiles[index];
-                        final isPrimary = profile['is_primary'] == true;
-                        
-                        // Fallback data if API fields are missing
-                        final name = profile['full_name'] ?? 'Unknown User';
-                        
-                        return _buildProfileCard(
-                          context: context,
-                          isActive: isPrimary || index == 0, // Fallback to first if no primary
-                          name: isPrimary ? '$name\n(You)' : name,
-                          subtitle: 'Tap to view Chart',
-                          icon: isPrimary ? Icons.wb_sunny_outlined : Icons.nightlight_round,
-                          profile: profile,
-                        );
-                      },
+              ? Center(
+                  child: Text(
+                    'No profiles added yet. Tap "Add New" to get started.',
+                    style: TextStyle(
+                      fontFamily: 'Inter',
+                      fontSize: 12.sp,
+                      color: const Color(0xFF8A8A8A),
                     ),
+                  ),
+                )
+              : ListView.separated(
+                  scrollDirection: Axis.horizontal,
+                  padding: EdgeInsets.symmetric(horizontal: 24.w),
+                  physics: const BouncingScrollPhysics(),
+                  itemCount: profiles.length,
+                  separatorBuilder: (context, index) => SizedBox(width: 12.w),
+                  itemBuilder: (context, index) {
+                    final profile = profiles[index];
+                    final isPrimary = profile['is_primary'] == true;
+
+                    // Fallback data if API fields are missing
+                    final name = profile['full_name'] ?? 'Unknown User';
+
+                    return _buildProfileCard(
+                      context: context,
+                      isActive:
+                          isPrimary ||
+                          index == 0, // Fallback to first if no primary
+                      name: isPrimary ? '$name\n(You)' : name,
+                      subtitle: 'Tap to view Chart',
+                      icon: isPrimary
+                          ? Icons.wb_sunny_outlined
+                          : Icons.nightlight_round,
+                      profile: profile,
+                    );
+                  },
+                ),
         ),
       ],
     );
@@ -165,11 +171,7 @@ class BirthProfilesSection extends StatelessWidget {
                 const Spacer(),
                 Row(
                   children: [
-                    Icon(
-                      icon,
-                      size: 10.sp,
-                      color: const Color(0xFF8A8A8A),
-                    ),
+                    Icon(icon, size: 10.sp, color: const Color(0xFF8A8A8A)),
                     SizedBox(width: 4.w),
                     Expanded(
                       child: Text(

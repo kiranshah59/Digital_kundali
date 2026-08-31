@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'insights_screen.dart';
-import 'lagna_chart_screen.dart';
 
 class RashiScreen extends StatefulWidget {
   final dynamic profileData;

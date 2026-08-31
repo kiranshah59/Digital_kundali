@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../../models/chart_model.dart';
 import '../../models/nepali_kundali_model.dart';
+import '../../models/insight_model.dart';
 import 'auth_service.dart';
 
 class ChartService {
@@ -114,6 +115,74 @@ class ChartService {
       return {
         'success': true,
         'data': _getMockNepali(chartId),
+      };
+    }
+  }
+
+  // --- INSIGHTS ---
+
+  static Future<Map<String, dynamic>> getInsight(int chartId, String topicSlug, {String language = 'en', String style = 'technical'}) async {
+    final url = Uri.parse('$baseUrl/charts/$chartId/insights/$topicSlug?language=$language&style=$style');
+    try {
+      final response = await http.get(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          if (AuthService.token != null) 'Authorization': 'Bearer ${AuthService.token}',
+        },
+      );
+
+      final decodedData = jsonDecode(response.body);
+
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        return {
+          'success': true,
+          'data': InsightModel.fromJson(decodedData['data']),
+        };
+      } else {
+        return {
+          'success': false,
+          'message': decodedData['message'] ?? 'Insight not found',
+        };
+      }
+    } catch (e) {
+      return {
+        'success': false,
+        'message': 'Network error',
+      };
+    }
+  }
+
+  static Future<Map<String, dynamic>> regenerateInsight(int chartId, String topicSlug, {String language = 'en', String style = 'technical'}) async {
+    final url = Uri.parse('$baseUrl/charts/$chartId/insights/$topicSlug/regenerate?language=$language&style=$style');
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          if (AuthService.token != null) 'Authorization': 'Bearer ${AuthService.token}',
+        },
+      );
+
+      final decodedData = jsonDecode(response.body);
+
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        return {
+          'success': true,
+          'data': InsightModel.fromJson(decodedData['data']),
+        };
+      } else {
+        return {
+          'success': false,
+          'message': decodedData['message'] ?? 'Failed to regenerate insight',
+        };
+      }
+    } catch (e) {
+      return {
+        'success': false,
+        'message': 'Network error',
       };
     }
   }

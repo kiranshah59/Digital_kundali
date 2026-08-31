@@ -328,7 +328,7 @@ class _LagnaChartScreenState extends State<LagnaChartScreen> {
                               SizedBox(height: 24.h),
                               
                               if (_chartModel != null)
-                                ..._chartModel!.chartData.planets.entries.map((e) => _buildPlanetaryStatusRow(e.key, e.value)).toList(),
+                                ..._chartModel!.chartData.planets.entries.map((e) => _buildPlanetaryStatusRow(e.key, e.value)),
 
                               SizedBox(height: 24.h),
                               Container(

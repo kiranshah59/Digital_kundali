@@ -5,18 +5,19 @@ import 'auth_service.dart';
 class ProfileService {
   static const String baseUrl = 'https://api.digitalkundali.com/api';
 
-  static List<dynamic> _mockedProfiles = [];
+  static final List<dynamic> _mockedProfiles = [];
 
   static Future<Map<String, dynamic>> getProfiles() async {
     final url = Uri.parse('$baseUrl/birth-profiles');
-    
+
     try {
       final response = await http.get(
         url,
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
-          if (AuthService.token != null) 'Authorization': 'Bearer ${AuthService.token}',
+          if (AuthService.token != null)
+            'Authorization': 'Bearer ${AuthService.token}',
         },
       );
 
@@ -48,7 +49,7 @@ class ProfileService {
     required String birthPlaceName,
   }) async {
     final url = Uri.parse('$baseUrl/birth-profiles');
-    
+
     // Create the profile map to be used either by API or locally
     final newProfile = {
       'id': DateTime.now().millisecondsSinceEpoch,
@@ -68,7 +69,8 @@ class ProfileService {
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
-          if (AuthService.token != null) 'Authorization': 'Bearer ${AuthService.token}',
+          if (AuthService.token != null)
+            'Authorization': 'Bearer ${AuthService.token}',
         },
         body: jsonEncode({
           ...newProfile,
