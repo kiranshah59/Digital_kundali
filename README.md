@@ -66,42 +66,7 @@ lib/
 └── main.dart           # Application root and dependency initialization
 ```
 
----
 
-## 🚀 Getting Started
-
-Follow these instructions to set up the project on your local machine for development and testing.
-
-### Prerequisites
-*   **Flutter SDK**: `>= 3.16.0` ([Install Guide](https://docs.flutter.dev/get-started/install))
-*   **Dart SDK**: `>= 3.2.0`
-*   **IDE**: VS Code, Android Studio, or IntelliJ IDEA with Flutter plugins installed.
-
-### Installation & Setup
-
-1. **Clone the repository:**
-   ```bash
-   git clone https://github.com/kiranshah59/Digital_kundali.git
-   cd digital_kundali_app
-   ```
-
-2. **Fetch dependencies:**
-   ```bash
-   flutter pub get
-   ```
-
-3. **Run the application:**
-   ```bash
-   flutter run
-   ```
-
----
-
-## 🔒 Backend Integration Notes
-
-To ensure absolute data integrity and security, the application relies on specific backend architectural decisions:
-1. **Scoped Rate Limiting**: Birth profile creation limits (e.g., maximum 5 profiles) MUST be calculated locally per `user_id` rather than globally across the database.
-2. **Token Validation**: The backend must strictly validate Bearer tokens on all `/api/birth_profiles` endpoints to prevent data leakage.
 
 ---
 
