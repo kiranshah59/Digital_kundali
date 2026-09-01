@@ -1,67 +1,110 @@
-# Digital Kundali
+<div align="center">
+  <h1>✨ Digital Kundali</h1>
+  <p><strong>Astronomical Precision Meets AI-Powered Astrological Guidance</strong></p>
+  <p>
+    <img src="https://img.shields.io/badge/Flutter-3.16+-02569B?logo=flutter&logoColor=white" alt="Flutter" />
+    <img src="https://img.shields.io/badge/Dart-3.2+-0175C2?logo=dart&logoColor=white" alt="Dart" />
+    <img src="https://img.shields.io/badge/Architecture-Service%20Oriented-success" alt="Architecture" />
+    <img src="https://img.shields.io/badge/UI-Responsive-orange" alt="Responsive" />
+  </p>
+</div>
 
-A modern, beautifully designed Flutter application offering personalized astrological readings, birth charts, and AI-powered life analysis based on precise astronomical data.
+<br />
 
-## 🌟 Features
+## 📖 Overview
 
-*   **Dynamic Onboarding Experience:** 
-    *   Smooth, interactive swipe transitions.
-    *   Static, overlay-based bottom navigation with clickable page indicators.
-    *   Automatic splash screen transitioning.
-*   **Authentication & Security:** 
-    *   Secure Login and Sign-Up flows.
-    *   Input validation and token-based session management.
-    *   Secure local caching for persistent login states.
-*   **Birth Profile Management:** 
-    *   Create and manage multiple birth profiles.
-    *   Isolated local storage caching tied specifically to the logged-in user account.
-    *   Integration with backend APIs for real-time validation and limit handling.
-*   **Modern UI/UX:** 
-    *   Premium design aesthetics using curated color palettes (Gold/Off-White/Black).
-    *   Custom SVG icons and elegant typography (Georgia/Inter).
+**Digital Kundali** is a premium, cross-platform mobile application built with Flutter. It revolutionizes the way users interact with Vedic astrology by combining **real orbital mechanics** and **AI-driven insights**. The application eschews mystical jargon in favor of grounded, plain-English readings tailored for career, relationships, and personal growth.
 
-## 🛠️ Tech Stack
+With a focus on luxury aesthetics and seamless user experience, Digital Kundali offers a fluid onboarding journey, highly secure authentication, and robust birth profile management.
 
-*   **Framework:** [Flutter](https://flutter.dev/) (Dart)
-*   **State Management:** Local StatefulWidgets & Singleton Services
-*   **API & Networking:** `http` package for backend communication
-*   **Local Storage:** `shared_preferences` for isolated caching
-*   **UI Helpers:** `flutter_screenutil` (responsive sizing), `flutter_svg` (vector graphics), `google_fonts`
+---
+
+## ✨ Key Features
+
+### 🎨 Premium User Experience
+*   **Dynamic Onboarding Flow**: A seamlessly choreographed, swipe-driven introductory experience featuring dynamic page indicators and smooth cross-fading overlays.
+*   **Curated Aesthetics**: A meticulously designed interface utilizing a sophisticated palette (Gold, Off-White, Obsidian) alongside elegant typography (Georgia & Inter).
+*   **Micro-interactions**: Subtle tactile feedback and state-driven animations for intuitive navigation.
+
+### 🔐 Robust Security & Authentication
+*   **Secure Session Management**: Token-based authentication flow ensuring secure access to personal data.
+*   **Isolated Data Architecture**: Local caching of birth profiles is strictly bound to the authenticated `user_id`, guaranteeing cross-account data privacy on shared devices.
+
+### 📊 Advanced Profile Management
+*   **Multi-Profile Support**: Seamlessly create, manage, and switch between multiple astrological birth profiles.
+*   **Real-time Synchronization**: Instantaneous bidirectional syncing with the backend architecture, featuring intelligent limit-handling and validation.
+
+---
+
+## 🏗️ Technical Architecture
+
+The application follows a **Service-Oriented Architecture** ensuring clear separation of concerns, scalability, and maintainability.
+
+### Tech Stack
+*   **Frontend Framework**: Flutter (Dart)
+*   **Networking**: `http` (RESTful API Integration)
+*   **Persistent Storage**: `shared_preferences` (Secure Local Caching)
+*   **UI/UX Dependencies**: 
+    *   `flutter_screenutil` (Adaptive and responsive layout rendering)
+    *   `flutter_svg` (High-performance vector rendering)
+    *   `google_fonts` (Dynamic typography injection)
+
+### Directory Structure
+
+```text
+lib/
+├── core/
+│   ├── services/       # Business logic & API communication (AuthService, ProfileService)
+│   └── constants/      # App-wide theme variables, API endpoints, and configuration
+├── screens/
+│   ├── splash/         # Entry point and intelligent routing
+│   ├── onboarding/     # Complex PageView controllers and dynamic overlays
+│   ├── authentication/ # Login, Registration, and Token validation
+│   ├── home/           # Main Dashboard and stateful navigation
+│   └── kundali/        # Birth chart visualization and AI-insight rendering
+├── widgets/            # Modular, reusable UI components (Buttons, Cards, Inputs)
+└── main.dart           # Application root and dependency initialization
+```
+
+---
 
 ## 🚀 Getting Started
 
+Follow these instructions to set up the project on your local machine for development and testing.
+
 ### Prerequisites
-*   Flutter SDK (v3.16 or higher)
-*   Dart SDK
+*   **Flutter SDK**: `>= 3.16.0` ([Install Guide](https://docs.flutter.dev/get-started/install))
+*   **Dart SDK**: `>= 3.2.0`
+*   **IDE**: VS Code, Android Studio, or IntelliJ IDEA with Flutter plugins installed.
 
-### Installation
+### Installation & Setup
 
-1. Clone the repository:
+1. **Clone the repository:**
    ```bash
    git clone https://github.com/kiranshah59/Digital_kundali.git
-   ```
-2. Navigate to the project directory:
-   ```bash
    cd digital_kundali_app
    ```
-3. Get the dependencies:
+
+2. **Fetch dependencies:**
    ```bash
    flutter pub get
    ```
-4. Run the app:
+
+3. **Run the application:**
    ```bash
    flutter run
    ```
 
-## 📁 Project Structure
+---
 
-*   `lib/core/services/` - Contains the business logic, API calls, and local storage handlers (e.g., `AuthService`, `ProfileService`).
-*   `lib/screens/` - Contains all the UI screens divided by features:
-    *   `/authentication` - Login and Sign Up screens.
-    *   `/onboarding` - The dynamic PageView onboarding flow and splash screen.
-    *   `/home` - Dashboard and main user interface.
-    *   `/kundali` - Birth chart detail and input screens.
-*   `lib/widgets/` - Reusable UI components.
+## 🔒 Backend Integration Notes
 
-## ⚙️ Backend Integration Note
-The app expects the backend to scope birth profile limits locally to the `user_id` rather than globally across the database. Ensure the backend API routes correctly validate tokens and user scope.
+To ensure absolute data integrity and security, the application relies on specific backend architectural decisions:
+1. **Scoped Rate Limiting**: Birth profile creation limits (e.g., maximum 5 profiles) MUST be calculated locally per `user_id` rather than globally across the database.
+2. **Token Validation**: The backend must strictly validate Bearer tokens on all `/api/birth_profiles` endpoints to prevent data leakage.
+
+---
+
+<div align="center">
+  <p>Built with ❤️ for precision and clarity.</p>
+</div>
