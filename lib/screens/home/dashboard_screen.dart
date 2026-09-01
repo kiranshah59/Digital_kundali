@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../core/services/profile_service.dart';
+import '../../core/services/auth_service.dart';
+import '../onboarding/main_page_view.dart';
 
 import '../../widgets/birth_profiles_section.dart';
 import '../../widgets/transit_status_section.dart';
@@ -106,6 +108,23 @@ class _DashboardScreenState extends State<DashboardScreen> {
           icon: Icon(
             Icons.settings_outlined,
             color: const Color(0xFF11141A),
+            size: 24.sp,
+          ),
+        ),
+        IconButton(
+          onPressed: () async {
+            await ProfileService.clearProfiles();
+            await AuthService.logout();
+            if (context.mounted) {
+              Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(builder: (_) => const MainPageView()),
+                (route) => false,
+              );
+            }
+          },
+          icon: Icon(
+            Icons.logout,
+            color: Colors.red,
             size: 24.sp,
           ),
         ),

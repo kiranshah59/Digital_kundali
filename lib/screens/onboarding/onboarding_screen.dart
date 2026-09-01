@@ -13,18 +13,7 @@ class OnboardingScreen extends StatelessWidget {
       padding: EdgeInsets.symmetric(horizontal: 30.w),
       child: Column(
         children: [
-          SizedBox(height: 80.h),
-          Text(
-            'DIGITAL KUNDALI',
-            style: TextStyle(
-              fontFamily: 'Georgia',
-              fontSize: 20.sp,
-              letterSpacing: 3,
-              fontWeight: FontWeight.w500,
-              color: Color(0xFF11141A),
-            ),
-          ),
-          SizedBox(height: 30.h),
+          SizedBox(height: 110.h),
           Container(
             width: 280.w,
             height: 280.h,
@@ -42,7 +31,7 @@ class OnboardingScreen extends StatelessWidget {
             ),
             alignment: Alignment.center,
             child: SvgPicture.asset(
-              'assets/onboarding.svg',
+              'assets/images/onboarding.svg',
               width: 220.w,
               height: 220.h,
             ),

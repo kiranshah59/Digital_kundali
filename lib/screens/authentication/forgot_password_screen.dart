@@ -69,7 +69,7 @@ class ForgotPasswordScreen extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               SvgPicture.asset(
-                                'assets/splash.svg',
+                                'assets/images/splash.svg',
                                 width: 44.w,
                                 height: 44,
                               ),

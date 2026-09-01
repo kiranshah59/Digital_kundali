@@ -4,6 +4,8 @@ class ChartModel {
   final String ayanamsaSystem;
   final String houseSystem;
   final ChartData chartData;
+  final String? engineVersion;
+  final DateTime? generatedAt;
 
   ChartModel({
     required this.id,
@@ -11,6 +13,8 @@ class ChartModel {
     required this.ayanamsaSystem,
     required this.houseSystem,
     required this.chartData,
+    this.engineVersion,
+    this.generatedAt,
   });
 
   factory ChartModel.fromJson(Map<String, dynamic> json) {
@@ -20,6 +24,8 @@ class ChartModel {
       ayanamsaSystem: json['ayanamsa_system'] ?? '',
       houseSystem: json['house_system'] ?? '',
       chartData: ChartData.fromJson(json['chart_data'] ?? {}),
+      engineVersion: json['engine_version'],
+      generatedAt: json['generated_at'] != null ? DateTime.tryParse(json['generated_at']) : null,
     );
   }
 }
@@ -27,10 +33,16 @@ class ChartModel {
 class ChartData {
   final Ascendant ascendant;
   final Map<String, PlanetData> planets;
+  final List<HouseData> houses;
+  final double? ayanamsaValue;
+  final double? julianDayUt;
 
   ChartData({
     required this.ascendant,
     required this.planets,
+    this.houses = const [],
+    this.ayanamsaValue,
+    this.julianDayUt,
   });
 
   factory ChartData.fromJson(Map<String, dynamic> json) {
@@ -41,9 +53,17 @@ class ChartData {
       });
     }
 
+    List<HouseData> parsedHouses = [];
+    if (json['houses'] != null && json['houses'] is List) {
+      parsedHouses = (json['houses'] as List).map((h) => HouseData.fromJson(h)).toList();
+    }
+
     return ChartData(
       ascendant: Ascendant.fromJson(json['ascendant'] ?? {}),
       planets: parsedPlanets,
+      houses: parsedHouses,
+      ayanamsaValue: json['ayanamsa_value']?.toDouble(),
+      julianDayUt: json['julian_day_ut']?.toDouble(),
     );
   }
 }
@@ -96,6 +116,23 @@ class PlanetData {
       nakshatra: json['nakshatra'] ?? '',
       pada: json['pada'] ?? 0,
       retrograde: json['retrograde'] ?? false,
+    );
+  }
+}
+
+class HouseData {
+  final int house;
+  final String sign;
+
+  HouseData({
+    required this.house,
+    required this.sign,
+  });
+
+  factory HouseData.fromJson(Map<String, dynamic> json) {
+    return HouseData(
+      house: json['house'] ?? 0,
+      sign: json['sign'] ?? '',
     );
   }
 }

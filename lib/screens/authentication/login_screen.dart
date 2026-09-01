@@ -94,7 +94,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               SvgPicture.asset(
-                                'assets/splash.svg',
+                                'assets/images/splash.svg',
                                 width: 50.w,
                                 height: 50.h,
                               ),

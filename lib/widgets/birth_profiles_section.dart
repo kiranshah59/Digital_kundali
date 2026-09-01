@@ -3,7 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../screens/kundali/birth_chart_detail_screen.dart';
 import '../screens/profile/add_profile_screen.dart';
 
-class BirthProfilesSection extends StatelessWidget {
+class BirthProfilesSection extends StatefulWidget {
   final List<dynamic> profiles;
   final bool isLoading;
   final VoidCallback onRefresh;
@@ -14,6 +14,13 @@ class BirthProfilesSection extends StatelessWidget {
     required this.isLoading,
     required this.onRefresh,
   });
+
+  @override
+  State<BirthProfilesSection> createState() => _BirthProfilesSectionState();
+}
+
+class _BirthProfilesSectionState extends State<BirthProfilesSection> {
+  int _selectedIndex = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +51,7 @@ class BirthProfilesSection extends StatelessWidget {
                     ),
                   );
                   if (result == true) {
-                    onRefresh();
+                    widget.onRefresh();
                   }
                 },
                 child: Row(
@@ -73,7 +80,7 @@ class BirthProfilesSection extends StatelessWidget {
         SizedBox(height: 16.h),
         SizedBox(
           height: 80.h,
-          child: isLoading
+          child: widget.isLoading
               ? Center(
                   child: CircularProgressIndicator(
                     valueColor: AlwaysStoppedAnimation<Color>(
@@ -81,7 +88,7 @@ class BirthProfilesSection extends StatelessWidget {
                     ),
                   ),
                 )
-              : profiles.isEmpty
+              : widget.profiles.isEmpty
               ? Center(
                   child: Text(
                     'No profiles added yet. Tap "Add New" to get started.',
@@ -96,10 +103,10 @@ class BirthProfilesSection extends StatelessWidget {
                   scrollDirection: Axis.horizontal,
                   padding: EdgeInsets.symmetric(horizontal: 24.w),
                   physics: const BouncingScrollPhysics(),
-                  itemCount: profiles.length,
+                  itemCount: widget.profiles.length,
                   separatorBuilder: (context, index) => SizedBox(width: 12.w),
                   itemBuilder: (context, index) {
-                    final profile = profiles[index];
+                    final profile = widget.profiles[index];
                     final isPrimary = profile['is_primary'] == true;
 
                     // Fallback data if API fields are missing
@@ -107,15 +114,14 @@ class BirthProfilesSection extends StatelessWidget {
 
                     return _buildProfileCard(
                       context: context,
-                      isActive:
-                          isPrimary ||
-                          index == 0, // Fallback to first if no primary
+                      isActive: index == _selectedIndex,
                       name: isPrimary ? '$name\n(You)' : name,
                       subtitle: 'Tap to view Chart',
                       icon: isPrimary
                           ? Icons.wb_sunny_outlined
                           : Icons.nightlight_round,
                       profile: profile,
+                      index: index,
                     );
                   },
                 ),
@@ -131,15 +137,20 @@ class BirthProfilesSection extends StatelessWidget {
     required String subtitle,
     required IconData icon,
     required dynamic profile,
+    required int index,
   }) {
     return GestureDetector(
-      onTap: () {
-        Navigator.push(
+      onTap: () async {
+        setState(() {
+          _selectedIndex = index;
+        });
+        await Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) => BirthChartDetailScreen(profileData: profile),
           ),
         );
+        widget.onRefresh();
       },
       child: Container(
         width: 140.w,
@@ -207,3 +218,4 @@ class BirthProfilesSection extends StatelessWidget {
     );
   }
 }
+

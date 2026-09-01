@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../../models/nepali_kundali_model.dart';
+import '../../models/chart_model.dart';
 
 class KundaliPainter extends CustomPainter {
-  final NepaliKundaliModel? kundaliData;
+  final ChartModel? chartModel;
   final bool showEnglish;
 
-  KundaliPainter({this.kundaliData, this.showEnglish = true});
+  KundaliPainter({this.chartModel, this.showEnglish = true});
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -57,7 +57,7 @@ class KundaliPainter extends CustomPainter {
       );
     }
 
-    if (kundaliData == null || kundaliData!.houses.isEmpty) {
+    if (chartModel == null || chartModel!.chartData.houses.isEmpty) {
       // Fallback/Loading state
       drawText('...', Offset(w / 2, h / 2));
       return;
@@ -96,25 +96,26 @@ class KundaliPainter extends CustomPainter {
       12: Offset(w * 0.65, h * 0.15),
     };
 
-    for (var house in kundaliData!.houses) {
+    // Group planets by house
+    final Map<int, List<String>> planetsByHouse = {};
+    chartModel!.chartData.planets.forEach((planetName, planetData) {
+      if (!planetsByHouse.containsKey(planetData.house)) {
+        planetsByHouse[planetData.house] = [];
+      }
+      String pName = planetName.substring(0, 1).toUpperCase() + planetName.substring(1, 2).toLowerCase();
+      planetsByHouse[planetData.house]!.add(pName);
+    });
+
+    for (var house in chartModel!.chartData.houses) {
       int houseNum = house.house;
       if (houseNum >= 1 && houseNum <= 12) {
-        // Draw House Number
-        // If showEnglish is true, display house number (as a string).
-        // The API returns sign_devanagari, which in Kundali shows the sign number in that house.
-        // Actually, the number written in the house is the Zodiac Sign number. 
-        // We will just use the sign_devanagari as it usually represents the sign number in North Indian chart.
-        // Alternatively we can use the English sign name or a mapped number.
-        // For simplicity, let's just use what the API gives.
-        String signLabel = showEnglish ? house.signEn.substring(0, 3).toUpperCase() : house.signDevanagari;
+        // Draw House Number/Sign
+        String signLabel = showEnglish ? house.sign.substring(0, 3).toUpperCase() : house.sign;
         drawText(signLabel, numberPositions[houseNum]!, isNumber: true);
 
         // Draw Planets
-        if (house.planets.isNotEmpty) {
-          String planetsStr = house.planets.map((p) {
-            String pName = showEnglish ? p.key.substring(0, 1).toUpperCase() + p.key.substring(1, 2) : p.nameDevanagari;
-            return pName;
-          }).join(', ');
+        if (planetsByHouse.containsKey(houseNum)) {
+          String planetsStr = planetsByHouse[houseNum]!.join(', ');
           drawText(planetsStr, housePositions[houseNum]!);
         }
       }
@@ -123,6 +124,6 @@ class KundaliPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant KundaliPainter oldDelegate) {
-    return oldDelegate.kundaliData != kundaliData || oldDelegate.showEnglish != showEnglish;
+    return oldDelegate.chartModel != chartModel || oldDelegate.showEnglish != showEnglish;
   }
 }

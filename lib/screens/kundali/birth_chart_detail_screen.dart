@@ -7,6 +7,9 @@ import '../../models/nepali_kundali_model.dart';
 import 'lagna_chart_screen.dart';
 import 'insights_screen.dart';
 import 'rashi_screen.dart';
+import '../profile/edit_profile_screen.dart';
+import '../../core/services/profile_service.dart';
+import '../../core/services/auth_service.dart';
 
 class BirthChartDetailScreen extends StatefulWidget {
   final dynamic profileData;
@@ -23,16 +26,18 @@ class _BirthChartDetailScreenState extends State<BirthChartDetailScreen> {
   ChartModel? _chartModel;
   NepaliKundaliModel? _nepaliKundaliModel;
   bool _showEnglish = true;
+  late dynamic _currentProfileData;
 
   @override
   void initState() {
     super.initState();
+    _currentProfileData = widget.profileData;
     _fetchChartData();
   }
 
   Future<void> _fetchChartData() async {
-    final String fullName = widget.profileData?['full_name'] ?? 'Unknown';
-    final profileId = widget.profileData?['id'] ?? fullName.hashCode.abs();
+    final String fullName = _currentProfileData?['full_name'] ?? 'Unknown';
+    final profileId = _currentProfileData?['id'] ?? fullName.hashCode.abs();
     
     if (profileId == null) {
       if (mounted) {
@@ -52,6 +57,16 @@ class _BirthChartDetailScreenState extends State<BirthChartDetailScreen> {
 
     if (!chartRes['success']) {
       if (mounted) {
+        if (chartRes['statusCode'] == 401) {
+          await ProfileService.clearProfiles();
+          await AuthService.logout();
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(chartRes['message'] ?? 'Session expired')),
+          );
+          Navigator.of(context).pushNamedAndRemoveUntil('/login', (route) => false);
+          return;
+        }
+
         setState(() {
           _errorMessage = chartRes['message'];
           _isLoading = false;
@@ -79,7 +94,7 @@ class _BirthChartDetailScreenState extends State<BirthChartDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final String fullName = widget.profileData?['full_name'] ?? 'Unknown User';
+    final String fullName = _currentProfileData?['full_name'] ?? 'Unknown User';
     final String firstName = fullName.split(' ').first;
     
     final List<String> nameParts = fullName.split(' ').where((p) => p.isNotEmpty).toList();
@@ -262,7 +277,7 @@ class _BirthChartDetailScreenState extends State<BirthChartDetailScreen> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => LagnaChartScreen(profileData: widget.profileData),
+                                    builder: (context) => LagnaChartScreen(profileData: _currentProfileData),
                                   ),
                                 );
                               },
@@ -274,7 +289,7 @@ class _BirthChartDetailScreenState extends State<BirthChartDetailScreen> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => InsightsScreen(profileData: widget.profileData),
+                                    builder: (context) => InsightsScreen(profileData: _currentProfileData),
                                   ),
                                 );
                               },
@@ -286,7 +301,7 @@ class _BirthChartDetailScreenState extends State<BirthChartDetailScreen> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => RashiScreen(profileData: widget.profileData),
+                                    builder: (context) => RashiScreen(profileData: _currentProfileData),
                                   ),
                                 );
                               },
@@ -310,7 +325,7 @@ class _BirthChartDetailScreenState extends State<BirthChartDetailScreen> {
                         SizedBox(height: 32.h),
                         
                         // Natal Parameters Card
-                        _buildNatalParametersCard(widget.profileData),
+                        _buildNatalParametersCard(_currentProfileData),
                         SizedBox(height: 32.h),
                         
                         // Lagna Chart (D1)
@@ -339,7 +354,7 @@ class _BirthChartDetailScreenState extends State<BirthChartDetailScreen> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => LagnaChartScreen(profileData: widget.profileData),
+                                builder: (context) => LagnaChartScreen(profileData: _currentProfileData),
                               ),
                             );
                           },
@@ -493,7 +508,75 @@ class _BirthChartDetailScreenState extends State<BirthChartDetailScreen> {
                   color: const Color(0xFF11141A),
                 ),
               ),
-              Icon(Icons.auto_awesome, size: 16.sp, color: const Color(0xFFA88143)),
+              Row(
+                children: [
+                  IconButton(
+                    icon: Icon(Icons.edit_outlined, size: 16.sp, color: const Color(0xFFA88143)),
+                    padding: EdgeInsets.zero,
+                    constraints: BoxConstraints(),
+                    onPressed: () async {
+                      final updatedData = await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              EditProfileScreen(profileData: profileData),
+                        ),
+                      );
+                      if (updatedData != null) {
+                        setState(() {
+                          _currentProfileData = {
+                            ...Map<String, dynamic>.from(_currentProfileData ?? {}),
+                            ...Map<String, dynamic>.from(updatedData),
+                          };
+                        });
+                        _fetchChartData();
+                      }
+                    },
+                  ),
+                  SizedBox(width: 8.w),
+                  IconButton(
+                    icon: Icon(Icons.delete_outline, size: 16.sp, color: Colors.red),
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(),
+                    onPressed: () async {
+                      final bool? confirm = await showDialog<bool>(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          title: const Text('Delete Profile'),
+                          content: const Text('Are you sure you want to delete this birth profile?'),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.pop(context, false),
+                              child: const Text('Cancel'),
+                            ),
+                            TextButton(
+                              onPressed: () => Navigator.pop(context, true),
+                              child: const Text('Delete', style: TextStyle(color: Colors.red)),
+                            ),
+                          ],
+                        ),
+                      );
+
+                      if (confirm == true && mounted) {
+                        final id = _currentProfileData?['id'];
+                        if (id != null) {
+                          final response = await ProfileService.deleteProfile(id);
+                          if (mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(response['message'] ?? 'Profile deleted successfully'),
+                              ),
+                            );
+                            Navigator.pop(context);
+                          }
+                        }
+                      }
+                    },
+                  ),
+                  SizedBox(width: 8.w),
+                  Icon(Icons.auto_awesome, size: 16.sp, color: const Color(0xFFA88143)),
+                ],
+              ),
             ],
           ),
           SizedBox(height: 24.h),
@@ -594,7 +677,7 @@ class _BirthChartDetailScreenState extends State<BirthChartDetailScreen> {
             height: 250.w,
             child: CustomPaint(
               painter: KundaliPainter(
-                kundaliData: _nepaliKundaliModel,
+                chartModel: _chartModel,
                 showEnglish: _showEnglish,
               ),
             ),

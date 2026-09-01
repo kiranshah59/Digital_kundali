@@ -289,7 +289,7 @@ class _LagnaChartScreenState extends State<LagnaChartScreen> {
                                   height: 250.w,
                                   child: CustomPaint(
                                     painter: KundaliPainter(
-                                      kundaliData: _nepaliKundaliModel,
+                                      chartModel: _chartModel,
                                       showEnglish: _showEnglish,
                                     ),
                                   ),

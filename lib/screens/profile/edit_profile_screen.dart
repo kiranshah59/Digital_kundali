@@ -2,22 +2,39 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../core/services/profile_service.dart';
 
-class AddProfileScreen extends StatefulWidget {
-  const AddProfileScreen({super.key});
+class EditProfileScreen extends StatefulWidget {
+  final dynamic profileData;
+
+  const EditProfileScreen({super.key, required this.profileData});
 
   @override
-  State<AddProfileScreen> createState() => _AddProfileScreenState();
+  State<EditProfileScreen> createState() => _EditProfileScreenState();
 }
 
-class _AddProfileScreenState extends State<AddProfileScreen> {
+class _EditProfileScreenState extends State<EditProfileScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _nameController = TextEditingController();
-  final _dobController = TextEditingController();
-  final _timeController = TextEditingController();
-  final _locationController = TextEditingController();
+  late TextEditingController _nameController;
+  late TextEditingController _dobController;
+  late TextEditingController _timeController;
+  late TextEditingController _locationController;
   
   bool _isLoading = false;
   String? _errorMessage;
+
+  @override
+  void initState() {
+    super.initState();
+    _nameController = TextEditingController(text: widget.profileData['full_name'] ?? '');
+    _dobController = TextEditingController(text: widget.profileData['date_of_birth'] ?? '');
+    
+    String timeOfBirth = widget.profileData['time_of_birth'] ?? '';
+    if (timeOfBirth.length > 5) {
+      timeOfBirth = timeOfBirth.substring(0, 5); // Take only HH:mm
+    }
+    _timeController = TextEditingController(text: timeOfBirth);
+    
+    _locationController = TextEditingController(text: widget.profileData['place_of_birth'] ?? widget.profileData['birth_place_name'] ?? '');
+  }
 
   Future<void> _submitProfile() async {
     if (_formKey.currentState!.validate()) {
@@ -27,19 +44,23 @@ class _AddProfileScreenState extends State<AddProfileScreen> {
       });
 
       String timeStr = _timeController.text.trim();
-      // If user typed HH:MM:SS, cut off the :SS part
-      if (timeStr.length > 5 && timeStr.contains(':')) {
+      // Ensure HH:MM format
+      if (timeStr.contains(':')) {
         final parts = timeStr.split(':');
         if (parts.length >= 2) {
           timeStr = '${parts[0].padLeft(2, '0')}:${parts[1].padLeft(2, '0')}';
         }
       }
 
-      final response = await ProfileService.addProfile(
+      int profileId = widget.profileData['id'];
+
+      final response = await ProfileService.updateProfile(
+        id: profileId,
         fullName: _nameController.text.trim(),
         dateOfBirth: _dobController.text.trim(),
         timeOfBirth: timeStr,
         birthPlaceName: _locationController.text.trim(),
+        originalProfile: Map<String, dynamic>.from(widget.profileData),
       );
 
       setState(() {
@@ -47,13 +68,15 @@ class _AddProfileScreenState extends State<AddProfileScreen> {
       });
 
       if (response['success']) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(response['message'] ?? 'Profile added successfully!'),
-            backgroundColor: Colors.green,
-          ),
-        );
-        Navigator.pop(context, true); // Return true to trigger refresh
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(response['message'] ?? 'Profile updated successfully!'),
+              backgroundColor: Colors.green,
+            ),
+          );
+          Navigator.pop(context, response['data']); // Return the updated data
+        }
       } else {
         setState(() {
           _errorMessage = response['message'];
@@ -74,7 +97,7 @@ class _AddProfileScreenState extends State<AddProfileScreen> {
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          'Add New Profile',
+          'Edit Profile',
           style: TextStyle(
             fontFamily: 'Georgia',
             fontSize: 18.sp,
@@ -162,7 +185,7 @@ class _AddProfileScreenState extends State<AddProfileScreen> {
                             ),
                           )
                         : Text(
-                            'SAVE PROFILE',
+                            'SAVE CHANGES',
                             style: TextStyle(
                               fontFamily: 'Inter',
                               fontSize: 14.sp,
