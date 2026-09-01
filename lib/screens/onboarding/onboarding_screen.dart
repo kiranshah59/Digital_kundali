@@ -58,76 +58,8 @@ class OnboardingScreen extends StatelessWidget {
             ),
           ),
           const Spacer(),
-          SizedBox(height: 16.h),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              _buildDot(false),
-              _buildDot(true),
-              _buildDot(false),
-              _buildDot(false),
-            ],
-          ),
-          SizedBox(height: 25.h),
-          SizedBox(
-            width: double.infinity,
-            height: 56.h,
-            child: ElevatedButton(
-              onPressed: onNext,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF0A0A0C),
-                foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12.r),
-                ),
-                elevation: 0,
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    'NEXT',
-                    style: TextStyle(
-                      fontFamily: 'Inter',
-                      fontSize: 13.sp,
-                      fontWeight: FontWeight.w700,
-                      letterSpacing: 1,
-                    ),
-                  ),
-                  SizedBox(width: 8.w),
-                  Icon(Icons.arrow_forward, size: 16.sp),
-                ],
-              ),
-            ),
-          ),
-          SizedBox(height: 5.h),
-          TextButton(
-            onPressed: onNext,
-            child: Text(
-              'SKIP',
-              style: TextStyle(
-                fontFamily: 'Inter',
-                fontSize: 11.sp,
-                fontWeight: FontWeight.w600,
-                letterSpacing: 1,
-                color: Color(0xFF6B6B6B),
-              ),
-            ),
-          ),
-          SizedBox(height: 12.h),
+          SizedBox(height: 140.h),
         ],
-      ),
-    );
-  }
-
-  Widget _buildDot(bool isActive) {
-    return Container(
-      margin: EdgeInsets.symmetric(horizontal: 4.w),
-      width: isActive ? 24.w : 8.w,
-      height: 8.h,
-      decoration: BoxDecoration(
-        color: isActive ? const Color(0xFFA88143) : const Color(0xFFD6D6D6),
-        borderRadius: BorderRadius.circular(4.r),
       ),
     );
   }

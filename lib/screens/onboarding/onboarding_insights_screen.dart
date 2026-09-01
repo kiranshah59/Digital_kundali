@@ -309,49 +309,7 @@ class OnboardingInsightsScreen extends StatelessWidget {
                 ),
               ),
             ),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 24.w),
-              child: Column(
-                children: [
-                  SizedBox(height: 16.h),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      _buildDot(false),
-                      _buildDot(false),
-                      _buildDot(true),
-                      _buildDot(false),
-                    ],
-                  ),
-                  SizedBox(height: 32.h),
-                  SizedBox(
-                    width: double.infinity,
-                    height: 56.h,
-                    child: ElevatedButton(
-                      onPressed: onNext,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF0A0A0C),
-                        foregroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12.r),
-                        ),
-                        elevation: 0,
-                      ),
-                      child: Text(
-                        'Get Started',
-                        style: TextStyle(
-                          fontFamily: 'Inter',
-                          fontSize: 13.sp,
-                          fontWeight: FontWeight.w700,
-                          letterSpacing: 1,
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 20.h),
-                ],
-              ),
-            ),
+            SizedBox(height: 140.h),
           ],
         ),
       ),
@@ -405,15 +363,5 @@ class OnboardingInsightsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildDot(bool isActive) {
-    return Container(
-      margin: EdgeInsets.symmetric(horizontal: 3.w),
-      width: isActive ? 20.w : 6.w,
-      height: 6.h,
-      decoration: BoxDecoration(
-        color: isActive ? const Color(0xFFA88143) : const Color(0xFFD6D6D6),
-        borderRadius: BorderRadius.circular(3.r),
-      ),
-    );
-  }
+
 }

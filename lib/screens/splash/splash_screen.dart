@@ -16,14 +16,9 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    Future.delayed(Duration(seconds: 1), () {
-      if (!mounted) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => OnboardingScreen(onNext: () {}),
-          ),
-        );
+    Future.delayed(const Duration(seconds: 2), () {
+      if (mounted) {
+        widget.onNext();
       }
     });
   }
@@ -206,6 +201,7 @@ class _SplashScreenState extends State<SplashScreen> {
                           ],
                         ),
                       ),
+
                       SizedBox(height: 16.h),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
