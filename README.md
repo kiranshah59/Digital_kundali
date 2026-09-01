@@ -70,6 +70,4 @@ lib/
 
 ---
 
-<div align="center">
-  <p>Built with ❤️ for precision and clarity.</p>
-</div>
+
