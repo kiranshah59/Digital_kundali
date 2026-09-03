@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'ai_guru_chat_view.dart';
 
 class GuruScreen extends StatefulWidget {
   final String? userName;
@@ -10,8 +11,34 @@ class GuruScreen extends StatefulWidget {
 }
 
 class _GuruScreenState extends State<GuruScreen> {
+  bool _showChat = false;
+
   @override
   Widget build(BuildContext context) {
+    if (_showChat) {
+      return PopScope(
+        canPop: false,
+        onPopInvoked: (didPop) {
+          if (didPop) return;
+          setState(() {
+            _showChat = false;
+          });
+        },
+        child: Scaffold(
+          backgroundColor: const Color(0xFFFAF9F5),
+          body: SafeArea(
+            child: AIGuruChatView(
+              onBack: () {
+                setState(() {
+                  _showChat = false;
+                });
+              },
+            ),
+          ),
+        ),
+      );
+    }
+
     return Scaffold(
       backgroundColor: const Color(0xFFFAF9F5),
       body: SafeArea(
@@ -188,7 +215,11 @@ class _GuruScreenState extends State<GuruScreen> {
           ),
           SizedBox(height: 24.h),
           ElevatedButton(
-            onPressed: () {},
+            onPressed: () {
+              setState(() {
+                _showChat = true;
+              });
+            },
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFFF6D69F),
               foregroundColor: const Color(0xFF11141A),
