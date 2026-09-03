@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'dashboard_screen.dart';
+import '../../guru/presentation/guru_screen.dart';
 
 class MainLayoutScreen extends StatefulWidget {
   final String? userName;
@@ -18,7 +19,7 @@ class _MainLayoutScreenState extends State<MainLayoutScreen> {
     DashboardScreen(userName: widget.userName),
     const Scaffold(body: Center(child: Text('Charts'))),
     const Scaffold(body: Center(child: Text('Insights'))),
-    const Scaffold(body: Center(child: Text('Guru'))),
+    GuruScreen(userName: widget.userName),
   ];
 
   @override
