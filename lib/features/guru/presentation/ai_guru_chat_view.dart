@@ -141,6 +141,7 @@ class _AIGuruChatViewState extends State<AIGuruChatView> {
 
   Widget _buildAIBubble() {
     return Container(
+      margin: EdgeInsets.only(right: 48.w),
       padding: EdgeInsets.all(16.w),
       decoration: BoxDecoration(
         color: const Color(0xFFF9F6F0), // Very light beige, slightly darker than background
