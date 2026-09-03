@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../screens/kundali/birth_chart_detail_screen.dart';
-import '../screens/profile/add_profile_screen.dart';
+import '../features/kundali/presentation/birth_chart_detail_screen.dart';
+import '../features/profile/presentation/add_profile_screen.dart';
 
 class BirthProfilesSection extends StatefulWidget {
   final List<dynamic> profiles;

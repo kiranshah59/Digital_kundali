@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../../widgets/geometric_illustration_painter.dart';
+import '../../../widgets/geometric_illustration_painter.dart';
 
 class OnboardingClarityScreen extends StatelessWidget {
   final VoidCallback onNext;

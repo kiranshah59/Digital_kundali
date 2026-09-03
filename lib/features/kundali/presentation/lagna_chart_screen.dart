@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../../widgets/kundali_painter.dart';
-import '../../core/services/chart_service.dart';
-import '../../models/chart_model.dart';
-import '../../models/nepali_kundali_model.dart';
+import '../../../widgets/kundali_painter.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../bloc/kundali_bloc.dart';
+import '../bloc/kundali_bloc.dart';
+import '../bloc/kundali_event.dart';
+import '../bloc/kundali_state.dart';
+import '../models/chart_model.dart';
 import 'insights_screen.dart';
 import 'rashi_screen.dart';
 
@@ -17,66 +20,12 @@ class LagnaChartScreen extends StatefulWidget {
 }
 
 class _LagnaChartScreenState extends State<LagnaChartScreen> {
-  bool _isLoading = true;
-  String? _errorMessage;
-  ChartModel? _chartModel;
-  NepaliKundaliModel? _nepaliKundaliModel;
   bool _showEnglish = true;
 
   @override
   void initState() {
     super.initState();
-    _fetchChartData();
-  }
-
-  Future<void> _fetchChartData() async {
-    final String fullName = widget.profileData?['full_name'] ?? 'Unknown';
-    final profileId = widget.profileData?['id'] ?? fullName.hashCode.abs();
-    
-    if (profileId == null) {
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-          _errorMessage = 'Invalid profile data (Missing ID)';
-        });
-      }
-      return;
-    }
-
-    // 1. Try to get existing chart
-    var chartRes = await ChartService.getChart(profileId);
-    
-    // 2. If 404, generate chart
-    if (!chartRes['success'] && chartRes['statusCode'] == 404) {
-      chartRes = await ChartService.generateChart(profileId);
-    }
-
-    if (!chartRes['success']) {
-      if (mounted) {
-        setState(() {
-          _errorMessage = chartRes['message'];
-          _isLoading = false;
-        });
-      }
-      return;
-    }
-
-    final ChartModel chartModel = chartRes['data'];
-    _chartModel = chartModel;
-
-    // 3. Get Nepali Kundali Layout
-    final nepaliRes = await ChartService.getNepaliKundali(chartModel.id);
-    
-    if (mounted) {
-      setState(() {
-        if (nepaliRes['success']) {
-          _nepaliKundaliModel = nepaliRes['data'];
-        } else {
-          _errorMessage = nepaliRes['message'];
-        }
-        _isLoading = false;
-      });
-    }
+    context.read<KundaliBloc>().add(LoadKundaliData(profileData: widget.profileData ?? {}));
   }
 
   @override
@@ -93,11 +42,6 @@ class _LagnaChartScreenState extends State<LagnaChartScreen> {
         initials = nameParts[0].length >= 2 ? nameParts[0].substring(0, 2).toUpperCase() : nameParts[0].toUpperCase();
       }
     }
-
-    final risingSign = _chartModel?.chartData.ascendant.sign ?? 'Leo';
-    final moonSign = _chartModel?.chartData.planets['moon']?.sign ?? 'Scorpio';
-    
-    String risingCap = risingSign.isNotEmpty ? risingSign.substring(0, 1).toUpperCase() + risingSign.substring(1) : '';
 
     return Scaffold(
       backgroundColor: const Color(0xFFFAF9F5),
@@ -142,45 +86,51 @@ class _LagnaChartScreenState extends State<LagnaChartScreen> {
           ),
         ],
       ),
-      body: _isLoading
-          ? Center(
+      body: BlocBuilder<KundaliBloc, KundaliState>(
+        builder: (context, state) {
+          if (state is KundaliLoading || state is KundaliInitial) {
+            return Center(
               child: CircularProgressIndicator(
                 valueColor: AlwaysStoppedAnimation<Color>(const Color(0xFFA88143)),
               ),
-            )
-          : _errorMessage != null
-              ? Center(
-                  child: Padding(
-                    padding: EdgeInsets.all(24.w),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.error_outline, color: const Color(0xFFD35555), size: 48.sp),
-                        SizedBox(height: 16.h),
-                        Text(
-                          _errorMessage!,
-                          textAlign: TextAlign.center,
-                          style: TextStyle(fontFamily: 'Inter', fontSize: 14.sp, color: const Color(0xFF11141A)),
-                        ),
-                        SizedBox(height: 24.h),
-                        ElevatedButton(
-                          onPressed: () {
-                            setState(() {
-                              _isLoading = true;
-                              _errorMessage = null;
-                            });
-                            _fetchChartData();
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFFA88143),
-                          ),
-                          child: const Text('Retry'),
-                        )
-                      ],
+            );
+          } else if (state is KundaliError) {
+            return Center(
+              child: Padding(
+                padding: EdgeInsets.all(24.w),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.error_outline, color: const Color(0xFFD35555), size: 48.sp),
+                    SizedBox(height: 16.h),
+                    Text(
+                      state.message,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontFamily: 'Inter', fontSize: 14.sp, color: const Color(0xFF11141A)),
                     ),
-                  ),
-                )
-              : SingleChildScrollView(
+                    SizedBox(height: 24.h),
+                    ElevatedButton(
+                      onPressed: () {
+                        context.read<KundaliBloc>().add(LoadKundaliData(profileData: widget.profileData ?? {}));
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFFA88143),
+                      ),
+                      child: const Text('Retry'),
+                    )
+                  ],
+                ),
+              ),
+            );
+          } else if (state is KundaliLoaded) {
+            final _chartModel = state.chartData;
+            final _nepaliKundaliModel = state.nepaliData;
+            
+            final risingSign = _chartModel.chartData.ascendant.sign;
+            final moonSign = _chartModel.chartData.planets['moon']?.sign ?? 'Scorpio';
+            String risingCap = risingSign.isNotEmpty ? risingSign.substring(0, 1).toUpperCase() + risingSign.substring(1) : '';
+
+            return SingleChildScrollView(
                   physics: const BouncingScrollPhysics(),
                   child: Padding(
                     padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 16.h),
@@ -290,6 +240,7 @@ class _LagnaChartScreenState extends State<LagnaChartScreen> {
                                   child: CustomPaint(
                                     painter: KundaliPainter(
                                       chartModel: _chartModel,
+                                      nepaliModel: _nepaliKundaliModel,
                                       showEnglish: _showEnglish,
                                     ),
                                   ),
@@ -328,7 +279,7 @@ class _LagnaChartScreenState extends State<LagnaChartScreen> {
                               SizedBox(height: 24.h),
                               
                               if (_chartModel != null)
-                                ..._chartModel!.chartData.planets.entries.map((e) => _buildPlanetaryStatusRow(e.key, e.value)),
+                                ..._chartModel.chartData.planets.entries.map((e) => _buildPlanetaryStatusRow(e.key, e.value)),
 
                               SizedBox(height: 24.h),
                               Container(
@@ -393,7 +344,7 @@ class _LagnaChartScreenState extends State<LagnaChartScreen> {
                               ),
                               SizedBox(height: 16.h),
                               Text(
-                                'With $risingCap rising at ${_chartModel?.chartData.ascendant.degree.toStringAsFixed(0) ?? 5} degrees, your personality is marked by a solar radiance. The Sun as your Lagna Lord is strongly placed, indicating a natural leadership ability and a robust physical constitution.',
+                                'With $risingCap rising at ${_chartModel.chartData.ascendant.degree.toStringAsFixed(0)} degrees, your personality is marked by a solar radiance. The Sun as your Lagna Lord is strongly placed, indicating a natural leadership ability and a robust physical constitution.',
                                 style: TextStyle(
                                   fontFamily: 'Inter',
                                   fontSize: 12.sp,
@@ -457,7 +408,11 @@ class _LagnaChartScreenState extends State<LagnaChartScreen> {
                       ],
                     ),
                   ),
-                ),
+                );
+          }
+          return const SizedBox.shrink();
+        },
+      ),
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
           boxShadow: [

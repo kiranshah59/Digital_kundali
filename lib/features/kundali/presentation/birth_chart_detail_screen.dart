@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../../widgets/kundali_painter.dart';
-import '../../core/services/chart_service.dart';
-import '../../models/chart_model.dart';
-import '../../models/nepali_kundali_model.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'lagna_chart_screen.dart';
 import 'insights_screen.dart';
 import 'rashi_screen.dart';
-import '../profile/edit_profile_screen.dart';
-import '../../core/services/profile_service.dart';
-import '../../core/services/auth_service.dart';
+import '../../profile/presentation/edit_profile_screen.dart';
+import '../../profile/data/profile_service.dart';
+import '../../auth/data/auth_service.dart';
+import '../models/chart_model.dart';
+import '../models/nepali_kundali_model.dart';
+import '../data/chart_service.dart';
+import '../../../widgets/kundali_painter.dart';
 
 class BirthChartDetailScreen extends StatefulWidget {
   final dynamic profileData;
@@ -678,6 +679,7 @@ class _BirthChartDetailScreenState extends State<BirthChartDetailScreen> {
             child: CustomPaint(
               painter: KundaliPainter(
                 chartModel: _chartModel,
+                nepaliModel: _nepaliKundaliModel,
                 showEnglish: _showEnglish,
               ),
             ),

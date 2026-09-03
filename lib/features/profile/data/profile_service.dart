@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-import 'auth_service.dart';
+import '../../auth/data/auth_service.dart';
 
 class ProfileService {
   static const String baseUrl = 'https://api.digitalkundali.com/api';
@@ -187,7 +187,7 @@ class ProfileService {
           'timezone': 'Asia/Kathmandu',
           'calendar_system': 'AD',
         }),
-      ).timeout(const Duration(seconds: 1));
+      ).timeout(const Duration(seconds: 30));
 
       final decodedData = jsonDecode(response.body);
 

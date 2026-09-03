@@ -1,87 +1,44 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../../core/services/profile_service.dart';
-
-class EditProfileScreen extends StatefulWidget {
-  final dynamic profileData;
-
-  const EditProfileScreen({super.key, required this.profileData});
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../bloc/profile_bloc.dart';
+import '../bloc/profile_event.dart';
+import '../bloc/profile_state.dart';
+class AddProfileScreen extends StatefulWidget {
+  const AddProfileScreen({super.key});
 
   @override
-  State<EditProfileScreen> createState() => _EditProfileScreenState();
+  State<AddProfileScreen> createState() => _AddProfileScreenState();
 }
 
-class _EditProfileScreenState extends State<EditProfileScreen> {
+class _AddProfileScreenState extends State<AddProfileScreen> {
   final _formKey = GlobalKey<FormState>();
-  late TextEditingController _nameController;
-  late TextEditingController _dobController;
-  late TextEditingController _timeController;
-  late TextEditingController _locationController;
+  final _nameController = TextEditingController();
+  final _dobController = TextEditingController();
+  final _timeController = TextEditingController();
+  final _locationController = TextEditingController();
   
-  bool _isLoading = false;
-  String? _errorMessage;
-
-  @override
-  void initState() {
-    super.initState();
-    _nameController = TextEditingController(text: widget.profileData['full_name'] ?? '');
-    _dobController = TextEditingController(text: widget.profileData['date_of_birth'] ?? '');
-    
-    String timeOfBirth = widget.profileData['time_of_birth'] ?? '';
-    if (timeOfBirth.length > 5) {
-      timeOfBirth = timeOfBirth.substring(0, 5); // Take only HH:mm
-    }
-    _timeController = TextEditingController(text: timeOfBirth);
-    
-    _locationController = TextEditingController(text: widget.profileData['place_of_birth'] ?? widget.profileData['birth_place_name'] ?? '');
-  }
-
-  Future<void> _submitProfile() async {
+  void _submitProfile() {
     if (_formKey.currentState!.validate()) {
-      setState(() {
-        _isLoading = true;
-        _errorMessage = null;
-      });
 
       String timeStr = _timeController.text.trim();
-      // Ensure HH:MM format
-      if (timeStr.contains(':')) {
+      if (timeStr.length > 5 && timeStr.contains(':')) {
         final parts = timeStr.split(':');
         if (parts.length >= 2) {
           timeStr = '${parts[0].padLeft(2, '0')}:${parts[1].padLeft(2, '0')}';
         }
       }
 
-      int profileId = widget.profileData['id'];
-
-      final response = await ProfileService.updateProfile(
-        id: profileId,
-        fullName: _nameController.text.trim(),
-        dateOfBirth: _dobController.text.trim(),
-        timeOfBirth: timeStr,
-        birthPlaceName: _locationController.text.trim(),
-        originalProfile: Map<String, dynamic>.from(widget.profileData),
+      context.read<ProfileBloc>().add(
+        AddProfile(
+          profileData: {
+            'full_name': _nameController.text.trim(),
+            'date_of_birth': _dobController.text.trim(),
+            'time_of_birth': timeStr,
+            'birth_place_name': _locationController.text.trim(),
+          },
+        ),
       );
-
-      setState(() {
-        _isLoading = false;
-      });
-
-      if (response['success']) {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(response['message'] ?? 'Profile updated successfully!'),
-              backgroundColor: Colors.green,
-            ),
-          );
-          Navigator.pop(context, response['data']); // Return the updated data
-        }
-      } else {
-        setState(() {
-          _errorMessage = response['message'];
-        });
-      }
     }
   }
 
@@ -97,7 +54,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          'Edit Profile',
+          'Add New Profile',
           style: TextStyle(
             fontFamily: 'Georgia',
             fontSize: 18.sp,
@@ -106,7 +63,28 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           ),
         ),
       ),
-      body: SafeArea(
+      body: BlocConsumer<ProfileBloc, ProfileState>(
+        listener: (context, state) {
+          if (state is ProfileOperationSuccess) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(state.message),
+                backgroundColor: Colors.green,
+              ),
+            );
+            Navigator.pop(context, true);
+          } else if (state is ProfileError) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(state.message, style: const TextStyle(color: Colors.white)),
+                backgroundColor: Colors.red,
+              ),
+            );
+          }
+        },
+        builder: (context, state) {
+          final bool _isLoading = state is ProfileLoading;
+          return SafeArea(
         child: SingleChildScrollView(
           padding: EdgeInsets.all(24.w),
           child: Form(
@@ -114,21 +92,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                if (_errorMessage != null)
-                  Container(
-                    width: double.infinity,
-                    padding: EdgeInsets.all(12.w),
-                    margin: EdgeInsets.only(bottom: 24.h),
-                    decoration: BoxDecoration(
-                      color: Colors.red.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(8.r),
-                      border: Border.all(color: Colors.red.withValues(alpha: 0.3)),
-                    ),
-                    child: Text(
-                      _errorMessage!,
-                      style: TextStyle(color: Colors.red, fontSize: 14.sp),
-                    ),
-                  ),
                 
                 _buildInputField(
                   label: 'Full Name',
@@ -185,7 +148,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                             ),
                           )
                         : Text(
-                            'SAVE CHANGES',
+                            'SAVE PROFILE',
                             style: TextStyle(
                               fontFamily: 'Inter',
                               fontSize: 14.sp,
@@ -199,6 +162,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             ),
           ),
         ),
+          );
+        },
       ),
     );
   }

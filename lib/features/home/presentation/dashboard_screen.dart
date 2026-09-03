@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../../core/services/profile_service.dart';
-import '../../core/services/auth_service.dart';
-import '../onboarding/main_page_view.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../profile/bloc/profile_bloc.dart';
+import '../../profile/bloc/profile_event.dart';
+import '../../profile/bloc/profile_state.dart';
+import '../../auth/data/auth_service.dart';
+import '../../onboarding/presentation/main_page_view.dart';
 
-import '../../widgets/birth_profiles_section.dart';
-import '../../widgets/transit_status_section.dart';
-import '../../widgets/daily_guidance_card.dart';
-import '../../widgets/life_area_forecast_grid.dart';
-import '../../widgets/ask_guru_banner.dart';
+import '../../../widgets/birth_profiles_section.dart';
+import '../../../widgets/transit_status_section.dart';
+import '../../../widgets/daily_guidance_card.dart';
+import '../../../widgets/life_area_forecast_grid.dart';
+import '../../../widgets/ask_guru_banner.dart';
 
 class DashboardScreen extends StatefulWidget {
   final String? userName;
@@ -20,26 +23,12 @@ class DashboardScreen extends StatefulWidget {
 }
 
 class _DashboardScreenState extends State<DashboardScreen> {
-  List<dynamic> _profiles = [];
-  bool _isLoadingProfiles = true;
+  List<dynamic> _cachedProfiles = [];
 
   @override
   void initState() {
     super.initState();
-    _fetchProfiles();
-  }
-
-  Future<void> _fetchProfiles() async {
-    setState(() => _isLoadingProfiles = true);
-    final response = await ProfileService.getProfiles();
-    if (mounted) {
-      setState(() {
-        _isLoadingProfiles = false;
-        if (response['success']) {
-          _profiles = response['data'] ?? [];
-        }
-      });
-    }
+    context.read<ProfileBloc>().add(LoadProfiles());
   }
 
   @override
@@ -55,10 +44,22 @@ class _DashboardScreenState extends State<DashboardScreen> {
               padding: EdgeInsets.symmetric(vertical: 16.h),
               sliver: SliverList(
                 delegate: SliverChildListDelegate([
-                  BirthProfilesSection(
-                    profiles: _profiles,
-                    isLoading: _isLoadingProfiles,
-                    onRefresh: _fetchProfiles,
+                  BlocBuilder<ProfileBloc, ProfileState>(
+                    builder: (context, state) {
+                      bool isLoading = state is ProfileLoading || state is ProfileInitial;
+                      
+                      if (state is ProfileLoaded) {
+                        _cachedProfiles = state.profiles;
+                      }
+                      
+                      return BirthProfilesSection(
+                        profiles: _cachedProfiles,
+                        isLoading: isLoading && _cachedProfiles.isEmpty,
+                        onRefresh: () async {
+                          context.read<ProfileBloc>().add(LoadProfiles());
+                        },
+                      );
+                    },
                   ),
                   SizedBox(height: 32.h),
                   const TransitStatusSection(),
@@ -113,7 +114,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
         ),
         IconButton(
           onPressed: () async {
-            await ProfileService.clearProfiles();
+            context.read<ProfileBloc>().add(ClearProfiles()); // Add this event if we clear them in bloc
             await AuthService.logout();
             if (context.mounted) {
               Navigator.of(context).pushAndRemoveUntil(

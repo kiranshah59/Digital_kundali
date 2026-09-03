@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../../models/chart_model.dart';
+import '../features/kundali/models/chart_model.dart';
+import '../features/kundali/models/nepali_kundali_model.dart';
 
 class KundaliPainter extends CustomPainter {
   final ChartModel? chartModel;
+  final NepaliKundaliModel? nepaliModel;
   final bool showEnglish;
 
-  KundaliPainter({this.chartModel, this.showEnglish = true});
+  KundaliPainter({this.chartModel, this.nepaliModel, this.showEnglish = true});
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -35,11 +37,11 @@ class KundaliPainter extends CustomPainter {
     canvas.drawPath(path, paint);
 
     // Function to draw text at a specific center point
-    void drawText(String text, Offset center, {bool isNumber = false}) {
+    void drawText(String text, Offset center, {bool isNumber = false, bool isDevanagari = false}) {
       final textSpan = TextSpan(
         text: text,
         style: TextStyle(
-          fontFamily: isNumber ? 'Inter' : 'Georgia',
+          fontFamily: isDevanagari ? null : (isNumber ? 'Inter' : 'Georgia'),
           fontSize: isNumber ? 10.sp : 12.sp,
           fontWeight: isNumber ? FontWeight.w500 : FontWeight.w600,
           color: isNumber ? const Color(0xFFA88143) : const Color(0xFF11141A),
@@ -96,13 +98,33 @@ class KundaliPainter extends CustomPainter {
       12: Offset(w * 0.65, h * 0.15),
     };
 
+    // Translation maps for Nepali
+    final Map<String, String> devanagariNumbers = {
+      'Aries': '१', 'Taurus': '२', 'Gemini': '३', 'Cancer': '४',
+      'Leo': '५', 'Virgo': '६', 'Libra': '७', 'Scorpio': '८',
+      'Sagittarius': '९', 'Capricorn': '१०', 'Aquarius': '११', 'Pisces': '१२'
+    };
+
+    final Map<String, String> devanagariPlanets = {
+      'Sun': 'सूर्य', 'Moon': 'चन्द्र', 'Mars': 'मंगल', 'Mercury': 'बुध',
+      'Jupiter': 'गुरु', 'Venus': 'शुक्र', 'Saturn': 'शनि', 'Rahu': 'राहु', 'Ketu': 'केतु'
+    };
+
     // Group planets by house
     final Map<int, List<String>> planetsByHouse = {};
     chartModel!.chartData.planets.forEach((planetName, planetData) {
       if (!planetsByHouse.containsKey(planetData.house)) {
         planetsByHouse[planetData.house] = [];
       }
-      String pName = planetName.substring(0, 1).toUpperCase() + planetName.substring(1, 2).toLowerCase();
+      String pName = planetName.substring(0, 1).toUpperCase() + planetName.substring(1).toLowerCase();
+      
+      if (!showEnglish) {
+        pName = devanagariPlanets[pName] ?? pName;
+      } else {
+        // Abbreviate for English (e.g., Sun -> Su, Venus -> Ve)
+        pName = pName.substring(0, 2);
+      }
+      
       planetsByHouse[planetData.house]!.add(pName);
     });
 
@@ -110,13 +132,21 @@ class KundaliPainter extends CustomPainter {
       int houseNum = house.house;
       if (houseNum >= 1 && houseNum <= 12) {
         // Draw House Number/Sign
-        String signLabel = showEnglish ? house.sign.substring(0, 3).toUpperCase() : house.sign;
-        drawText(signLabel, numberPositions[houseNum]!, isNumber: true);
+        String signLabel;
+        if (showEnglish) {
+          signLabel = house.sign.substring(0, 3).toUpperCase();
+        } else {
+          // Find the capitalized sign name to match map (e.g., "leo" -> "Leo")
+          String capitalizedSign = house.sign.substring(0, 1).toUpperCase() + house.sign.substring(1).toLowerCase();
+          signLabel = devanagariNumbers[capitalizedSign] ?? house.sign;
+        }
+        
+        drawText(signLabel, numberPositions[houseNum]!, isNumber: true, isDevanagari: !showEnglish);
 
         // Draw Planets
         if (planetsByHouse.containsKey(houseNum)) {
           String planetsStr = planetsByHouse[houseNum]!.join(', ');
-          drawText(planetsStr, housePositions[houseNum]!);
+          drawText(planetsStr, housePositions[houseNum]!, isDevanagari: !showEnglish);
         }
       }
     }
