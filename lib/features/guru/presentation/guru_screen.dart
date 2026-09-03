@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'ai_guru_chat_view.dart';
+import 'guru_profile_screen.dart';
 
 
 class GuruScreen extends StatefulWidget {
@@ -62,14 +63,7 @@ class _GuruScreenState extends State<GuruScreen> {
                     sessions: '2,400+ Sessions',
                     experience: '22 Years Experience',
                     languages: 'Sanskrit, Hindi, English',
-                    imageWidget: Image.network(
-                      'https://randomuser.me/api/portraits/men/32.jpg',
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) => Container(
-                        color: Colors.grey[400],
-                        child: const Icon(Icons.person, color: Colors.white),
-                      ),
-                    ),
+                    imageUrl: 'https://randomuser.me/api/portraits/men/32.jpg',
                   ),
                   SizedBox(height: 16.h),
                   _buildExpertCard(
@@ -79,14 +73,7 @@ class _GuruScreenState extends State<GuruScreen> {
                     sessions: '1,850+ Sessions',
                     experience: '15 Years Experience',
                     languages: 'Tamil, English, Hindi',
-                    imageWidget: Image.network(
-                      'https://randomuser.me/api/portraits/women/44.jpg',
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) => Container(
-                        color: Colors.grey[400],
-                        child: const Icon(Icons.person, color: Colors.white),
-                      ),
-                    ),
+                    imageUrl: 'https://randomuser.me/api/portraits/women/44.jpg',
                   ),
                   SizedBox(height: 16.h),
                   _buildExpertCard(
@@ -96,14 +83,7 @@ class _GuruScreenState extends State<GuruScreen> {
                     sessions: '4,100+ Sessions',
                     experience: '35 Years Experience',
                     languages: 'Hindi, Gujarati, English',
-                    imageWidget: Image.network(
-                      'https://randomuser.me/api/portraits/men/85.jpg',
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) => Container(
-                        color: Colors.grey[400],
-                        child: const Icon(Icons.person, color: Colors.white),
-                      ),
-                    ),
+                    imageUrl: 'https://randomuser.me/api/portraits/men/85.jpg',
                   ),
                   SizedBox(height: 32.h),
                   _buildTrustedBySeekers(),
@@ -339,7 +319,7 @@ class _GuruScreenState extends State<GuruScreen> {
     required String sessions,
     required String experience,
     required String languages,
-    required Widget imageWidget,
+    required String imageUrl,
   }) {
     return Container(
       padding: EdgeInsets.all(16.w),
@@ -366,7 +346,14 @@ class _GuruScreenState extends State<GuruScreen> {
                 child: SizedBox(
                   width: 64.w,
                   height: 64.w,
-                  child: imageWidget,
+                  child: Image.network(
+                    imageUrl,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) => Container(
+                      color: Colors.grey[400],
+                      child: const Icon(Icons.person, color: Colors.white),
+                    ),
+                  ),
                 ),
               ),
               const Spacer(),
@@ -458,7 +445,17 @@ class _GuruScreenState extends State<GuruScreen> {
             width: double.infinity,
             height: 44.h,
             child: OutlinedButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => GuruProfileScreen(
+                    name: name,
+                    imageUrl: imageUrl,
+                    rating: rating,
+                    sessions: sessions,
+                  )),
+                );
+              },
               style: OutlinedButton.styleFrom(
                 side: const BorderSide(color: Color(0xFF11141A)),
                 shape: RoundedRectangleBorder(
