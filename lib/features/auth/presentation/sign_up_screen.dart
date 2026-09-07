@@ -377,23 +377,40 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 ],
                               ),
                               SizedBox(height: 24.h),
-                              // Social Buttons
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: _buildSocialButton(
-                                      icon: Icons.g_mobiledata,
-                                      label: 'Google',
+                              // Google Button
+                              SizedBox(
+                                width: double.infinity,
+                                height: 52.h,
+                                child: OutlinedButton(
+                                  onPressed: () {},
+                                  style: OutlinedButton.styleFrom(
+                                    backgroundColor: const Color(0xFFFAF9F5),
+                                    side: const BorderSide(color: Color(0xFFEAE6DF)),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(4.r),
                                     ),
                                   ),
-                                  SizedBox(width: 16.w),
-                                  Expanded(
-                                    child: _buildSocialButton(
-                                      icon: Icons.apple,
-                                      label: 'Apple',
-                                    ),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      SvgPicture.asset(
+                                        'assets/images/google.svg',
+                                        width: 20.w,
+                                        height: 20.h,
+                                      ),
+                                      SizedBox(width: 12.w),
+                                      Text(
+                                        'Google',
+                                        style: TextStyle(
+                                          fontFamily: 'Inter',
+                                          fontSize: 15.sp,
+                                          fontWeight: FontWeight.w700,
+                                          color: const Color(0xFF202124),
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                ],
+                                ),
                               ),
                             ],
                           ),
@@ -494,30 +511,4 @@ class _SignUpScreenState extends State<SignUpScreen> {
     );
   }
 
-  Widget _buildSocialButton({required IconData icon, required String label}) {
-    return Container(
-      height: 48.h,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: const Color(0xFFEAE6DF)),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(icon, size: 20.sp, color: const Color(0xFF11141A)),
-          SizedBox(width: 8.w),
-          Text(
-            label,
-            style: TextStyle(
-              fontFamily: 'Inter',
-              fontSize: 12.sp,
-              fontWeight: FontWeight.w600,
-              color: const Color(0xFF11141A),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 }
