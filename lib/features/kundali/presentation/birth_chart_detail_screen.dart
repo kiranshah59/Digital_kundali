@@ -11,6 +11,7 @@ import '../models/chart_model.dart';
 import '../models/nepali_kundali_model.dart';
 import '../data/chart_service.dart';
 import '../../../widgets/kundali_painter.dart';
+import '../../../widgets/paid_plan_widget.dart';
 
 class BirthChartDetailScreen extends StatefulWidget {
   final dynamic profileData;
@@ -164,37 +165,39 @@ class _BirthChartDetailScreenState extends State<BirthChartDetailScreen> {
               ),
             )
           : _errorMessage != null
-              ? Center(
-                  child: Padding(
-                    padding: EdgeInsets.all(24.w),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.error_outline, color: const Color(0xFFD35555), size: 48.sp),
-                        SizedBox(height: 16.h),
-                        Text(
-                          _errorMessage!,
-                          textAlign: TextAlign.center,
-                          style: TextStyle(fontFamily: 'Inter', fontSize: 14.sp, color: const Color(0xFF11141A)),
+              ? _errorMessage!.toLowerCase().contains('paid plan')
+                  ? const PaidPlanWidget(featureName: 'Birth Chart')
+                  : Center(
+                      child: Padding(
+                        padding: EdgeInsets.all(24.w),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.error_outline, color: const Color(0xFFD35555), size: 48.sp),
+                            SizedBox(height: 16.h),
+                            Text(
+                              _errorMessage!,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(fontFamily: 'Inter', fontSize: 14.sp, color: const Color(0xFF11141A)),
+                            ),
+                            SizedBox(height: 24.h),
+                            ElevatedButton(
+                              onPressed: () {
+                                setState(() {
+                                  _isLoading = true;
+                                  _errorMessage = null;
+                                });
+                                _fetchChartData();
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: const Color(0xFFA88143),
+                              ),
+                              child: const Text('Retry'),
+                            )
+                          ],
                         ),
-                        SizedBox(height: 24.h),
-                        ElevatedButton(
-                          onPressed: () {
-                            setState(() {
-                              _isLoading = true;
-                              _errorMessage = null;
-                            });
-                            _fetchChartData();
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFFA88143),
-                          ),
-                          child: const Text('Retry'),
-                        )
-                      ],
-                    ),
-                  ),
-                )
+                      ),
+                    )
               : SingleChildScrollView(
                   physics: const BouncingScrollPhysics(),
                   child: Padding(

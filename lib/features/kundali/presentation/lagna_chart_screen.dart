@@ -3,10 +3,11 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../widgets/kundali_painter.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../bloc/kundali_bloc.dart';
-import '../bloc/kundali_bloc.dart';
 import '../bloc/kundali_event.dart';
 import '../bloc/kundali_state.dart';
 import '../models/chart_model.dart';
+import '../models/nepali_kundali_model.dart';
+import '../../../widgets/paid_plan_widget.dart';
 import 'insights_screen.dart';
 import 'rashi_screen.dart';
 
@@ -25,21 +26,28 @@ class _LagnaChartScreenState extends State<LagnaChartScreen> {
   @override
   void initState() {
     super.initState();
-    context.read<KundaliBloc>().add(LoadKundaliData(profileData: widget.profileData ?? {}));
+    context.read<KundaliBloc>().add(
+      LoadKundaliData(profileData: widget.profileData ?? {}),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     final String fullName = widget.profileData?['full_name'] ?? 'Unknown User';
-    
+
     // Get initials
-    final List<String> nameParts = fullName.split(' ').where((p) => p.isNotEmpty).toList();
+    final List<String> nameParts = fullName
+        .split(' ')
+        .where((p) => p.isNotEmpty)
+        .toList();
     String initials = 'U';
     if (nameParts.isNotEmpty) {
       if (nameParts.length >= 2) {
         initials = '${nameParts[0][0]}${nameParts[1][0]}'.toUpperCase();
       } else {
-        initials = nameParts[0].length >= 2 ? nameParts[0].substring(0, 2).toUpperCase() : nameParts[0].toUpperCase();
+        initials = nameParts[0].length >= 2
+            ? nameParts[0].substring(0, 2).toUpperCase()
+            : nameParts[0].toUpperCase();
       }
     }
 
@@ -49,7 +57,11 @@ class _LagnaChartScreenState extends State<LagnaChartScreen> {
         backgroundColor: const Color(0xFFFAF9F5),
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: const Color(0xFF11141A), size: 24.sp),
+          icon: Icon(
+            Icons.arrow_back,
+            color: const Color(0xFF11141A),
+            size: 24.sp,
+          ),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
@@ -76,10 +88,21 @@ class _LagnaChartScreenState extends State<LagnaChartScreen> {
                   CircleAvatar(
                     radius: 12.r,
                     backgroundColor: const Color(0xFF11141A),
-                    child: Text(initials, style: TextStyle(color: Colors.white, fontSize: 10.sp, fontWeight: FontWeight.bold)),
+                    child: Text(
+                      initials,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 10.sp,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ),
                   SizedBox(width: 4.w),
-                  Icon(Icons.keyboard_arrow_down, size: 16.sp, color: Colors.grey),
+                  Icon(
+                    Icons.keyboard_arrow_down,
+                    size: 16.sp,
+                    color: Colors.grey,
+                  ),
                 ],
               ),
             ),
@@ -91,33 +114,50 @@ class _LagnaChartScreenState extends State<LagnaChartScreen> {
           if (state is KundaliLoading || state is KundaliInitial) {
             return Center(
               child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(const Color(0xFFA88143)),
+                valueColor: AlwaysStoppedAnimation<Color>(
+                  const Color(0xFFA88143),
+                ),
               ),
             );
           } else if (state is KundaliError) {
+            if (state.message.toLowerCase().contains('paid plan')) {
+              return const PaidPlanWidget(featureName: 'Lagna Chart');
+            }
             return Center(
               child: Padding(
                 padding: EdgeInsets.all(24.w),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.error_outline, color: const Color(0xFFD35555), size: 48.sp),
+                    Icon(
+                      Icons.error_outline,
+                      color: const Color(0xFFD35555),
+                      size: 48.sp,
+                    ),
                     SizedBox(height: 16.h),
                     Text(
                       state.message,
                       textAlign: TextAlign.center,
-                      style: TextStyle(fontFamily: 'Inter', fontSize: 14.sp, color: const Color(0xFF11141A)),
+                      style: TextStyle(
+                        fontFamily: 'Inter',
+                        fontSize: 14.sp,
+                        color: const Color(0xFF11141A),
+                      ),
                     ),
                     SizedBox(height: 24.h),
                     ElevatedButton(
                       onPressed: () {
-                        context.read<KundaliBloc>().add(LoadKundaliData(profileData: widget.profileData ?? {}));
+                        context.read<KundaliBloc>().add(
+                          LoadKundaliData(
+                            profileData: widget.profileData ?? {},
+                          ),
+                        );
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFFA88143),
                       ),
                       child: const Text('Retry'),
-                    )
+                    ),
                   ],
                 ),
               ),
@@ -125,290 +165,315 @@ class _LagnaChartScreenState extends State<LagnaChartScreen> {
           } else if (state is KundaliLoaded) {
             final _chartModel = state.chartData;
             final _nepaliKundaliModel = state.nepaliData;
-            
+
             final risingSign = _chartModel.chartData.ascendant.sign;
-            final moonSign = _chartModel.chartData.planets['moon']?.sign ?? 'Scorpio';
-            String risingCap = risingSign.isNotEmpty ? risingSign.substring(0, 1).toUpperCase() + risingSign.substring(1) : '';
+            final moonSign =
+                _chartModel.chartData.planets['moon']?.sign ?? 'Scorpio';
+            String risingCap = risingSign.isNotEmpty
+                ? risingSign.substring(0, 1).toUpperCase() +
+                      risingSign.substring(1)
+                : '';
 
             return SingleChildScrollView(
-                  physics: const BouncingScrollPhysics(),
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 16.h),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+              physics: const BouncingScrollPhysics(),
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 16.h),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Tabs
+                    SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      physics: const BouncingScrollPhysics(),
+                      child: Row(
+                        children: [
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => InsightsScreen(
+                                    profileData: widget.profileData,
+                                  ),
+                                ),
+                              );
+                            },
+                            child: _buildPillTab(
+                              'Insights',
+                              Icons.lightbulb_outline,
+                              false,
+                            ),
+                          ),
+                          SizedBox(width: 8.w),
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => RashiScreen(
+                                    profileData: widget.profileData,
+                                  ),
+                                ),
+                              );
+                            },
+                            child: _buildPillTab('Rashi', Icons.adjust, false),
+                          ),
+                          SizedBox(width: 8.w),
+                          _buildPillTab('Dashas', Icons.menu_book, false),
+                        ],
+                      ),
+                    ),
+                    SizedBox(height: 32.h),
+
+                    Text(
+                      'PRIMARY READING',
+                      style: TextStyle(
+                        fontFamily: 'Inter',
+                        fontSize: 10.sp,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: 1.5,
+                        color: const Color(0xFF8A8A8A),
+                      ),
+                    ),
+                    SizedBox(height: 8.h),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        // Tabs
-                        SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
-                          physics: const BouncingScrollPhysics(),
+                        Text(
+                          'Lagna Chart (D1)',
+                          style: TextStyle(
+                            fontFamily: 'Georgia',
+                            fontSize: 24.sp,
+                            color: const Color(0xFF11141A),
+                          ),
+                        ),
+                        Container(
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFEAE6DF),
+                            borderRadius: BorderRadius.circular(4.r),
+                          ),
                           child: Row(
                             children: [
-                              GestureDetector(
-                                onTap: () {
-                                  Navigator.pushReplacement(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => InsightsScreen(profileData: widget.profileData),
-                                    ),
-                                  );
-                                },
-                                child: _buildPillTab('Insights', Icons.lightbulb_outline, false),
+                              _buildToggle(
+                                'EN',
+                                _showEnglish,
+                                () => setState(() => _showEnglish = true),
                               ),
-                              SizedBox(width: 8.w),
-                              GestureDetector(
-                                onTap: () {
-                                  Navigator.pushReplacement(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => RashiScreen(profileData: widget.profileData),
-                                    ),
-                                  );
-                                },
-                                child: _buildPillTab('Rashi', Icons.adjust, false),
-                              ),
-                              SizedBox(width: 8.w),
-                              _buildPillTab('Dashas', Icons.menu_book, false),
-                            ],
-                          ),
-                        ),
-                        SizedBox(height: 32.h),
-                        
-                        Text(
-                          'PRIMARY READING',
-                          style: TextStyle(
-                            fontFamily: 'Inter',
-                            fontSize: 10.sp,
-                            fontWeight: FontWeight.w700,
-                            letterSpacing: 1.5,
-                            color: const Color(0xFF8A8A8A),
-                          ),
-                        ),
-                        SizedBox(height: 8.h),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              'Lagna Chart (D1)',
-                              style: TextStyle(
-                                fontFamily: 'Georgia',
-                                fontSize: 24.sp,
-                                color: const Color(0xFF11141A),
-                              ),
-                            ),
-                            Container(
-                              decoration: BoxDecoration(
-                                color: const Color(0xFFEAE6DF),
-                                borderRadius: BorderRadius.circular(4.r),
-                              ),
-                              child: Row(
-                                children: [
-                                  _buildToggle('EN', _showEnglish, () => setState(() => _showEnglish = true)),
-                                  _buildToggle('NE', !_showEnglish, () => setState(() => _showEnglish = false)),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: 16.h),
-                        
-                        // Chart Box
-                        Container(
-                          width: double.infinity,
-                          padding: EdgeInsets.all(24.w),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(12.r),
-                            border: Border.all(color: const Color(0xFFEAE6DF)),
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: [
-                              Text(
-                                'LAT: 28.6139° N\nLON: 77.2090° E',
-                                textAlign: TextAlign.right,
-                                style: TextStyle(
-                                  fontFamily: 'Inter',
-                                  fontSize: 8.sp,
-                                  color: const Color(0xFF8A8A8A),
-                                ),
-                              ),
-                              SizedBox(height: 16.h),
-                              Center(
-                                child: SizedBox(
-                                  width: 250.w,
-                                  height: 250.w,
-                                  child: CustomPaint(
-                                    painter: KundaliPainter(
-                                      chartModel: _chartModel,
-                                      nepaliModel: _nepaliKundaliModel,
-                                      showEnglish: _showEnglish,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        SizedBox(height: 24.h),
-
-                        // Planetary Status Section
-                        Container(
-                          width: double.infinity,
-                          padding: EdgeInsets.all(24.w),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFFF6F5F2), // Beige background
-                            borderRadius: BorderRadius.circular(12.r),
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    'Planetary Status',
-                                    style: TextStyle(
-                                      fontFamily: 'Georgia',
-                                      fontSize: 18.sp,
-                                      color: const Color(0xFF11141A),
-                                    ),
-                                  ),
-                                  Icon(Icons.bar_chart, color: const Color(0xFFA88143), size: 20.sp),
-                                ],
-                              ),
-                              SizedBox(height: 24.h),
-                              
-                              if (_chartModel != null)
-                                ..._chartModel.chartData.planets.entries.map((e) => _buildPlanetaryStatusRow(e.key, e.value)),
-
-                              SizedBox(height: 24.h),
-                              Container(
-                                width: double.infinity,
-                                padding: EdgeInsets.symmetric(vertical: 16.h),
-                                decoration: BoxDecoration(
-                                  color: const Color(0xFF0A0A0C),
-                                  borderRadius: BorderRadius.circular(8.r),
-                                ),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                      'Generate Full Planetary Report',
-                                      style: TextStyle(
-                                        fontFamily: 'Inter',
-                                        fontSize: 12.sp,
-                                        fontWeight: FontWeight.w600,
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                    SizedBox(width: 8.w),
-                                    Icon(Icons.auto_awesome, color: Colors.white, size: 16.sp),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        SizedBox(height: 24.h),
-                        
-                        // Interpretation
-                        Container(
-                          width: double.infinity,
-                          padding: EdgeInsets.all(24.w),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(16.r),
-                            border: Border.all(color: const Color(0xFFEAE6DF)),
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'INTERPRETATION',
-                                style: TextStyle(
-                                  fontFamily: 'Inter',
-                                  fontSize: 10.sp,
-                                  fontWeight: FontWeight.w700,
-                                  letterSpacing: 1.5,
-                                  color: const Color(0xFFA88143),
-                                ),
-                              ),
-                              SizedBox(height: 8.h),
-                              Text(
-                                'Ascendant Insight',
-                                style: TextStyle(
-                                  fontFamily: 'Georgia',
-                                  fontSize: 18.sp,
-                                  color: const Color(0xFF11141A),
-                                ),
-                              ),
-                              SizedBox(height: 16.h),
-                              Text(
-                                'With $risingCap rising at ${_chartModel.chartData.ascendant.degree.toStringAsFixed(0)} degrees, your personality is marked by a solar radiance. The Sun as your Lagna Lord is strongly placed, indicating a natural leadership ability and a robust physical constitution.',
-                                style: TextStyle(
-                                  fontFamily: 'Inter',
-                                  fontSize: 12.sp,
-                                  color: const Color(0xFF5A6273),
-                                  height: 1.6,
-                                ),
-                              ),
-                              SizedBox(height: 16.h),
-                              Row(
-                                children: [
-                                  Text(
-                                    'Read full analysis',
-                                    style: TextStyle(
-                                      fontFamily: 'Inter',
-                                      fontSize: 12.sp,
-                                      fontWeight: FontWeight.w600,
-                                      color: const Color(0xFF11141A),
-                                    ),
-                                  ),
-                                  SizedBox(width: 4.w),
-                                  Icon(Icons.arrow_forward, size: 16.sp, color: const Color(0xFF11141A)),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                        SizedBox(height: 24.h),
-
-                        // Remedial Suggestion
-                        Container(
-                          width: double.infinity,
-                          padding: EdgeInsets.all(24.w),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFF070B19), // Very dark navy
-                            borderRadius: BorderRadius.circular(16.r),
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Remedial Suggestion',
-                                style: TextStyle(
-                                  fontFamily: 'Georgia',
-                                  fontSize: 18.sp,
-                                  color: const Color(0xFFFDE0AD), // Light gold
-                                ),
-                              ),
-                              SizedBox(height: 16.h),
-                              Text(
-                                'Your Moon in $moonSign suggests intense emotional depths. To balance this, consider wearing a natural pearl (Moti) set in silver on a Monday morning.',
-                                style: TextStyle(
-                                  fontFamily: 'Inter',
-                                  fontSize: 12.sp,
-                                  color: const Color(0xFF8A92A6),
-                                  height: 1.6,
-                                ),
+                              _buildToggle(
+                                'NE',
+                                !_showEnglish,
+                                () => setState(() => _showEnglish = false),
                               ),
                             ],
                           ),
                         ),
                       ],
                     ),
-                  ),
-                );
+                    SizedBox(height: 16.h),
+
+                    // Chart Box
+                    Container(
+                      width: double.infinity,
+                      padding: EdgeInsets.all(24.w),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12.r),
+                        border: Border.all(color: const Color(0xFFEAE6DF)),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          SizedBox(height: 16.h),
+                          Center(
+                            child: SizedBox(
+                              width: 250.w,
+                              height: 250.w,
+                              child: CustomPaint(
+                                painter: KundaliPainter(
+                                  chartModel: _chartModel,
+                                  nepaliModel: _nepaliKundaliModel,
+                                  showEnglish: _showEnglish,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(height: 24.h),
+
+                    // Planetary Status Section
+                    Container(
+                      width: double.infinity,
+                      padding: EdgeInsets.all(24.w),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFF6F5F2), // Beige background
+                        borderRadius: BorderRadius.circular(12.r),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                'Planetary Status',
+                                style: TextStyle(
+                                  fontFamily: 'Georgia',
+                                  fontSize: 18.sp,
+                                  color: const Color(0xFF11141A),
+                                ),
+                              ),
+                              Icon(
+                                Icons.bar_chart,
+                                color: const Color(0xFFA88143),
+                                size: 20.sp,
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 24.h),
+
+                          if (_chartModel != null)
+                            ..._chartModel.chartData.planets.entries.map(
+                              (e) => _buildPlanetaryStatusRow(e.key, e.value),
+                            ),
+
+                          SizedBox(height: 24.h),
+                          Container(
+                            width: double.infinity,
+                            padding: EdgeInsets.symmetric(vertical: 16.h),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF0A0A0C),
+                              borderRadius: BorderRadius.circular(8.r),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  'Generate Full Planetary Report',
+                                  style: TextStyle(
+                                    fontFamily: 'Inter',
+                                    fontSize: 12.sp,
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                                SizedBox(width: 8.w),
+                                Icon(
+                                  Icons.auto_awesome,
+                                  color: Colors.white,
+                                  size: 16.sp,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(height: 24.h),
+
+                    // Interpretation
+                    Container(
+                      width: double.infinity,
+                      padding: EdgeInsets.all(24.w),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(16.r),
+                        border: Border.all(color: const Color(0xFFEAE6DF)),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'INTERPRETATION',
+                            style: TextStyle(
+                              fontFamily: 'Inter',
+                              fontSize: 10.sp,
+                              fontWeight: FontWeight.w700,
+                              letterSpacing: 1.5,
+                              color: const Color(0xFFA88143),
+                            ),
+                          ),
+                          SizedBox(height: 8.h),
+                          Text(
+                            'Ascendant Insight',
+                            style: TextStyle(
+                              fontFamily: 'Georgia',
+                              fontSize: 18.sp,
+                              color: const Color(0xFF11141A),
+                            ),
+                          ),
+                          SizedBox(height: 16.h),
+                          Text(
+                            'With $risingCap rising at ${_chartModel.chartData.ascendant.degree.toStringAsFixed(0)} degrees, your personality is marked by a solar radiance. The Sun as your Lagna Lord is strongly placed, indicating a natural leadership ability and a robust physical constitution.',
+                            style: TextStyle(
+                              fontFamily: 'Inter',
+                              fontSize: 12.sp,
+                              color: const Color(0xFF5A6273),
+                              height: 1.6,
+                            ),
+                          ),
+                          SizedBox(height: 16.h),
+                          Row(
+                            children: [
+                              Text(
+                                'Read full analysis',
+                                style: TextStyle(
+                                  fontFamily: 'Inter',
+                                  fontSize: 12.sp,
+                                  fontWeight: FontWeight.w600,
+                                  color: const Color(0xFF11141A),
+                                ),
+                              ),
+                              SizedBox(width: 4.w),
+                              Icon(
+                                Icons.arrow_forward,
+                                size: 16.sp,
+                                color: const Color(0xFF11141A),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(height: 24.h),
+
+                    // Remedial Suggestion
+                    Container(
+                      width: double.infinity,
+                      padding: EdgeInsets.all(24.w),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF070B19), // Very dark navy
+                        borderRadius: BorderRadius.circular(16.r),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Remedial Suggestion',
+                            style: TextStyle(
+                              fontFamily: 'Georgia',
+                              fontSize: 18.sp,
+                              color: const Color(0xFFFDE0AD), // Light gold
+                            ),
+                          ),
+                          SizedBox(height: 16.h),
+                          Text(
+                            'Your Moon in $moonSign suggests intense emotional depths. To balance this, consider wearing a natural pearl (Moti) set in silver on a Monday morning.',
+                            style: TextStyle(
+                              fontFamily: 'Inter',
+                              fontSize: 12.sp,
+                              color: const Color(0xFF8A92A6),
+                              height: 1.6,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
           }
           return const SizedBox.shrink();
         },
@@ -478,7 +543,11 @@ class _LagnaChartScreenState extends State<LagnaChartScreen> {
       ),
       child: Row(
         children: [
-          Icon(icon, size: 14.sp, color: isActive ? const Color(0xFFA88143) : const Color(0xFF8A8A8A)),
+          Icon(
+            icon,
+            size: 14.sp,
+            color: isActive ? const Color(0xFFA88143) : const Color(0xFF8A8A8A),
+          ),
           SizedBox(width: 6.w),
           Text(
             text,
@@ -486,7 +555,9 @@ class _LagnaChartScreenState extends State<LagnaChartScreen> {
               fontFamily: 'Inter',
               fontSize: 12.sp,
               fontWeight: isActive ? FontWeight.w600 : FontWeight.w500,
-              color: isActive ? const Color(0xFF11141A) : const Color(0xFF8A8A8A),
+              color: isActive
+                  ? const Color(0xFF11141A)
+                  : const Color(0xFF8A8A8A),
             ),
           ),
         ],
@@ -502,7 +573,15 @@ class _LagnaChartScreenState extends State<LagnaChartScreen> {
         decoration: BoxDecoration(
           color: isActive ? Colors.white : Colors.transparent,
           borderRadius: BorderRadius.circular(4.r),
-          boxShadow: isActive ? [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 2, offset: const Offset(0, 1))] : [],
+          boxShadow: isActive
+              ? [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.05),
+                    blurRadius: 2,
+                    offset: const Offset(0, 1),
+                  ),
+                ]
+              : [],
         ),
         child: Text(
           text,
@@ -518,18 +597,32 @@ class _LagnaChartScreenState extends State<LagnaChartScreen> {
   }
 
   Widget _buildPlanetaryStatusRow(String key, PlanetData data) {
-    String abbr = key.substring(0, 1).toUpperCase() + (key.length > 1 ? key.substring(1, 2) : '');
+    String abbr =
+        key.substring(0, 1).toUpperCase() +
+        (key.length > 1 ? key.substring(1, 2) : '');
     String name = key.substring(0, 1).toUpperCase() + key.substring(1);
-    
+
     // Pick a random tag for visual purposes
     String tag = 'NEUTRAL';
     Color tagColor = const Color(0xFF8A8A8A);
     Color tagBgColor = const Color(0xFFEAE6DF);
-    if (key == 'sun') { tag = 'PURVA PHALGUNI'; }
-    if (key == 'moon') { tag = 'DEBILITATED'; tagColor = const Color(0xFFD35555); tagBgColor = const Color(0xFFFADCDC); }
-    if (key == 'mars') { tag = 'MOOLATRIKONA'; }
-    if (key == 'mercury') { tag = 'EXALTED'; }
-    if (key == 'jupiter') { tag = 'SWAKSHETRA'; }
+    if (key == 'sun') {
+      tag = 'PURVA PHALGUNI';
+    }
+    if (key == 'moon') {
+      tag = 'DEBILITATED';
+      tagColor = const Color(0xFFD35555);
+      tagBgColor = const Color(0xFFFADCDC);
+    }
+    if (key == 'mars') {
+      tag = 'MOOLATRIKONA';
+    }
+    if (key == 'mercury') {
+      tag = 'EXALTED';
+    }
+    if (key == 'jupiter') {
+      tag = 'SWAKSHETRA';
+    }
 
     return Padding(
       padding: EdgeInsets.only(bottom: 24.h),

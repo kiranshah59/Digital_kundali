@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class LifeAreaForecastGrid extends StatelessWidget {
-  const LifeAreaForecastGrid({super.key});
+  final void Function(String)? onTopicTap;
+
+  const LifeAreaForecastGrid({super.key, this.onTopicTap});
 
   @override
   Widget build(BuildContext context) {
@@ -35,6 +37,7 @@ class LifeAreaForecastGrid extends StatelessWidget {
             children: [
               _buildForecastCard(
                 title: 'Career',
+                slug: 'career',
                 icon: Icons.work_outline_rounded,
                 statusText: 'FAVORABLE',
                 statusColor: const Color(0xFF379D73),
@@ -43,6 +46,7 @@ class LifeAreaForecastGrid extends StatelessWidget {
               ),
               _buildForecastCard(
                 title: 'Health',
+                slug: 'health',
                 icon: Icons.spa_outlined,
                 statusText: 'STABLE',
                 statusColor: const Color(0xFFA88143),
@@ -51,6 +55,7 @@ class LifeAreaForecastGrid extends StatelessWidget {
               ),
               _buildForecastCard(
                 title: 'Wealth',
+                slug: 'wealth',
                 icon: Icons.account_balance_outlined,
                 statusText: 'CAUTION',
                 statusColor: const Color(0xFFD35555),
@@ -59,6 +64,7 @@ class LifeAreaForecastGrid extends StatelessWidget {
               ),
               _buildForecastCard(
                 title: 'Love',
+                slug: 'love',
                 icon: Icons.favorite_border_rounded,
                 statusText: 'BRIGHT',
                 statusColor: const Color(0xFF379D73),
@@ -74,20 +80,27 @@ class LifeAreaForecastGrid extends StatelessWidget {
 
   Widget _buildForecastCard({
     required String title,
+    required String slug,
     required IconData icon,
     required String statusText,
     required Color statusColor,
     required Color statusBgColor,
     required String description,
   }) {
-    return Container(
-      padding: EdgeInsets.all(16.w),
-      decoration: BoxDecoration(
-        color: const Color(0xFFFDFCF9),
-        borderRadius: BorderRadius.circular(16.r),
-        border: Border.all(color: const Color(0xFFEAE6DF), width: 1),
-      ),
-      child: Column(
+    return GestureDetector(
+      onTap: () {
+        if (onTopicTap != null) {
+          onTopicTap!(slug);
+        }
+      },
+      child: Container(
+        padding: EdgeInsets.all(16.w),
+        decoration: BoxDecoration(
+          color: const Color(0xFFFDFCF9),
+          borderRadius: BorderRadius.circular(16.r),
+          border: Border.all(color: const Color(0xFFEAE6DF), width: 1),
+        ),
+        child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
@@ -143,6 +156,7 @@ class LifeAreaForecastGrid extends StatelessWidget {
             ),
           ),
         ],
+      ),
       ),
     );
   }

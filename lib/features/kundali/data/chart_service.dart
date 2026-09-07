@@ -154,11 +154,16 @@ class ChartService {
           'data': InsightModel.fromJson(decodedData['data']),
         };
       } else {
-        // Fallback for paid plan required or other errors during testing
-        return {'success': true, 'data': _getMockInsight(chartId, topicSlug, language, style)};
+        return {
+          'success': false,
+          'message': decodedData['message'] ?? 'Failed to load insight',
+        };
       }
     } catch (e) {
-      return {'success': true, 'data': _getMockInsight(chartId, topicSlug, language, style)};
+      return {
+        'success': false,
+        'message': e.toString(),
+      };
     }
   }
 
@@ -192,11 +197,16 @@ class ChartService {
           'data': InsightModel.fromJson(decodedData['data']),
         };
       } else {
-        // Fallback for paid plan required or other errors during testing
-        return {'success': true, 'data': _getMockInsight(chartId, topicSlug, language, style)};
+        return {
+          'success': false,
+          'message': decodedData['message'] ?? 'Failed to regenerate insight',
+        };
       }
     } catch (e) {
-      return {'success': true, 'data': _getMockInsight(chartId, topicSlug, language, style)};
+      return {
+        'success': false,
+        'message': e.toString(),
+      };
     }
   }
 

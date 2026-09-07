@@ -8,11 +8,13 @@ import '../bloc/insight_state.dart';
 import '../models/chart_model.dart';
 import '../models/insight_model.dart';
 import '../data/chart_service.dart';
+import '../../../widgets/paid_plan_widget.dart';
 
 class InsightsScreen extends StatefulWidget {
   final dynamic profileData;
+  final String? initialTopicSlug;
 
-  const InsightsScreen({super.key, this.profileData});
+  const InsightsScreen({super.key, this.profileData, this.initialTopicSlug});
 
   @override
   State<InsightsScreen> createState() => _InsightsScreenState();
@@ -22,10 +24,26 @@ class _InsightsScreenState extends State<InsightsScreen> {
   bool _isDetailed = false;
   bool _showEnglish = true;
   int? _chartId;
+  late String _selectedTopicSlug;
+
+  final List<Map<String, String>> _topics = [
+    {'title': 'Health', 'slug': 'health'},
+    {'title': 'Career', 'slug': 'career'},
+    {'title': 'Education', 'slug': 'education'},
+    {'title': 'Marriage', 'slug': 'marriage'},
+    {'title': 'Wealth', 'slug': 'wealth'},
+    {'title': 'Love', 'slug': 'love'},
+  ];
+
+  String _getCapitalizedTopic(String slug) {
+    if (slug.isEmpty) return 'Insight';
+    return slug[0].toUpperCase() + slug.substring(1);
+  }
 
   @override
   void initState() {
     super.initState();
+    _selectedTopicSlug = widget.initialTopicSlug ?? 'health';
     _fetchInsightData();
   }
 
@@ -48,7 +66,7 @@ class _InsightsScreenState extends State<InsightsScreen> {
 
     context.read<InsightBloc>().add(LoadInsight(
       chartId: _chartId!,
-      topicSlug: 'health',
+      topicSlug: _selectedTopicSlug,
       language: lang,
       style: apiStyle,
     ));
@@ -61,7 +79,7 @@ class _InsightsScreenState extends State<InsightsScreen> {
 
     context.read<InsightBloc>().add(RegenerateInsight(
       chartId: _chartId!,
-      topicSlug: 'health',
+      topicSlug: _selectedTopicSlug,
       language: lang,
       style: apiStyle,
     ));
@@ -162,11 +180,23 @@ class _InsightsScreenState extends State<InsightsScreen> {
               physics: const BouncingScrollPhysics(),
               child: Row(
                 children: [
-                  _buildCategoryPill('Health', true),
-                  SizedBox(width: 12.w),
-                  _buildCategoryPill('Education', false),
-                  SizedBox(width: 12.w),
-                  _buildCategoryPill('Marriage', false),
+                  ..._topics.map((topic) {
+                    final bool isActive = _selectedTopicSlug == topic['slug'];
+                    return Padding(
+                      padding: EdgeInsets.only(right: 12.w),
+                      child: GestureDetector(
+                        onTap: () {
+                          if (!isActive) {
+                            setState(() {
+                              _selectedTopicSlug = topic['slug']!;
+                            });
+                            _fetchInsightData();
+                          }
+                        },
+                        child: _buildCategoryPill(topic['title']!, isActive),
+                      ),
+                    );
+                  }).toList(),
                 ],
               ),
             ),
@@ -222,9 +252,13 @@ class _InsightsScreenState extends State<InsightsScreen> {
                 if (state is InsightLoading || state is InsightInitial) {
                   return Center(child: Padding(padding: EdgeInsets.all(32.w), child: CircularProgressIndicator(color: const Color(0xFFA88143))));
                 } else if (state is InsightError) {
+                  if (state.message.toLowerCase().contains('paid plan')) {
+                    return const PaidPlanWidget(featureName: 'Topic insights');
+                  }
                   return Center(child: Padding(padding: EdgeInsets.all(32.w), child: Text(state.message, style: TextStyle(color: Colors.red))));
                 } else if (state is InsightLoaded) {
                   final _insightModel = state.insightData;
+                  
                   return Padding(
               padding: EdgeInsets.symmetric(horizontal: 24.w),
               child: Container(
@@ -240,10 +274,10 @@ class _InsightsScreenState extends State<InsightsScreen> {
                   children: [
                     Row(
                       children: [
-                        Icon(Icons.medical_services_rounded, color: const Color(0xFFA88143), size: 20.sp),
+                        Icon(Icons.lightbulb_rounded, color: const Color(0xFFA88143), size: 20.sp),
                         SizedBox(width: 8.w),
                         Text(
-                          'Health & Vitality',
+                          _getCapitalizedTopic(_insightModel.topicSlug),
                           style: TextStyle(
                             fontFamily: 'Georgia',
                             fontSize: 18.sp,
@@ -254,46 +288,16 @@ class _InsightsScreenState extends State<InsightsScreen> {
                       ],
                     ),
                     SizedBox(height: 24.h),
-                    Text(
-                      '"A robust alignment of the Lagna Lord suggests a natural resilience and strong constitution."',
-                      style: TextStyle(
-                        fontFamily: 'Georgia',
-                        fontSize: 22.sp,
-                        fontStyle: FontStyle.italic,
-                        fontWeight: FontWeight.w600,
-                        color: const Color(0xFF0F172A),
-                        height: 1.4,
-                      ),
-                    ),
-                    SizedBox(height: 24.h),
                     Container(width: 48.w, height: 1.h, color: const Color(0xFFEAE6DF)),
                     SizedBox(height: 24.h),
-                    Builder(
-                      builder: (context) {
-                        final parts = _insightModel.content.split('|||');
-                        return Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              parts[0],
-                              style: TextStyle(
-                                fontFamily: 'Inter',
-                                fontSize: 13.sp,
-                                color: const Color(0xFF475569),
-                                height: 1.6,
-                              ),
-                            ),
-                            if (parts.length > 2) ...[
-                              SizedBox(height: 24.h),
-                              _buildSubSection(parts[1], parts[2]),
-                            ],
-                            if (parts.length > 4) ...[
-                              SizedBox(height: 16.h),
-                              _buildSubSection(parts[3], parts[4]),
-                            ],
-                          ],
-                        );
-                      },
+                    Text(
+                      _insightModel.content,
+                      style: TextStyle(
+                        fontFamily: 'Inter',
+                        fontSize: 13.sp,
+                        color: const Color(0xFF475569),
+                        height: 1.6,
+                      ),
                     ),
                     SizedBox(height: 32.h),
                     Divider(color: const Color(0xFFEAE6DF), height: 1),
@@ -316,24 +320,47 @@ class _InsightsScreenState extends State<InsightsScreen> {
                             ),
                           ],
                         ),
-                        GestureDetector(
-                          onTap: () {}, // Add share functionality later
-                          child: Row(
-                            children: [
-                              Text(
-                                'Share\nReport',
-                                textAlign: TextAlign.right,
-                                style: TextStyle(
-                                  fontFamily: 'Inter',
-                                  fontSize: 12.sp,
-                                  fontWeight: FontWeight.w700,
-                                  color: const Color(0xFF0F172A),
-                                ),
+                        Row(
+                          children: [
+                            GestureDetector(
+                              onTap: _regenerateInsight,
+                              child: Row(
+                                children: [
+                                  Icon(Icons.refresh_rounded, size: 16.sp, color: const Color(0xFFA88143)),
+                                  SizedBox(width: 4.w),
+                                  Text(
+                                    'Regenerate',
+                                    style: TextStyle(
+                                      fontFamily: 'Inter',
+                                      fontSize: 12.sp,
+                                      fontWeight: FontWeight.w700,
+                                      color: const Color(0xFFA88143),
+                                    ),
+                                  ),
+                                ],
                               ),
-                              SizedBox(width: 8.w),
-                              Icon(Icons.share, size: 16.sp, color: const Color(0xFF0F172A)),
-                            ],
-                          ),
+                            ),
+                            SizedBox(width: 16.w),
+                            GestureDetector(
+                              onTap: () {}, // Add share functionality later
+                              child: Row(
+                                children: [
+                                  Text(
+                                    'Share',
+                                    textAlign: TextAlign.right,
+                                    style: TextStyle(
+                                      fontFamily: 'Inter',
+                                      fontSize: 12.sp,
+                                      fontWeight: FontWeight.w700,
+                                      color: const Color(0xFF0F172A),
+                                    ),
+                                  ),
+                                  SizedBox(width: 4.w),
+                                  Icon(Icons.share, size: 16.sp, color: const Color(0xFF0F172A)),
+                                ],
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),

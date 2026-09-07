@@ -4,6 +4,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../bloc/profile_bloc.dart';
 import '../bloc/profile_event.dart';
 import '../bloc/profile_state.dart';
+import '../../../widgets/paid_plan_widget.dart';
+
 class EditProfileScreen extends StatefulWidget {
   final dynamic profileData;
 
@@ -101,12 +103,24 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               'birth_place_name': _locationController.text.trim(),
             }); 
           } else if (state is ProfileError) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(state.message, style: const TextStyle(color: Colors.white)),
-                backgroundColor: Colors.red,
-              ),
-            );
+            final isPlanError = state.message.toLowerCase().contains('plan') || state.message.toLowerCase().contains('limit');
+            if (isPlanError) {
+              showModalBottomSheet(
+                context: context,
+                backgroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
+                ),
+                builder: (context) => const PaidPlanWidget(featureName: 'Editing profiles'),
+              );
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(state.message, style: const TextStyle(color: Colors.white)),
+                  backgroundColor: Colors.red,
+                ),
+              );
+            }
           }
         },
         builder: (context, state) {

@@ -12,6 +12,7 @@ import '../../../widgets/transit_status_section.dart';
 import '../../../widgets/daily_guidance_card.dart';
 import '../../../widgets/life_area_forecast_grid.dart';
 import '../../../widgets/ask_guru_banner.dart';
+import '../../kundali/presentation/insights_screen.dart';
 
 class DashboardScreen extends StatefulWidget {
   final String? userName;
@@ -63,10 +64,24 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   ),
                   SizedBox(height: 32.h),
                   const TransitStatusSection(),
+                
                   SizedBox(height: 32.h),
                   const DailyGuidanceCard(),
                   SizedBox(height: 32.h),
-                  const LifeAreaForecastGrid(),
+                  LifeAreaForecastGrid(
+                    onTopicTap: (slug) {
+                      final defaultProfile = _cachedProfiles.isNotEmpty ? _cachedProfiles.first : null;
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => InsightsScreen(
+                            profileData: defaultProfile,
+                            initialTopicSlug: slug,
+                          ),
+                        ),
+                      );
+                    },
+                  ),
                   SizedBox(height: 32.h),
                   const AskGuruBanner(),
                   SizedBox(height: 48.h),
