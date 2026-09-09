@@ -33,6 +33,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.2"
+  calendar_date_picker2:
+    dependency: "direct main"
+    description:
+      name: calendar_date_picker2
+      sha256: d6ea697c7fc0eebc64c62ad2ac6232a8c38795010bd8466b687bfebcbbdd872e
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.0.0"
   characters:
     dependency: transitive
     description:
@@ -168,6 +176,54 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "8.2.1"
+  google_identity_services_web:
+    dependency: transitive
+    description:
+      name: google_identity_services_web
+      sha256: "5d187c46dc59e02646e10fe82665fc3884a9b71bc1c90c2b8b749316d33ee454"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.3.3+1"
+  google_sign_in:
+    dependency: "direct main"
+    description:
+      name: google_sign_in
+      sha256: d0a2c3bcb06e607bb11e4daca48bd4b6120f0bbc4015ccebbe757d24ea60ed2a
+      url: "https://pub.dev"
+    source: hosted
+    version: "6.3.0"
+  google_sign_in_android:
+    dependency: transitive
+    description:
+      name: google_sign_in_android
+      sha256: d5e23c56a4b84b6427552f1cf3f98f716db3b1d1a647f16b96dbb5b93afa2805
+      url: "https://pub.dev"
+    source: hosted
+    version: "6.2.1"
+  google_sign_in_ios:
+    dependency: transitive
+    description:
+      name: google_sign_in_ios
+      sha256: "102005f498ce18442e7158f6791033bbc15ad2dcc0afa4cf4752e2722a516c96"
+      url: "https://pub.dev"
+    source: hosted
+    version: "5.9.0"
+  google_sign_in_platform_interface:
+    dependency: transitive
+    description:
+      name: google_sign_in_platform_interface
+      sha256: "5f6f79cf139c197261adb6ac024577518ae48fdff8e53205c5373b5f6430a8aa"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.5.0"
+  google_sign_in_web:
+    dependency: transitive
+    description:
+      name: google_sign_in_web
+      sha256: "460547beb4962b7623ac0fb8122d6b8268c951cf0b646dd150d60498430e4ded"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.12.4+4"
   hooks:
     dependency: transitive
     description:
@@ -192,6 +248,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.1.2"
+  intl:
+    dependency: "direct main"
+    description:
+      name: intl
+      sha256: d6f56758b7d3014a48af9701c085700aac781a92a87a62b1333b46d8879661cf
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.19.0"
   jni:
     dependency: transitive
     description:
@@ -280,6 +344,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.18.0"
+  nepali_date_picker:
+    dependency: "direct main"
+    description:
+      name: nepali_date_picker
+      sha256: b2b59072228ac42c290420e6ca9962683c5ad9b5c2d341f1c12dc14d77674eb4
+      url: "https://pub.dev"
+    source: hosted
+    version: "6.0.2"
+  nepali_utils:
+    dependency: transitive
+    description:
+      name: nepali_utils
+      sha256: "686ac878ca844e0ec264a7c0da6404ab7992db5b9120d3ffe1356a3b1de266f4"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.0.8"
   nested:
     dependency: transitive
     description:

@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:google_sign_in/google_sign_in.dart';
 
 class AuthService {
   static const String baseUrl = 'https://api.digitalkundali.com/api';
@@ -27,6 +28,7 @@ class AuthService {
           'email': email,
           'password': password,
           'password_confirmation': passwordConfirmation,
+          
         }),
       );
 
@@ -95,6 +97,61 @@ class AuthService {
       return {
         'success': false,
         'message': 'Network error occurred. Please try again.',
+      };
+    }
+  }
+
+  static Future<Map<String, dynamic>> googleLogin() async {
+    final url = Uri.parse('$baseUrl/auth/google');
+    
+    try {
+      // Initialize GoogleSignIn using the Web Client ID from Google Cloud Console
+      final GoogleSignIn googleSignIn = GoogleSignIn(
+        serverClientId: '1084761234012-ulut15lblmcf3ee59fo4kqgvpkda4qqo.apps.googleusercontent.com', // <-- Replace with your Google Cloud Console Web Client ID
+      );
+      final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
+      
+      if (googleUser == null) {
+        return {
+          'success': false,
+          'message': 'Google login cancelled',
+        };
+      }
+
+      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+      
+      // We send the Google ID token to the backend
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        body: jsonEncode({
+          'id_token': googleAuth.idToken,
+        }),
+      );
+
+      final decodedData = jsonDecode(response.body);
+
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        token = decodedData['token'] ?? decodedData['data']?['token'] ?? token;
+        userId = decodedData['user']?['id']?.toString() ?? decodedData['data']?['user']?['id']?.toString() ?? userId;
+        return {
+          'success': true,
+          'data': decodedData,
+        };
+      } else {
+        return {
+          'success': false,
+          'message': decodedData['message'] ?? 'Google Login failed',
+          'errors': decodedData['errors'],
+        };
+      }
+    } catch (e) {
+      return {
+        'success': false,
+        'message': 'Google Login error: ${e.toString()}',
       };
     }
   }

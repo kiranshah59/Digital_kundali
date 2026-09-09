@@ -6,6 +6,7 @@ import '../data/auth_service.dart';
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   AuthBloc() : super(AuthInitial()) {
     on<AuthLoginRequested>(_onLoginRequested);
+    on<AuthGoogleLoginRequested>(_onGoogleLoginRequested);
     on<AuthSignUpRequested>(_onSignUpRequested);
     on<AuthLogoutRequested>(_onLogoutRequested);
   }
@@ -26,6 +27,25 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         emit(AuthSuccess(userName: userName));
       } else {
         emit(AuthError(message: result['message'] ?? 'Login failed'));
+      }
+    } catch (e) {
+      emit(AuthError(message: e.toString()));
+    }
+  }
+
+  Future<void> _onGoogleLoginRequested(
+    AuthGoogleLoginRequested event,
+    Emitter<AuthState> emit,
+  ) async {
+    emit(AuthLoading());
+    try {
+      final result = await AuthService.googleLogin();
+
+      if (result['success']) {
+        final String? userName = result['data']?['data']?['user']?['name'];
+        emit(AuthSuccess(userName: userName));
+      } else {
+        emit(AuthError(message: result['message'] ?? 'Google Login failed'));
       }
     } catch (e) {
       emit(AuthError(message: e.toString()));

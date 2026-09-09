@@ -294,7 +294,9 @@ class _LoginScreenState extends State<LoginScreen> {
                           width: double.infinity,
                           height: 52.h,
                           child: OutlinedButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              context.read<AuthBloc>().add(AuthGoogleLoginRequested());
+                            },
                             style: OutlinedButton.styleFrom(
                               backgroundColor: const Color(0xFFFAF9F5),
                               side: const BorderSide(color: Color(0xFFEAE6DF)),

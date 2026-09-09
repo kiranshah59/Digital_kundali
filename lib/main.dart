@@ -7,7 +7,6 @@ import 'features/profile/bloc/profile_bloc.dart';
 import 'features/kundali/bloc/kundali_bloc.dart';
 import 'features/kundali/bloc/insight_bloc.dart';
 
-
 void main() {
 
   // widgetsFlutterBinding.ensureInitialized();

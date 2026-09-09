@@ -3,6 +3,8 @@ import 'package:digital_kundali_app/features/onboarding/presentation/onboarding_
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
+
+
 class SplashScreen extends StatefulWidget {
   final VoidCallback onNext;
 
