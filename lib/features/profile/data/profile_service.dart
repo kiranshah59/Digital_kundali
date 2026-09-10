@@ -14,7 +14,9 @@ class ProfileService {
     final String prefix = AuthService.userId ?? 'guest';
     final String? profilesJson = prefs.getString('${prefix}_mocked_profiles');
     if (profilesJson != null) {
-      _mockedProfiles = jsonDecode(profilesJson);
+      final List<dynamic> decoded = jsonDecode(profilesJson);
+      // Remove any profiles with fake timestamp IDs that caused duplicates
+      _mockedProfiles = decoded.where((p) => p['id'] is int && (p['id'] as int) < 1000000000).toList();
     }
     final String? apiJson = prefs.getString('${prefix}_cached_api_profiles');
     if (apiJson != null) {
@@ -132,9 +134,6 @@ class ProfileService {
       final decodedData = jsonDecode(response.body);
 
       if (response.statusCode >= 200 && response.statusCode < 300) {
-        // API succeeded, but we also save locally in case backend doesn't persist properly
-        _mockedProfiles.add(newProfile);
-        await _saveMockedProfiles();
         return {
           'success': true,
           'data': decodedData['data'],

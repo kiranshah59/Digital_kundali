@@ -687,7 +687,7 @@ class _BirthChartDetailScreenState extends State<BirthChartDetailScreen> {
           SizedBox(height: 16.h),
           _buildParamRow(
             'PLACE OF BIRTH',
-            profileData?['place_of_birth'] ?? 'New Delhi, India',
+            profileData?['place_of_birth'] ?? profileData?['birth_place_name'] ?? 'New Delhi, India',
           ),
 
           SizedBox(height: 24.h),
@@ -704,7 +704,7 @@ class _BirthChartDetailScreenState extends State<BirthChartDetailScreen> {
               SizedBox(width: 8.w),
               Expanded(
                 child: Text(
-                  'Coordinates: 28.6139° N, 77.2090° E',
+                  'Coordinates: ${profileData?['latitude'] ?? '28.6139'}° N, ${profileData?['longitude'] ?? '77.2090'}° E',
                   style: TextStyle(
                     fontFamily: 'Inter',
                     fontSize: 10.sp,
