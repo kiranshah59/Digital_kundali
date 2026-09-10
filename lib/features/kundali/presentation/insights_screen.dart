@@ -64,12 +64,14 @@ class _InsightsScreenState extends State<InsightsScreen> {
     String lang = _showEnglish ? 'en' : 'ne';
     String apiStyle = _isDetailed ? 'technical' : 'simple';
 
-    context.read<InsightBloc>().add(LoadInsight(
-      chartId: _chartId!,
-      topicSlug: _selectedTopicSlug,
-      language: lang,
-      style: apiStyle,
-    ));
+    context.read<InsightBloc>().add(
+      LoadInsight(
+        chartId: _chartId!,
+        topicSlug: _selectedTopicSlug,
+        language: lang,
+        style: apiStyle,
+      ),
+    );
   }
 
   void _regenerateInsight() {
@@ -77,26 +79,33 @@ class _InsightsScreenState extends State<InsightsScreen> {
     String lang = _showEnglish ? 'en' : 'ne';
     String apiStyle = _isDetailed ? 'technical' : 'simple';
 
-    context.read<InsightBloc>().add(RegenerateInsight(
-      chartId: _chartId!,
-      topicSlug: _selectedTopicSlug,
-      language: lang,
-      style: apiStyle,
-    ));
+    context.read<InsightBloc>().add(
+      RegenerateInsight(
+        chartId: _chartId!,
+        topicSlug: _selectedTopicSlug,
+        language: lang,
+        style: apiStyle,
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     final String fullName = widget.profileData?['full_name'] ?? 'Unknown User';
-    
+
     // Get initials
-    final List<String> nameParts = fullName.split(' ').where((p) => p.isNotEmpty).toList();
+    final List<String> nameParts = fullName
+        .split(' ')
+        .where((p) => p.isNotEmpty)
+        .toList();
     String initials = 'U';
     if (nameParts.isNotEmpty) {
       if (nameParts.length >= 2) {
         initials = '${nameParts[0][0]}${nameParts[1][0]}'.toUpperCase();
       } else {
-        initials = nameParts[0].length >= 2 ? nameParts[0].substring(0, 2).toUpperCase() : nameParts[0].toUpperCase();
+        initials = nameParts[0].length >= 2
+            ? nameParts[0].substring(0, 2).toUpperCase()
+            : nameParts[0].toUpperCase();
       }
     }
 
@@ -106,7 +115,11 @@ class _InsightsScreenState extends State<InsightsScreen> {
         backgroundColor: const Color(0xFFFAF9F5),
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: const Color(0xFF11141A), size: 24.sp),
+          icon: Icon(
+            Icons.arrow_back,
+            color: const Color(0xFF11141A),
+            size: 24.sp,
+          ),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
@@ -133,10 +146,21 @@ class _InsightsScreenState extends State<InsightsScreen> {
                   CircleAvatar(
                     radius: 12.r,
                     backgroundColor: const Color(0xFF11141A),
-                    child: Text(initials, style: TextStyle(color: Colors.white, fontSize: 10.sp, fontWeight: FontWeight.bold)),
+                    child: Text(
+                      initials,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 10.sp,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ),
                   SizedBox(width: 4.w),
-                  Icon(Icons.keyboard_arrow_down, size: 16.sp, color: Colors.grey),
+                  Icon(
+                    Icons.keyboard_arrow_down,
+                    size: 16.sp,
+                    color: Colors.grey,
+                  ),
                 ],
               ),
             ),
@@ -165,14 +189,17 @@ class _InsightsScreenState extends State<InsightsScreen> {
                   _buildTopTab('Rashi', false, () {
                     Navigator.pushReplacement(
                       context,
-                      MaterialPageRoute(builder: (context) => RashiScreen(profileData: widget.profileData)),
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            RashiScreen(profileData: widget.profileData),
+                      ),
                     );
                   }),
                 ],
               ),
             ),
             SizedBox(height: 24.h),
-            
+
             // Category Pills
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
@@ -216,8 +243,14 @@ class _InsightsScreenState extends State<InsightsScreen> {
                     ),
                     child: Row(
                       children: [
-                        _buildToggle('Simple', !_isDetailed, () { setState(() => _isDetailed = false); _fetchInsightData(); }),
-                        _buildToggle('Detailed', _isDetailed, () { setState(() => _isDetailed = true); _fetchInsightData(); }),
+                        _buildToggle('Simple', !_isDetailed, () {
+                          setState(() => _isDetailed = false);
+                          _fetchInsightData();
+                        }),
+                        _buildToggle('Detailed', _isDetailed, () {
+                          setState(() => _isDetailed = true);
+                          _fetchInsightData();
+                        }),
                       ],
                     ),
                   ),
@@ -229,8 +262,14 @@ class _InsightsScreenState extends State<InsightsScreen> {
                     ),
                     child: Row(
                       children: [
-                        _buildToggle('EN', _showEnglish, () { setState(() => _showEnglish = true); _fetchInsightData(); }),
-                        _buildToggle('NE', !_showEnglish, () { setState(() => _showEnglish = false); _fetchInsightData(); }),
+                        _buildToggle('EN', _showEnglish, () {
+                          setState(() => _showEnglish = true);
+                          _fetchInsightData();
+                        }),
+                        _buildToggle('NE', !_showEnglish, () {
+                          setState(() => _showEnglish = false);
+                          _fetchInsightData();
+                        }),
                       ],
                     ),
                   ),
@@ -243,150 +282,199 @@ class _InsightsScreenState extends State<InsightsScreen> {
             BlocConsumer<InsightBloc, InsightState>(
               listener: (context, state) {
                 if (state is InsightError) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(state.message)),
-                  );
+                  ScaffoldMessenger.of(
+                    context,
+                  ).showSnackBar(SnackBar(content: Text(state.message)));
                 }
               },
               builder: (context, state) {
                 if (state is InsightLoading || state is InsightInitial) {
-                  return Center(child: Padding(padding: EdgeInsets.all(32.w), child: CircularProgressIndicator(color: const Color(0xFFA88143))));
+                  return Center(
+                    child: Padding(
+                      padding: EdgeInsets.all(32.w),
+                      child: CircularProgressIndicator(
+                        color: const Color(0xFFA88143),
+                      ),
+                    ),
+                  );
                 } else if (state is InsightError) {
                   if (state.message.toLowerCase().contains('paid plan')) {
                     return const PaidPlanWidget(featureName: 'Topic insights');
                   }
-                  return Center(child: Padding(padding: EdgeInsets.all(32.w), child: Text(state.message, style: TextStyle(color: Colors.red))));
-                } else if (state is InsightLoaded) {
-                  final _insightModel = state.insightData;
-                  
-                  return Padding(
-              padding: EdgeInsets.symmetric(horizontal: 24.w),
-              child: Container(
-                width: double.infinity,
-                padding: EdgeInsets.all(24.w),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12.r),
-                  border: Border.all(color: const Color(0xFFEAE6DF)),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Icon(Icons.lightbulb_rounded, color: const Color(0xFFA88143), size: 20.sp),
-                        SizedBox(width: 8.w),
-                        Text(
-                          _getCapitalizedTopic(_insightModel.topicSlug),
-                          style: TextStyle(
-                            fontFamily: 'Georgia',
-                            fontSize: 18.sp,
-                            fontWeight: FontWeight.w600,
-                            color: const Color(0xFF0F172A),
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 24.h),
-                    Container(width: 48.w, height: 1.h, color: const Color(0xFFEAE6DF)),
-                    SizedBox(height: 24.h),
-                    Text(
-                      _insightModel.content,
-                      style: TextStyle(
-                        fontFamily: 'Inter',
-                        fontSize: 13.sp,
-                        color: const Color(0xFF475569),
-                        height: 1.6,
+                  return Center(
+                    child: Padding(
+                      padding: EdgeInsets.all(32.w),
+                      child: Text(
+                        state.message,
+                        style: TextStyle(color: Colors.red),
                       ),
                     ),
-                    SizedBox(height: 32.h),
-                    Divider(color: const Color(0xFFEAE6DF), height: 1),
-                    SizedBox(height: 16.h),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Row(
-                          children: [
-                            Icon(Icons.verified, color: const Color(0xFFA88143), size: 12.sp),
-                            SizedBox(width: 6.w),
-                            Text(
-                              'Calculated with Precision\nAlgorithm v4.2',
-                              style: TextStyle(
-                                fontFamily: 'Inter',
-                                fontSize: 10.sp,
-                                color: const Color(0xFF94A3B8),
-                                height: 1.4,
+                  );
+                } else if (state is InsightLoaded) {
+                  final _insightModel = state.insightData;
+
+                  return Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 24.w),
+                    child: Container(
+                      width: double.infinity,
+                      padding: EdgeInsets.all(24.w),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12.r),
+                        border: Border.all(color: const Color(0xFFEAE6DF)),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Icon(
+                                Icons.lightbulb_rounded,
+                                color: const Color(0xFFA88143),
+                                size: 20.sp,
                               ),
+                              SizedBox(width: 8.w),
+                              Text(
+                                _getCapitalizedTopic(_insightModel.topicSlug),
+                                style: TextStyle(
+                                  fontFamily: 'Georgia',
+                                  fontSize: 18.sp,
+                                  fontWeight: FontWeight.w600,
+                                  color: const Color(0xFF0F172A),
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 24.h),
+                          Container(
+                            width: 48.w,
+                            height: 1.h,
+                            color: const Color(0xFFEAE6DF),
+                          ),
+                          SizedBox(height: 24.h),
+                          Text(
+                            _insightModel.content,
+                            style: TextStyle(
+                              fontFamily: 'Inter',
+                              fontSize: 13.sp,
+                              color: const Color(0xFF475569),
+                              height: 1.6,
                             ),
-                          ],
-                        ),
-                        Row(
-                          children: [
-                            GestureDetector(
-                              onTap: _regenerateInsight,
-                              child: Row(
+                          ),
+                          SizedBox(height: 32.h),
+                          Divider(color: const Color(0xFFEAE6DF), height: 1),
+                          SizedBox(height: 16.h),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Row(
                                 children: [
-                                  Icon(Icons.refresh_rounded, size: 16.sp, color: const Color(0xFFA88143)),
-                                  SizedBox(width: 4.w),
+                                  Icon(
+                                    Icons.verified,
+                                    color: const Color(0xFFA88143),
+                                    size: 12.sp,
+                                  ),
+                                  SizedBox(width: 6.w),
                                   Text(
-                                    'Regenerate',
+                                    'Calculated with Precision\nAlgorithm v4.2',
                                     style: TextStyle(
                                       fontFamily: 'Inter',
-                                      fontSize: 12.sp,
-                                      fontWeight: FontWeight.w700,
-                                      color: const Color(0xFFA88143),
+                                      fontSize: 10.sp,
+                                      color: const Color(0xFF94A3B8),
+                                      height: 1.4,
                                     ),
                                   ),
                                 ],
                               ),
-                            ),
-                            SizedBox(width: 16.w),
-                            GestureDetector(
-                              onTap: () {}, // Add share functionality later
-                              child: Row(
+                              Row(
                                 children: [
-                                  Text(
-                                    'Share',
-                                    textAlign: TextAlign.right,
-                                    style: TextStyle(
-                                      fontFamily: 'Inter',
-                                      fontSize: 12.sp,
-                                      fontWeight: FontWeight.w700,
-                                      color: const Color(0xFF0F172A),
+                                  GestureDetector(
+                                    onTap: _regenerateInsight,
+                                    child: Row(
+                                      children: [
+                                        Icon(
+                                          Icons.refresh_rounded,
+                                          size: 16.sp,
+                                          color: const Color(0xFFA88143),
+                                        ),
+                                        SizedBox(width: 4.w),
+                                        Text(
+                                          'Regenerate',
+                                          style: TextStyle(
+                                            fontFamily: 'Inter',
+                                            fontSize: 12.sp,
+                                            fontWeight: FontWeight.w700,
+                                            color: const Color(0xFFA88143),
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ),
-                                  SizedBox(width: 4.w),
-                                  Icon(Icons.share, size: 16.sp, color: const Color(0xFF0F172A)),
+                                  SizedBox(width: 16.w),
+                                  GestureDetector(
+                                    onTap:
+                                        () {}, // Add share functionality later
+                                    child: Row(
+                                      children: [
+                                        Text(
+                                          'Share',
+                                          textAlign: TextAlign.right,
+                                          style: TextStyle(
+                                            fontFamily: 'Inter',
+                                            fontSize: 12.sp,
+                                            fontWeight: FontWeight.w700,
+                                            color: const Color(0xFF0F172A),
+                                          ),
+                                        ),
+                                        SizedBox(width: 4.w),
+                                        Icon(
+                                          Icons.share,
+                                          size: 16.sp,
+                                          color: const Color(0xFF0F172A),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
                                 ],
                               ),
-                            ),
-                          ],
-                        ),
-                      ],
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
-                  ],
-                ),
-              ),
-            );
-          }
-          return const SizedBox.shrink();
-        }),
+                  );
+                }
+                return const SizedBox.shrink();
+              },
+            ),
             SizedBox(height: 16.h),
 
             // Mini Cards List
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 24.w),
-              child: _buildMiniCard(Icons.star_border, 'Daily Dasha', 'Jupiter Mahadasha continues to favor mental clarity and internal growth.'),
+              child: _buildMiniCard(
+                Icons.star_border,
+                'Daily Dasha',
+                'Jupiter Mahadasha continues to favor mental clarity and internal growth.',
+              ),
             ),
             SizedBox(height: 16.h),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 24.w),
-              child: _buildMiniCard(Icons.cloud_outlined, 'Transit Impact', 'Saturn\'s transit suggests a need for structural changes in your work-life balance.'),
+              child: _buildMiniCard(
+                Icons.cloud_outlined,
+                'Transit Impact',
+                'Saturn\'s transit suggests a need for structural changes in your work-life balance.',
+              ),
             ),
             SizedBox(height: 16.h),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 24.w),
-              child: _buildMiniCard(Icons.shield_outlined, 'Moons Influence', 'Waning crescent phase indicates a good time for introspection and detoxification.'),
+              child: _buildMiniCard(
+                Icons.shield_outlined,
+                'Moons Influence',
+                'Waning crescent phase indicates a good time for introspection and detoxification.',
+              ),
             ),
             SizedBox(height: 32.h),
           ],
@@ -481,7 +569,9 @@ class _InsightsScreenState extends State<InsightsScreen> {
       padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 8.h),
       decoration: BoxDecoration(
         color: isActive ? const Color(0xFF0A0A0C) : Colors.white,
-        border: Border.all(color: isActive ? Colors.transparent : const Color(0xFFEAE6DF)),
+        border: Border.all(
+          color: isActive ? Colors.transparent : const Color(0xFFEAE6DF),
+        ),
         borderRadius: BorderRadius.circular(8.r),
       ),
       child: Text(
@@ -504,7 +594,15 @@ class _InsightsScreenState extends State<InsightsScreen> {
         decoration: BoxDecoration(
           color: isActive ? Colors.white : Colors.transparent,
           borderRadius: BorderRadius.circular(4.r),
-          boxShadow: isActive ? [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 2, offset: const Offset(0, 1))] : [],
+          boxShadow: isActive
+              ? [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.05),
+                    blurRadius: 2,
+                    offset: const Offset(0, 1),
+                  ),
+                ]
+              : [],
         ),
         child: Text(
           text,

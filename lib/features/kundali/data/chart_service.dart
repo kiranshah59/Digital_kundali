@@ -212,6 +212,48 @@ class ChartService {
 
   // --- MOCK DATA FOR TESTING API INTEGRATION LOCALLY ---
 
+  static Future<Map<String, dynamic>> getDasha(
+    int profileId, {
+    String language = 'en',
+    String style = 'technical',
+  }) async {
+    final url = Uri.parse(
+      '$baseUrl/birth-profiles/$profileId/dasha?language=$language&style=$style',
+    );
+    try {
+      final response = await http
+          .get(
+            url,
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json',
+              if (AuthService.token != null)
+                'Authorization': 'Bearer ${AuthService.token}',
+            },
+          )
+          .timeout(const Duration(seconds: 30));
+
+      final decodedData = jsonDecode(response.body);
+
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        return {
+          'success': true,
+          'data': decodedData,
+        };
+      } else {
+        return {
+          'success': false,
+          'message': decodedData['message'] ?? 'Failed to load dasha',
+        };
+      }
+    } catch (e) {
+      return {
+        'success': false,
+        'message': e.toString(),
+      };
+    }
+  }
+
   static ChartModel _getMockChart(int profileId) {
     int signOffset = (profileId.toString().hashCode.abs()) % 12;
     List<String> signs = [

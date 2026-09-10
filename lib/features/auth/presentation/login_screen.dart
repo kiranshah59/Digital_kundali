@@ -81,77 +81,11 @@ class _LoginScreenState extends State<LoginScreen> {
                           width: 160.w,
                           height: 160.h,
                           decoration: const BoxDecoration(color: Colors.white),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              SvgPicture.asset(
-                                'assets/images/splash.svg',
-                                width: 50.w,
-                                height: 50.h,
-                              ),
-                              SizedBox(height: 12.h),
-                              Text.rich(
-                                const TextSpan(
-                                  children: [
-                                    TextSpan(
-                                      text: 'DIGITAL ',
-                                      style: TextStyle(
-                                        color: Color(0xFF0A1B28),
-                                      ),
-                                    ),
-                                    TextSpan(
-                                      text: 'KUNDALI',
-                                      style: TextStyle(
-                                        color: Color(0xFFA88143),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                style: TextStyle(
-                                  fontFamily: 'Inter',
-                                  fontSize: 12.sp,
-                                  fontWeight: FontWeight.w500,
-                                  letterSpacing: 3.0,
-                                ),
-                              ),
-                              SizedBox(height: 6.h),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Container(
-                                    width: 30.w,
-                                    height: 0.5,
-                                    color: const Color(0xFFEAE6DF),
-                                  ),
-                                  Padding(
-                                    padding: EdgeInsets.symmetric(
-                                      horizontal: 4.w,
-                                    ),
-                                    child: Icon(
-                                      Icons.star,
-                                      size: 6.sp,
-                                      color: const Color(0xFFA88143),
-                                    ),
-                                  ),
-                                  Container(
-                                    width: 30.w,
-                                    height: 0.5,
-                                    color: const Color(0xFFEAE6DF),
-                                  ),
-                                ],
-                              ),
-                              SizedBox(height: 6.h),
-                              Text(
-                                'YOUR BIRTH CHART, READ WITH CLARITY',
-                                style: TextStyle(
-                                  fontFamily: 'Inter',
-                                  fontSize: 5.sp,
-                                  fontWeight: FontWeight.w600,
-                                  letterSpacing: 1.0,
-                                  color: const Color(0xFF4A4A4A),
-                                ),
-                              ),
-                            ],
+                          child: Center(
+                            child: Image.asset(
+                              'assets/images/splash.png',
+                              fit: BoxFit.contain,
+                            ),
                           ),
                         ),
                         SizedBox(height: 32.h),

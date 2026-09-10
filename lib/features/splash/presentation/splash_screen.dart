@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:digital_kundali_app/features/onboarding/presentation/onboarding_screen.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 
 
 
@@ -45,111 +44,11 @@ class _SplashScreenState extends State<SplashScreen> {
                           width: 290.w,
                           height: 280.h,
                           color: Colors.white,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              SvgPicture.asset(
-                                'assets/images/splash.svg',
-                                width: 100.w,
-                                height: 100.h,
-                              ),
-                              SizedBox(height: 8.h),
-                              FittedBox(
-                                fit: BoxFit.scaleDown,
-                                child: RichText(
-                                  text: TextSpan(
-                                    style: TextStyle(
-                                      fontFamily: 'Inter',
-                                      fontSize: 18.sp,
-                                      fontWeight: FontWeight.normal,
-                                      letterSpacing: 6.5,
-                                    ),
-                                    children: [
-                                      TextSpan(
-                                        text: 'DIGITAL ',
-                                        style: TextStyle(
-                                          color: Color(0xFF11141A),
-                                        ),
-                                      ),
-                                      TextSpan(
-                                        text: 'KUNDALI',
-                                        style: TextStyle(
-                                          color: Color(0xFFA88143),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                              SizedBox(height: 12.h),
-                              FittedBox(
-                                fit: BoxFit.scaleDown,
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Container(
-                                      width: 120.w,
-                                      height: 1,
-                                      decoration: BoxDecoration(
-                                        gradient: LinearGradient(
-                                          colors: [
-                                            const Color(
-                                              0xFFA88143,
-                                            ).withValues(alpha: 0.0),
-                                            const Color(
-                                              0xFFA88143,
-                                            ).withValues(alpha: 0.5),
-                                          ],
-                                          begin: Alignment.centerLeft,
-                                          end: Alignment.centerRight,
-                                        ),
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: EdgeInsets.symmetric(
-                                        horizontal: 10,
-                                      ),
-                                      child: SizedBox(
-                                        width: 10.w,
-                                        height: 10.h,
-                                        child: CustomPaint(
-                                          painter: _SparklePainter(),
-                                        ),
-                                      ),
-                                    ),
-                                    Container(
-                                      width: 120.w,
-                                      height: 1,
-                                      decoration: BoxDecoration(
-                                        gradient: LinearGradient(
-                                          colors: [
-                                            const Color(
-                                              0xFFA88143,
-                                            ).withValues(alpha: 0.5),
-                                            const Color(
-                                              0xFFA88143,
-                                            ).withValues(alpha: 0.0),
-                                          ],
-                                          begin: Alignment.centerLeft,
-                                          end: Alignment.centerRight,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              SizedBox(height: 12.h),
-                              Text(
-                                'YOUR BIRTH CHART, READ WITH CLARITY',
-                                style: TextStyle(
-                                  fontFamily: 'Inter',
-                                  fontSize: 6.sp,
-                                  fontWeight: FontWeight.w600,
-                                  letterSpacing: 1.5,
-                                  color: Color(0xFF11141A),
-                                ),
-                              ),
-                            ],
+                          child: Center(
+                            child: Image.asset(
+                              'assets/images/splash.png',
+                              fit: BoxFit.contain,
+                            ),
                           ),
                         ),
                       ),
@@ -208,7 +107,7 @@ class _SplashScreenState extends State<SplashScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: List.generate(
-                          4,
+                          3,
                           (index) => Container(
                             margin: EdgeInsets.symmetric(horizontal: 3.w),
                             width: 4.w,
@@ -231,26 +130,4 @@ class _SplashScreenState extends State<SplashScreen> {
       ),
     );
   }
-}
-
-class _SparklePainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = const Color(0xFFA88143)
-      ..style = PaintingStyle.fill;
-    final cx = size.width / 2;
-    final cy = size.height / 2;
-    final path = Path()
-      ..moveTo(cx, 0)
-      ..quadraticBezierTo(cx, cy, size.width, cy)
-      ..quadraticBezierTo(cx, cy, cx, size.height)
-      ..quadraticBezierTo(cx, cy, 0, cy)
-      ..quadraticBezierTo(cx, cy, cx, 0)
-      ..close();
-    canvas.drawPath(path, paint);
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
