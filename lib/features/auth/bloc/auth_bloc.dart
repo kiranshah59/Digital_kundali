@@ -62,7 +62,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         name: event.name,
         email: event.email,
         password: event.password,
-        passwordConfirmation: event.passwordConfirmation,
+        passwordConfirmation: event.passwordConfirmation,                           
       );
 
       if (result['success']) {

@@ -128,19 +128,68 @@ class _DashboardScreenState extends State<DashboardScreen> {
           ),
         ),
         IconButton(
-          onPressed: () async {
-            context.read<ProfileBloc>().add(ClearProfiles()); // Add this event if we clear them in bloc
-            await AuthService.logout();
-            if (context.mounted) {
-              Navigator.of(context).pushAndRemoveUntil(
-                MaterialPageRoute(builder: (_) => const MainPageView()),
-                (route) => false,
-              );
-            }
+          onPressed: () {
+            showDialog(
+              context: context,
+              builder: (BuildContext dialogContext) {
+                return AlertDialog(
+                  backgroundColor: const Color(0xFF424242),
+                  title: const Text(
+                    'Log out',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  content: const Text(
+                    'Are you sure you want to log out?',
+                    style: TextStyle(
+                      color: Colors.white70,
+                      fontSize: 16,
+                    ),
+                  ),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.of(dialogContext).pop(),
+                      child: const Text(
+                        'CANCEL',
+                        style: TextStyle(
+                          color: Color(0xFF80CBC4),
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                    TextButton(
+                      onPressed: () async {
+                        Navigator.of(dialogContext).pop(); // Close dialog
+                        context.read<ProfileBloc>().add(ClearProfiles());
+                        await AuthService.logout();
+                        if (context.mounted) {
+                          Navigator.of(context).pushAndRemoveUntil(
+                            MaterialPageRoute(
+                              builder: (_) => const MainPageView(),
+                            ),
+                            (route) => false,
+                          );
+                        }
+                      },
+                      child: const Text(
+                        'LOG OUT',
+                        style: TextStyle(
+                          color: Color(0xFF80CBC4),
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  ],
+                );
+              },
+            );
           },
           icon: Icon(
             Icons.logout,
-            color: Colors.red,
+            color: const Color(0xFF11141A),
             size: 24.sp,
           ),
         ),

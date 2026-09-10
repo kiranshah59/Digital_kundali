@@ -43,12 +43,16 @@ class ChartService {
           'message': 'Session expired. Please log in again.',
         };
       } else {
-        // Mock fallback for testing without paid plan
-        return {'success': true, 'data': _getMockChart(profileId)};
+        return {
+          'success': false,
+          'message': decodedData['message'] ?? 'Failed to load chart',
+        };
       }
     } catch (e) {
-      // Mock fallback for network error
-      return {'success': true, 'data': _getMockChart(profileId)};
+      return {
+        'success': false,
+        'message': e.toString(),
+      };
     }
   }
 
@@ -81,12 +85,16 @@ class ChartService {
           'message': 'Session expired. Please log in again.',
         };
       } else {
-        // Mock fallback for testing without paid plan
-        return {'success': true, 'data': _getMockChart(profileId)};
+        return {
+          'success': false,
+          'message': decodedData['message'] ?? 'Failed to generate chart',
+        };
       }
     } catch (e) {
-      // Mock fallback for network error
-      return {'success': true, 'data': _getMockChart(profileId)};
+      return {
+        'success': false,
+        'message': e.toString(),
+      };
     }
   }
 
@@ -113,12 +121,16 @@ class ChartService {
           'data': NepaliKundaliModel.fromJson(decodedData['data']),
         };
       } else {
-        // Mock fallback for testing without paid plan
-        return {'success': true, 'data': _getMockNepali(chartId)};
+        return {
+          'success': false,
+          'message': decodedData['message'] ?? 'Failed to load Nepali Kundali',
+        };
       }
     } catch (e) {
-      // Mock fallback for network error
-      return {'success': true, 'data': _getMockNepali(chartId)};
+      return {
+        'success': false,
+        'message': e.toString(),
+      };
     }
   }
 
@@ -210,8 +222,6 @@ class ChartService {
     }
   }
 
-  // --- MOCK DATA FOR TESTING API INTEGRATION LOCALLY ---
-
   static Future<Map<String, dynamic>> getDasha(
     int profileId, {
     String language = 'en',
@@ -252,239 +262,5 @@ class ChartService {
         'message': e.toString(),
       };
     }
-  }
-
-  static ChartModel _getMockChart(int profileId) {
-    int signOffset = (profileId.toString().hashCode.abs()) % 12;
-    List<String> signs = [
-      "Aries",
-      "Taurus",
-      "Gemini",
-      "Cancer",
-      "Leo",
-      "Virgo",
-      "Libra",
-      "Scorpio",
-      "Sagittarius",
-      "Capricorn",
-      "Aquarius",
-      "Pisces",
-    ];
-
-    return ChartModel.fromJson({
-      "id": profileId,
-      "birth_profile_id": profileId,
-      "ayanamsa_system": "lahiri",
-      "house_system": "whole_sign",
-      "chart_data": {
-        "ascendant": {
-          "sign": signs[signOffset],
-          "degree": 12.5,
-          "nakshatra": "Ashwini",
-          "pada": 1,
-        },
-        "planets": {
-          "sun": {
-            "sign": signs[(signOffset + 1) % 12],
-            "degree": 14.32,
-            "house": 2,
-            "nakshatra": "Krittika",
-            "pada": 2,
-            "retrograde": false,
-          },
-          "moon": {
-            "sign": signs[(signOffset + 2) % 12],
-            "degree": 5.2,
-            "house": 3,
-            "nakshatra": "Mrigashira",
-            "pada": 1,
-            "retrograde": false,
-          },
-          "mars": {
-            "sign": signs[(signOffset + 3) % 12],
-            "degree": 21.1,
-            "house": 4,
-            "nakshatra": "Punarvasu",
-            "pada": 4,
-            "retrograde": false,
-          },
-          "mercury": {
-            "sign": signs[(signOffset + 4) % 12],
-            "degree": 28.56,
-            "house": 5,
-            "nakshatra": "Magha",
-            "pada": 1,
-            "retrograde": false,
-          },
-          "jupiter": {
-            "sign": signs[(signOffset + 5) % 12],
-            "degree": 5.12,
-            "house": 6,
-            "nakshatra": "Chitra",
-            "pada": 1,
-            "retrograde": false,
-          },
-          "venus": {
-            "sign": signs[(signOffset + 6) % 12],
-            "degree": 18.33,
-            "house": 7,
-            "nakshatra": "Vishakha",
-            "pada": 1,
-            "retrograde": false,
-          },
-          "saturn": {
-            "sign": signs[(signOffset + 7) % 12],
-            "degree": 26.09,
-            "house": 8,
-            "nakshatra": "Jyeshtha",
-            "pada": 1,
-            "retrograde": false,
-          },
-        },
-        "houses": List.generate(12, (index) => {
-          "house": index + 1,
-          "sign": signs[(signOffset + index) % 12],
-        }),
-        "ayanamsa_value": 24.16,
-        "julian_day_ut": 2449823.927,
-      },
-      "engine_version": "1.0.0",
-      "generated_at": DateTime.now().toUtc().toIso8601String(),
-    });
-  }
-
-  static NepaliKundaliModel _getMockNepali(int chartId) {
-    int offset = (chartId.toString().hashCode.abs()) % 12;
-    List<String> signsEn = [
-      "Aries",
-      "Taurus",
-      "Gemini",
-      "Cancer",
-      "Leo",
-      "Virgo",
-      "Libra",
-      "Scorpio",
-      "Sagittarius",
-      "Capricorn",
-      "Aquarius",
-      "Pisces",
-    ];
-    List<String> signsDev = [
-      "१",
-      "२",
-      "३",
-      "४",
-      "५",
-      "६",
-      "७",
-      "८",
-      "९",
-      "१०",
-      "११",
-      "१२",
-    ];
-
-    return NepaliKundaliModel.fromJson({
-      "ascendant": {
-        "sign_en": signsEn[offset],
-        "sign_devanagari": signsDev[offset],
-        "degree_devanagari": "१२.५",
-      },
-      "houses": List.generate(12, (index) {
-        int houseNum = index + 1;
-        int signIdx = (offset + index) % 12;
-
-        List<Map<String, dynamic>> planets = [];
-        if (houseNum == 2) {
-          planets.add({
-            "key": "sun",
-            "name_devanagari": "सूर्य",
-            "degree_devanagari": "१४.३२",
-            "retrograde": false,
-          });
-        }
-        if (houseNum == 3) {
-          planets.add({
-            "key": "moon",
-            "name_devanagari": "चन्द्र",
-            "degree_devanagari": "५.२",
-            "retrograde": false,
-          });
-        }
-        if (houseNum == 4) {
-          planets.add({
-            "key": "mars",
-            "name_devanagari": "मंगल",
-            "degree_devanagari": "२१.१",
-            "retrograde": false,
-          });
-        }
-        if (houseNum == 5) {
-          planets.add({
-            "key": "mercury",
-            "name_devanagari": "बुध",
-            "degree_devanagari": "२८.५६",
-            "retrograde": false,
-          });
-        }
-        if (houseNum == 6) {
-          planets.add({
-            "key": "jupiter",
-            "name_devanagari": "गुरु",
-            "degree_devanagari": "५.१२",
-            "retrograde": false,
-          });
-        }
-        if (houseNum == 7) {
-          planets.add({
-            "key": "venus",
-            "name_devanagari": "शुक्र",
-            "degree_devanagari": "१८.३३",
-            "retrograde": false,
-          });
-        }
-        if (houseNum == 8) {
-          planets.add({
-            "key": "saturn",
-            "name_devanagari": "शनि",
-            "degree_devanagari": "२६.०९",
-            "retrograde": false,
-          });
-        }
-
-        return {
-          "house": houseNum,
-          "sign_en": signsEn[signIdx],
-          "sign_devanagari": signsDev[signIdx],
-          "planets": planets,
-        };
-      }),
-    });
-  }
-
-  static InsightModel _getMockInsight(int chartId, String topicSlug, String language, String style) {
-    String mockContent = "Your astrological chart indicates a high degree of general vitality. The placement of the First House Lord in a Kendra house provides you with the physical stamina necessary to manage high-stress environments.";
-    
-    if (language == 'ne') {
-      mockContent = "तपाईंको कुण्डली अनुसार $topicSlug को स्थिति सामान्य छ। गुरुको प्रभावले राम्रो फल प्राप्त हुनेछ। मिहिनेत अनुसार सफलता मिल्नेछ।";
-    }
-
-    if (language == 'ne') {
-      mockContent += "|||ग्रहको बल|||यो समयमा नयाँ कामको थालनी गर्दा सफलता मिल्ने सम्भावना छ। शनि र मंगलको अवस्था हेर्दा स्वास्थ्यमा अलि बढी ध्यान दिनुपर्ने देखिन्छ।";
-      mockContent += "|||सुझाव|||आफ्नो स्वास्थ्यमा विशेष ध्यान दिनुहोला र नियमित व्यायाम गर्नुहोला।";
-    } else {
-      mockContent += "|||PLANETARY STRENGTH|||The Sun's position in Aries provides excellent recovery capabilities. You possess a natural drive to maintain physical wellness through active movement.";
-      mockContent += "|||WELLNESS SUGGESTIONS|||Prioritize hydration and consistent sleep cycles. Moderate fire-based activities (Agni Yoga) can help balance your internal metabolic furnace.";
-    }
-
-    return InsightModel.fromJson({
-      "id": DateTime.now().millisecondsSinceEpoch % 100000,
-      "chart_id": chartId,
-      "insight_topic_id": topicSlug.hashCode.abs() % 100,
-      "topic_slug": topicSlug,
-      "language": language,
-      "style": style,
-      "content": mockContent,
-    });
   }
 }
