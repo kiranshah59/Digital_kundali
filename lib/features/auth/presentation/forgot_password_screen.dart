@@ -65,77 +65,11 @@ class ForgotPasswordScreen extends StatelessWidget {
                             color: Colors.white,
                             borderRadius: BorderRadius.circular(16.r),
                           ),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              SvgPicture.asset(
-                                'assets/images/splash.svg',
-                                width: 44.w,
-                                height: 44,
-                              ),
-                              SizedBox(height: 10),
-                              Text.rich(
-                                TextSpan(
-                                  children: [
-                                    TextSpan(
-                                      text: 'DIGITAL ',
-                                      style: TextStyle(
-                                        color: Color(0xFF0A1B28),
-                                      ),
-                                    ),
-                                    TextSpan(
-                                      text: 'KUNDALI',
-                                      style: TextStyle(
-                                        color: Color(0xFFA88143),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                style: TextStyle(
-                                  fontFamily: 'Inter',
-                                  fontSize: 10.sp,
-                                  fontWeight: FontWeight.w500,
-                                  letterSpacing: 2.5,
-                                ),
-                              ),
-                              SizedBox(height: 4),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Container(
-                                    width: 24.w,
-                                    height: 0.5,
-                                    color: const Color(0xFFEAE6DF),
-                                  ),
-                                  Padding(
-                                    padding: EdgeInsets.symmetric(
-                                      horizontal: 4.w,
-                                    ),
-                                    child: Icon(
-                                      Icons.star,
-                                      size: 5.sp,
-                                      color: Color(0xFFA88143),
-                                    ),
-                                  ),
-                                  Container(
-                                    width: 24.w,
-                                    height: 0.5,
-                                    color: const Color(0xFFEAE6DF),
-                                  ),
-                                ],
-                              ),
-                              SizedBox(height: 4),
-                              Text(
-                                'YOUR BIRTH CHART, READ WITH CLARITY',
-                                style: TextStyle(
-                                  fontFamily: 'Inter',
-                                  fontSize: 5.sp,
-                                  fontWeight: FontWeight.w600,
-                                  letterSpacing: 1.0,
-                                  color: Color(0xFF4A4A4A),
-                                ),
-                              ),
-                            ],
+                          child: Center(
+                            child: Image.asset(
+                              'assets/images/splash.png',
+                              fit: BoxFit.contain,
+                            ),
                           ),
                         ),
 

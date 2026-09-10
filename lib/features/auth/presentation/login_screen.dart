@@ -117,7 +117,10 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                         SizedBox(height: 32.h),
                         // Email Field
-                        _buildLabel('EMAIL ADDRESS'),
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: _buildLabel('EMAIL ADDRESS'),
+                        ),
                         SizedBox(height: 8.h),
                         _buildTextField('your@email.com', _emailController),
 
