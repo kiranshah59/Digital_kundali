@@ -1,82 +1,35 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:shared_preferences/shared_preferences.dart';
 import '../../auth/data/auth_service.dart';
 
 class ProfileService {
   static const String baseUrl = 'https://api.digitalkundali.com/api';
 
-  static List<dynamic> _mockedProfiles = [];
-  static List<dynamic> _lastApiProfiles = [];
-
-  static Future<void> _loadMockedProfiles() async {
-    final prefs = await SharedPreferences.getInstance();
-    final String prefix = AuthService.userId ?? 'guest';
-    final String? profilesJson = prefs.getString('${prefix}_mocked_profiles');
-    if (profilesJson != null) {
-      final List<dynamic> decoded = jsonDecode(profilesJson);
-      // Remove any profiles with fake timestamp IDs that caused duplicates
-      _mockedProfiles = decoded.where((p) => p['id'] is int && (p['id'] as int) < 1000000000).toList();
-    }
-    final String? apiJson = prefs.getString('${prefix}_cached_api_profiles');
-    if (apiJson != null) {
-      _lastApiProfiles = jsonDecode(apiJson);
-    }
-  }
-
-  static Future<void> _saveMockedProfiles() async {
-    final prefs = await SharedPreferences.getInstance();
-    final String prefix = AuthService.userId ?? 'guest';
-    await prefs.setString('${prefix}_mocked_profiles', jsonEncode(_mockedProfiles));
-    await prefs.setString('${prefix}_cached_api_profiles', jsonEncode(_lastApiProfiles));
-  }
-
   static Future<void> clearProfiles() async {
-    final prefs = await SharedPreferences.getInstance();
-    final String prefix = AuthService.userId ?? 'guest';
-    await prefs.remove('${prefix}_mocked_profiles');
-    await prefs.remove('${prefix}_cached_api_profiles');
-    _mockedProfiles = [];
-    _lastApiProfiles = [];
-  }
-
-  static List<dynamic> _getMergedProfiles(List<dynamic> apiProfiles) {
-    final Map<int, dynamic> merged = {};
-    for (var p in apiProfiles) {
-      merged[p['id']] = p;
-    }
-    for (var p in _mockedProfiles) {
-      merged[p['id']] = p;
-    }
-    return merged.values.toList();
+    
   }
 
   static Future<Map<String, dynamic>> getProfiles() async {
-    await _loadMockedProfiles();
     final url = Uri.parse('$baseUrl/birth-profiles');
 
     try {
-      final response = await http.get(
-        url,
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-          if (AuthService.token != null)
-            'Authorization': 'Bearer ${AuthService.token}',
-        },
-      ).timeout(const Duration(seconds: 30));
+      final response = await http
+          .get(
+            url,
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json',
+              if (AuthService.token != null)
+                'Authorization': 'Bearer ${AuthService.token}',
+            },
+          )
+          .timeout(const Duration(seconds: 30));
 
       final decodedData = jsonDecode(response.body);
 
       if (response.statusCode >= 200 && response.statusCode < 300) {
         final List<dynamic> apiProfiles = decodedData['data'] ?? [];
-        _lastApiProfiles = apiProfiles;
-        await _saveMockedProfiles();
-        
-        return {
-          'success': true,
-          'data': _getMergedProfiles(apiProfiles),
-        };
+        return {'success': true, 'data': apiProfiles};
       } else {
         return {
           'success': false,
@@ -99,9 +52,7 @@ class ProfileService {
   }) async {
     final url = Uri.parse('$baseUrl/birth-profiles');
 
-    // Create the profile map to be used either by API or locally
-    final newProfile = {
-      'id': DateTime.now().millisecondsSinceEpoch,
+    final newProfilePayload = {
       'full_name': fullName,
       'relationship': 'self',
       'gender': 'female',
@@ -110,26 +61,26 @@ class ProfileService {
       'place_of_birth': birthPlaceName,
       'birth_place_name': birthPlaceName,
       'is_primary': false,
+      'time_of_birth_precision': 'exact',
+      'latitude': 27.6710464, // Mock for now, requires Geocoding integration later
+      'longitude': 85.4297794, // Mock for now
+      'timezone': 'Asia/Kathmandu',
+      'calendar_system': 'AD',
     };
 
     try {
-      final response = await http.post(
-        url,
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-          if (AuthService.token != null)
-            'Authorization': 'Bearer ${AuthService.token}',
-        },
-        body: jsonEncode({
-          ...newProfile,
-          'time_of_birth_precision': 'exact',
-          'latitude': 27.6710464, // Mock for now
-          'longitude': 85.4297794, // Mock for now
-          'timezone': 'Asia/Kathmandu',
-          'calendar_system': 'AD',
-        }),
-      ).timeout(const Duration(seconds: 30));
+      final response = await http
+          .post(
+            url,
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json',
+              if (AuthService.token != null)
+                'Authorization': 'Bearer ${AuthService.token}',
+            },
+            body: jsonEncode(newProfilePayload),
+          )
+          .timeout(const Duration(seconds: 30));
 
       final decodedData = jsonDecode(response.body);
 
@@ -172,26 +123,28 @@ class ProfileService {
     };
 
     try {
-      final response = await http.put(
-        url,
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-          if (AuthService.token != null)
-            'Authorization': 'Bearer ${AuthService.token}',
-        },
-        body: jsonEncode({
-          ...updatedData,
-          'time_of_birth_precision': 'exact',
-          'timezone': 'Asia/Kathmandu',
-          'calendar_system': 'AD',
-        }),
-      ).timeout(const Duration(seconds: 30));
+
+      final response = await http
+          .put(
+            url,
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json',
+              if (AuthService.token != null)
+                'Authorization': 'Bearer ${AuthService.token}',
+            },
+            body: jsonEncode({
+              ...updatedData,
+              'time_of_birth_precision': 'exact',
+              'timezone': 'Asia/Kathmandu',
+              'calendar_system': 'AD',
+            }),
+          )
+          .timeout(const Duration(seconds: 30));
 
       final decodedData = jsonDecode(response.body);
 
       if (response.statusCode >= 200 && response.statusCode < 300) {
-        await _updateMockedProfileLocally(id, updatedData, originalProfile);
         return {
           'success': true,
           'data': decodedData['data'],
@@ -215,34 +168,24 @@ class ProfileService {
     final url = Uri.parse('$baseUrl/birth-profiles/$id');
 
     try {
-      final response = await http.delete(
-        url,
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-          if (AuthService.token != null)
-            'Authorization': 'Bearer ${AuthService.token}',
-        },
-      ).timeout(const Duration(seconds: 30));
+      final response = await http
+          .delete(
+            url,
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json',
+              if (AuthService.token != null)
+                'Authorization': 'Bearer ${AuthService.token}',
+            },
+          )
+          .timeout(const Duration(seconds: 30));
 
       if (response.statusCode >= 200 && response.statusCode < 300) {
-        await _deleteMockedProfileLocally(id);
-        return {
-          'success': true,
-          'message': 'Profile deleted successfully',
-        };
+        return {'success': true, 'message': 'Profile deleted successfully'};
       } else if (response.statusCode == 404) {
-        // If the backend says it doesn't exist, we must still clean it up locally
-        await _deleteMockedProfileLocally(id);
-        return {
-          'success': true,
-          'message': 'Profile removed',
-        };
+        return {'success': true, 'message': 'Profile removed'};
       } else {
-        return {
-          'success': false,
-          'message': 'Failed to delete profile',
-        };
+        return {'success': false, 'message': 'Failed to delete profile'};
       }
     } catch (e) {
       return {
@@ -250,26 +193,5 @@ class ProfileService {
         'message': 'Network error while deleting profile',
       };
     }
-  }
-
-  static Future<void> _deleteMockedProfileLocally(int id) async {
-    _mockedProfiles.removeWhere((p) => p['id'] == id);
-    _lastApiProfiles.removeWhere((p) => p['id'] == id);
-    await _saveMockedProfiles();
-  }
-
-  static Future<void> _updateMockedProfileLocally(int id, Map<String, dynamic> updatedData, Map<String, dynamic>? originalProfile) async {
-    final index = _mockedProfiles.indexWhere((p) => p['id'] == id);
-    if (index != -1) {
-      final current = Map<String, dynamic>.from(_mockedProfiles[index]);
-      current.addAll(updatedData);
-      _mockedProfiles[index] = current;
-    } else if (originalProfile != null) {
-      // It's an API profile being overridden locally
-      final current = Map<String, dynamic>.from(originalProfile);
-      current.addAll(updatedData);
-      _mockedProfiles.add(current);
-    }
-    await _saveMockedProfiles();
   }
 }

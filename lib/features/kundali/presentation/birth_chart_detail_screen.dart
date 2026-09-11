@@ -7,6 +7,7 @@ import 'rashi_screen.dart';
 import '../../profile/presentation/edit_profile_screen.dart';
 import '../../profile/data/profile_service.dart';
 import '../../auth/data/auth_service.dart';
+import '../../auth/presentation/login_screen.dart';
 import '../models/chart_model.dart';
 import '../models/nepali_kundali_model.dart';
 import '../data/chart_service.dart';
@@ -65,9 +66,10 @@ class _BirthChartDetailScreenState extends State<BirthChartDetailScreen> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text(chartRes['message'] ?? 'Session expired')),
           );
-          Navigator.of(
-            context,
-          ).pushNamedAndRemoveUntil('/login', (route) => false);
+          Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(builder: (_) => const LoginScreen()),
+            (route) => false,
+          );
           return;
         }
 

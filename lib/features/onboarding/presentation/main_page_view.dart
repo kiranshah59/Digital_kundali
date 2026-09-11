@@ -6,6 +6,7 @@ import 'onboarding_screen.dart';
 import 'onboarding_clarity_screen.dart';
 import 'onboarding_insights_screen.dart';
 import '../../auth/presentation/sign_up_screen.dart';
+import '../../auth/presentation/login_screen.dart';
 
 class MainPageView extends StatefulWidget {
   const MainPageView({super.key});
@@ -53,10 +54,8 @@ class _MainPageViewState extends State<MainPageView> {
   }
 
   void _skipToLastPage() {
-    _pageController.animateToPage(
-      3,
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.easeInOut,
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(builder: (_) => const LoginScreen()),
     );
   }
 
@@ -67,7 +66,7 @@ class _MainPageViewState extends State<MainPageView> {
         children: [
           PageView(
             controller: _pageController,
-            physics: const BouncingScrollPhysics(),
+            physics: const _OnboardingPhysics(),
             children: [
               SplashScreen(onNext: _goToNext),
               OnboardingScreen(onNext: _goToNext),
@@ -114,10 +113,10 @@ class _MainPageViewState extends State<MainPageView> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          // Dots
+          // Dots (3 dots for the 3 onboarding pages, index 1 to 3)
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: List.generate(4, (index) => _buildDot(index)),
+            children: List.generate(3, (index) => _buildDot(index + 1)),
           ),
           SizedBox(height: 32.h),
 
@@ -216,5 +215,35 @@ class _MainPageViewState extends State<MainPageView> {
         ),
       ),
     );
+  }
+}
+
+class _OnboardingPhysics extends ScrollPhysics {
+  const _OnboardingPhysics({super.parent});
+
+  @override
+  _OnboardingPhysics applyTo(ScrollPhysics? ancestor) {
+    return _OnboardingPhysics(parent: buildParent(ancestor));
+  }
+
+  @override
+  bool shouldAcceptUserOffset(ScrollMetrics position) {
+    // Prevent manual swipe if on page 0 (splash screen)
+    if (position.pixels < position.viewportDimension) {
+      return false;
+    }
+    return true;
+  }
+
+  @override
+  double applyBoundaryConditions(ScrollMetrics position, double value) {
+    final page1Offset = position.viewportDimension;
+    
+    // Prevent swiping back to page 0
+    if (value < page1Offset && position.pixels >= page1Offset) {
+      return value - position.pixels;
+    }
+    
+    return super.applyBoundaryConditions(position, value);
   }
 }

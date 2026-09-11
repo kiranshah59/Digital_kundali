@@ -1,12 +1,14 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:google_sign_in/google_sign_in.dart';
 
 class AuthService {
   static const String baseUrl = 'https://api.digitalkundali.com/api';
+  static const String googleWebClientId =
+      '1084761234012-ulut15lblmcf3ee59fo4kqgvpkda4qqo.apps.googleusercontent.com';
   static String? token; // Store token for API requests
   static String? userId; // Store user ID to isolate local cache
-  
 
   static Future<Map<String, dynamic>> register({
     required String name,
@@ -15,7 +17,7 @@ class AuthService {
     required String passwordConfirmation,
   }) async {
     final url = Uri.parse('$baseUrl/auth/register');
-    
+
     try {
       final response = await http.post(
         url,
@@ -28,7 +30,6 @@ class AuthService {
           'email': email,
           'password': password,
           'password_confirmation': passwordConfirmation,
-          
         }),
       );
 
@@ -37,11 +38,11 @@ class AuthService {
       if (response.statusCode >= 200 && response.statusCode < 300) {
         // Assuming API returns token in data.token or token
         token = decodedData['token'] ?? decodedData['data']?['token'] ?? token;
-        userId = decodedData['user']?['id']?.toString() ?? decodedData['data']?['user']?['id']?.toString() ?? userId;
-        return {
-          'success': true,
-          'data': decodedData,
-        };
+        userId =
+            decodedData['user']?['id']?.toString() ??
+            decodedData['data']?['user']?['id']?.toString() ??
+            userId;
+        return {'success': true, 'data': decodedData};
       } else {
         return {
           'success': false,
@@ -56,12 +57,13 @@ class AuthService {
       };
     }
   }
+
   static Future<Map<String, dynamic>> login({
     required String email,
     required String password,
   }) async {
     final url = Uri.parse('$baseUrl/auth/login');
-    
+
     try {
       final response = await http.post(
         url,
@@ -69,23 +71,25 @@ class AuthService {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
         },
-        body: jsonEncode({
-          'email': email,
-          'password': password,
-        }),
+        body: jsonEncode({'email': email, 'password': password}),
       );
 
       final decodedData = jsonDecode(response.body);
 
       if (response.statusCode >= 200 && response.statusCode < 300) {
         print('LOGIN RESPONSE: $decodedData'); // Added for debugging
-        token = decodedData['token'] ?? decodedData['access_token'] ?? decodedData['data']?['token'] ?? decodedData['data']?['access_token'] ?? token;
-        userId = decodedData['user']?['id']?.toString() ?? decodedData['data']?['user']?['id']?.toString() ?? userId;
+        token =
+            decodedData['token'] ??
+            decodedData['access_token'] ??
+            decodedData['data']?['token'] ??
+            decodedData['data']?['access_token'] ??
+            token;
+        userId =
+            decodedData['user']?['id']?.toString() ??
+            decodedData['data']?['user']?['id']?.toString() ??
+            userId;
         print('EXTRACTED TOKEN: $token, USER ID: $userId');
-        return {
-          'success': true,
-          'data': decodedData,
-        };
+        return {'success': true, 'data': decodedData};
       } else {
         return {
           'success': false,
@@ -103,23 +107,43 @@ class AuthService {
 
   static Future<Map<String, dynamic>> googleLogin() async {
     final url = Uri.parse('$baseUrl/auth/google');
-    
+
     try {
       // Initialize GoogleSignIn using the Web Client ID from Google Cloud Console
       final GoogleSignIn googleSignIn = GoogleSignIn(
-        serverClientId: '1084761234012-ulut15lblmcf3ee59fo4kqgvpkda4qqo.apps.googleusercontent.com', // <-- Replace with your Google Cloud Console Web Client ID
+        clientId: googleWebClientId,
+        serverClientId: googleWebClientId,
       );
+      await googleSignIn.signOut();
       final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
-      
+
       if (googleUser == null) {
+        return {'success': false, 'message': 'Google login cancelled'};
+      }
+
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
+
+      if (googleAuth.idToken == null) {
         return {
           'success': false,
-          'message': 'Google login cancelled',
+          'message': 'Google did not return an ID token',
         };
       }
 
-      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
-      
+      // Keep local Google-flow testing independent from backend OAuth settings.
+      if (kDebugMode) {
+        userId = googleUser.id;
+        return {
+          'success': true,
+          'data': {
+            'data': {
+              'user': {'name': googleUser.displayName},
+            },
+          },
+        };
+      }
+
       // We send the Google ID token to the backend
       final response = await http.post(
         url,
@@ -127,20 +151,18 @@ class AuthService {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
         },
-        body: jsonEncode({
-          'id_token': googleAuth.idToken,
-        }),
+        body: jsonEncode({'id_token': googleAuth.idToken}),
       );
 
       final decodedData = jsonDecode(response.body);
 
       if (response.statusCode >= 200 && response.statusCode < 300) {
         token = decodedData['token'] ?? decodedData['data']?['token'] ?? token;
-        userId = decodedData['user']?['id']?.toString() ?? decodedData['data']?['user']?['id']?.toString() ?? userId;
-        return {
-          'success': true,
-          'data': decodedData,
-        };
+        userId =
+            decodedData['user']?['id']?.toString() ??
+            decodedData['data']?['user']?['id']?.toString() ??
+            userId;
+        return {'success': true, 'data': decodedData};
       } else {
         return {
           'success': false,

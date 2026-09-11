@@ -5,7 +5,7 @@ import '../../profile/bloc/profile_bloc.dart';
 import '../../profile/bloc/profile_event.dart';
 import '../../profile/bloc/profile_state.dart';
 import '../../auth/data/auth_service.dart';
-import '../../onboarding/presentation/main_page_view.dart';
+import '../../auth/presentation/login_screen.dart';
 
 import '../../../widgets/birth_profiles_section.dart';
 import '../../../widgets/transit_status_section.dart';
@@ -168,7 +168,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         if (context.mounted) {
                           Navigator.of(context).pushAndRemoveUntil(
                             MaterialPageRoute(
-                              builder: (_) => const MainPageView(),
+                              builder: (_) => const LoginScreen(),
                             ),
                             (route) => false,
                           );
