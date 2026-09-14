@@ -689,7 +689,9 @@ class _BirthChartDetailScreenState extends State<BirthChartDetailScreen> {
           SizedBox(height: 16.h),
           _buildParamRow(
             'PLACE OF BIRTH',
-            profileData?['place_of_birth'] ?? profileData?['birth_place_name'] ?? 'New Delhi, India',
+            profileData?['place_of_birth'] ??
+                profileData?['birth_place_name'] ??
+                'New Delhi, India',
           ),
 
           SizedBox(height: 24.h),

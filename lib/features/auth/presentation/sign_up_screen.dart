@@ -34,6 +34,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
     super.dispose();
   }
 
+
+//register api
   void _handleRegister() {
     final name = _nameController.text.trim();
     final email = _emailController.text.trim();
@@ -57,6 +59,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
     context.read<AuthBloc>().add(AuthSignUpRequested(email: email, password: password, passwordConfirmation: _confirmPasswordController.text, name: name));
   }
+
+//register api end
 
   @override
   Widget build(BuildContext context) {

@@ -52,6 +52,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     }
   }
 
+ 
+ 
+ //for register api 
+ 
   Future<void> _onSignUpRequested(
     AuthSignUpRequested event,
     Emitter<AuthState> emit,
@@ -75,6 +79,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       emit(AuthError(message: e.toString()));
     }
   }
+
+  //register api end
 
   Future<void> _onLogoutRequested(
     AuthLogoutRequested event,

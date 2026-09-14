@@ -10,6 +10,7 @@ class AuthService {
   static String? token; // Store token for API requests
   static String? userId; // Store user ID to isolate local cache
 
+  //api for register
   static Future<Map<String, dynamic>> register({
     required String name,
     required String email,
@@ -32,6 +33,7 @@ class AuthService {
           'password_confirmation': passwordConfirmation,
         }),
       );
+      //api register
 
       final decodedData = jsonDecode(response.body);
 

@@ -5,9 +5,7 @@ import '../../auth/data/auth_service.dart';
 class ProfileService {
   static const String baseUrl = 'https://api.digitalkundali.com/api';
 
-  static Future<void> clearProfiles() async {
-    
-  }
+  static Future<void> clearProfiles() async {}
 
   static Future<Map<String, dynamic>> getProfiles() async {
     final url = Uri.parse('$baseUrl/birth-profiles');
@@ -62,7 +60,8 @@ class ProfileService {
       'birth_place_name': birthPlaceName,
       'is_primary': false,
       'time_of_birth_precision': 'exact',
-      'latitude': 27.6710464, // Mock for now, requires Geocoding integration later
+      'latitude':
+          27.6710464, // Mock for now, requires Geocoding integration later
       'longitude': 85.4297794, // Mock for now
       'timezone': 'Asia/Kathmandu',
       'calendar_system': 'AD',
@@ -123,7 +122,6 @@ class ProfileService {
     };
 
     try {
-
       final response = await http
           .put(
             url,
