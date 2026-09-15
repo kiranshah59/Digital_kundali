@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../features/kundali/bloc/kundali_bloc.dart';
+import '../features/kundali/bloc/kundali_state.dart';
 
 class TransitStatusSection extends StatelessWidget {
   const TransitStatusSection({super.key});
@@ -49,83 +52,57 @@ class TransitStatusSection extends StatelessWidget {
         SizedBox(height: 16.h),
         SizedBox(
           height: 85.h,
-          child: ListView(
-            scrollDirection: Axis.horizontal,
-            padding: EdgeInsets.symmetric(horizontal: 24.w),
-            physics: const BouncingScrollPhysics(),
-            children: [
-              _buildTransitCard(
-                planet: 'Mars (Mangal)',
-                sign: 'Aries',
-                degree: "10° 15'",
-              ),
-              SizedBox(width: 12.w),
-              _buildTransitCard(
-                planet: 'Venus (Shukra)',
-                sign: 'Taurus',
-                degree: "12° 20'",
-              ),
-              SizedBox(width: 12.w),
-              _buildTransitCard(
-                planet: 'Mercury (Budh)',
-                sign: 'Gemini',
-                degree: "05° 30'",
-              ),
-              SizedBox(width: 12.w),
-              _buildTransitCard(
-                planet: 'Moon (Chandra)',
-                sign: 'Cancer',
-                degree: "02° 45'",
-              ),
-              SizedBox(width: 12.w),
-              _buildTransitCard(
-                planet: 'Sun (Surya)',
-                sign: 'Leo',
-                degree: "14° 22'",
-              ),
-              SizedBox(width: 12.w),
-              _buildTransitCard(
-                planet: 'Mercury (Budh)',
-                sign: 'Virgo',
-                degree: "18° 10'",
-              ),
-              SizedBox(width: 12.w),
-              _buildTransitCard(
-                planet: 'Venus (Shukra)',
-                sign: 'Libra',
-                degree: "22° 05'",
-              ),
-              SizedBox(width: 12.w),
-              _buildTransitCard(
-                planet: 'Mars (Mangal)',
-                sign: 'Scorpio',
-                degree: "08° 40'",
-              ),
-              SizedBox(width: 12.w),
-              _buildTransitCard(
-                planet: 'Jupiter (Guru)',
-                sign: 'Sagittarius',
-                degree: "15° 50'",
-              ),
-              SizedBox(width: 12.w),
-              _buildTransitCard(
-                planet: 'Saturn (Shani)',
-                sign: 'Capricorn',
-                degree: "20° 11'",
-              ),
-              SizedBox(width: 12.w),
-              _buildTransitCard(
-                planet: 'Saturn (Shani)',
-                sign: 'Aquarius',
-                degree: "25° 10'",
-              ),
-              SizedBox(width: 12.w),
-              _buildTransitCard(
-                planet: 'Jupiter (Guru)',
-                sign: 'Pisces',
-                degree: "09° 05'",
-              ),
-            ],
+          child: BlocBuilder<KundaliBloc, KundaliState>(
+            builder: (context, state) {
+              if (state is KundaliLoaded) {
+                final planets = state.chartData.chartData.planets;
+                if (planets.isEmpty) {
+                  return Center(
+                    child: Text(
+                      'No transit data available',
+                      style: TextStyle(fontSize: 12.sp, color: Colors.grey),
+                    ),
+                  );
+                }
+
+                return ListView.separated(
+                  scrollDirection: Axis.horizontal,
+                  padding: EdgeInsets.symmetric(horizontal: 24.w),
+                  physics: const BouncingScrollPhysics(),
+                  itemCount: planets.length,
+                  separatorBuilder: (context, index) => SizedBox(width: 12.w),
+                  itemBuilder: (context, index) {
+                    final key = planets.keys.elementAt(index);
+                    final planetData = planets[key]!;
+                    // Make planet name look nice if it's lowercase or standard key
+                    final planetName = key[0].toUpperCase() + key.substring(1).toLowerCase();
+                    return _buildTransitCard(
+                      planet: planetName,
+                      sign: planetData.sign,
+                      degree: '${planetData.degree}°',
+                    );
+                  },
+                );
+              } else if (state is KundaliLoading) {
+                return Center(
+                  child: SizedBox(
+                    width: 24.w,
+                    height: 24.w,
+                    child: const CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: Color(0xFFA88143),
+                    ),
+                  ),
+                );
+              } else {
+                return Center(
+                  child: Text(
+                    'Transit status unavailable',
+                    style: TextStyle(fontSize: 12.sp, color: Colors.grey),
+                  ),
+                );
+              }
+            },
           ),
         ),
       ],

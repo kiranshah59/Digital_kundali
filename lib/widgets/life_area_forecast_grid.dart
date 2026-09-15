@@ -1,10 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../features/home/bloc/dashboard_bloc.dart';
+import '../features/home/bloc/dashboard_state.dart';
+
 class LifeAreaForecastGrid extends StatelessWidget {
   final void Function(String)? onTopicTap;
 
   const LifeAreaForecastGrid({super.key, this.onTopicTap});
+
+  IconData _getIconForSlug(String slug) {
+    switch (slug) {
+      case 'career': return Icons.work_outline_rounded;
+      case 'health': return Icons.spa_outlined;
+      case 'wealth': return Icons.account_balance_outlined;
+      case 'love': return Icons.favorite_border_rounded;
+      case 'marriage': return Icons.favorite_outline;
+      case 'education': return Icons.school_outlined;
+      case 'business': return Icons.business_center_outlined;
+      case 'general-nature': return Icons.person_outline;
+      case 'physical-traits': return Icons.accessibility_new_outlined;
+      case 'child': return Icons.child_care_outlined;
+      case 'social': return Icons.people_outline;
+      default: return Icons.auto_awesome_outlined;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,51 +48,39 @@ class LifeAreaForecastGrid extends StatelessWidget {
         SizedBox(height: 16.h),
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 24.w),
-          child: GridView.count(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            crossAxisCount: 2,
-            mainAxisSpacing: 16.h,
-            crossAxisSpacing: 16.w,
-            childAspectRatio: 0.9,
-            children: [
-              _buildForecastCard(
-                title: 'Career',
-                slug: 'career',
-                icon: Icons.work_outline_rounded,
-                statusText: 'FAVORABLE',
-                statusColor: const Color(0xFF379D73),
-                statusBgColor: const Color(0xFFE8F4EE),
-                description: 'Growth period starts. Mercury helps negotiation.',
-              ),
-              _buildForecastCard(
-                title: 'Health',
-                slug: 'health',
-                icon: Icons.spa_outlined,
-                statusText: 'STABLE',
-                statusColor: const Color(0xFFA88143),
-                statusBgColor: const Color(0xFFF3EFE7),
-                description: 'Energy levels consistent. Focus on sleep cycles.',
-              ),
-              _buildForecastCard(
-                title: 'Wealth',
-                slug: 'wealth',
-                icon: Icons.account_balance_outlined,
-                statusText: 'CAUTION',
-                statusColor: const Color(0xFFD35555),
-                statusBgColor: const Color(0xFFFBEAEA),
-                description: 'Avoid high-risk investments until Thursday.',
-              ),
-              _buildForecastCard(
-                title: 'Love',
-                slug: 'love',
-                icon: Icons.favorite_border_rounded,
-                statusText: 'BRIGHT',
-                statusColor: const Color(0xFF379D73),
-                statusBgColor: const Color(0xFFE8F4EE),
-                description: 'Harmonious Venus aspect. Socialize tonight.',
-              ),
-            ],
+          child: BlocBuilder<DashboardBloc, DashboardState>(
+            builder: (context, state) {
+              if (state is DashboardLoaded) {
+                final topics = state.insightTopics;
+                if (topics.isEmpty) {
+                  return const Center(child: Text('No forecast topics available'));
+                }
+                
+                return GridView.count(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  crossAxisCount: 2,
+                  mainAxisSpacing: 16.h,
+                  crossAxisSpacing: 16.w,
+                  childAspectRatio: 0.9,
+                  children: topics.map((topic) {
+                    final slug = topic['slug'] ?? 'general';
+                    return _buildForecastCard(
+                      title: topic['name'] ?? 'Topic',
+                      slug: slug,
+                      icon: _getIconForSlug(slug),
+                      statusText: 'INSIGHT',
+                      statusColor: const Color(0xFF379D73),
+                      statusBgColor: const Color(0xFFE8F4EE),
+                      description: topic['description'] ?? 'Explore your forecast for this area.',
+                    );
+                  }).toList(),
+                );
+              } else if (state is DashboardLoading) {
+                return const Center(child: CircularProgressIndicator(color: Color(0xFFA88143)));
+              }
+              return const SizedBox.shrink();
+            },
           ),
         ),
       ],

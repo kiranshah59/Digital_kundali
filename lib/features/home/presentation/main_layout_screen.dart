@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'dashboard_screen.dart';
 import '../../guru/presentation/guru_screen.dart';
+import '../../kundali/presentation/charts_tab_screen.dart';
 
 class MainLayoutScreen extends StatefulWidget {
   final String? userName;
@@ -17,7 +18,7 @@ class _MainLayoutScreenState extends State<MainLayoutScreen> {
 
   List<Widget> get _screens => [
     DashboardScreen(userName: widget.userName),
-    const Scaffold(body: Center(child: Text('Charts'))),
+    const ChartsTabScreen(),
     const Scaffold(body: Center(child: Text('Insights'))),
     GuruScreen(userName: widget.userName),
   ];

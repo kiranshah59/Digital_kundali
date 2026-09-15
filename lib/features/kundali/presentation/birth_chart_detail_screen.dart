@@ -893,12 +893,11 @@ class _BirthChartDetailScreenState extends State<BirthChartDetailScreen> {
               ],
             ),
           ),
-          // Rows
           for (int i = 0; i < planets.length; i++)
             _buildTableRow(
               planets[i].key.toUpperCase(),
               planets[i].value.sign,
-              '${planets[i].value.degree.toStringAsFixed(2)}°',
+              '${planets[i].value.degree}°',
               isEven: i % 2 != 0,
               isLast: i == planets.length - 1,
             ),

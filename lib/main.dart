@@ -6,6 +6,7 @@ import 'features/auth/bloc/auth_bloc.dart';
 import 'features/profile/bloc/profile_bloc.dart';
 import 'features/kundali/bloc/kundali_bloc.dart';
 import 'features/kundali/bloc/insight_bloc.dart';
+import 'features/home/bloc/dashboard_bloc.dart';
 
 void main() {
 
@@ -30,6 +31,7 @@ class DigitalKundaliApp extends StatelessWidget {
             BlocProvider<ProfileBloc>(create: (_) => ProfileBloc()),
             BlocProvider<KundaliBloc>(create: (_) => KundaliBloc()),
             BlocProvider<InsightBloc>(create: (_) => InsightBloc()),
+            BlocProvider<DashboardBloc>(create: (_) => DashboardBloc()),
           ],
           child: MaterialApp(
             title: 'Digital Kundali',

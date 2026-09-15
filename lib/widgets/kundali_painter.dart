@@ -42,7 +42,9 @@ class KundaliPainter extends CustomPainter {
         text: text,
         style: TextStyle(
           fontFamily: isDevanagari ? null : (isNumber ? 'Inter' : 'Georgia'),
-          fontSize: isNumber ? 10.sp : 12.sp,
+          fontSize: isDevanagari 
+            ? (isNumber ? 7.sp : 8.sp) 
+            : (isNumber ? 10.sp : 12.sp),
           fontWeight: isNumber ? FontWeight.w500 : FontWeight.w600,
           color: isNumber ? const Color(0xFFA88143) : const Color(0xFF11141A),
         ),
@@ -98,55 +100,44 @@ class KundaliPainter extends CustomPainter {
       12: Offset(w * 0.65, h * 0.15),
     };
 
-    // Translation maps for Nepali
-    final Map<String, String> devanagariNumbers = {
-      'Aries': '१', 'Taurus': '२', 'Gemini': '३', 'Cancer': '४',
-      'Leo': '५', 'Virgo': '६', 'Libra': '७', 'Scorpio': '८',
-      'Sagittarius': '९', 'Capricorn': '१०', 'Aquarius': '११', 'Pisces': '१२'
-    };
+    if (!showEnglish && nepaliModel != null) {
+      // Use the actual paid API data for Nepali Kundali
+      for (var house in nepaliModel!.houses) {
+        int houseNum = house.house;
+        if (houseNum >= 1 && houseNum <= 12) {
+          drawText(house.signDevanagari, numberPositions[houseNum]!, isNumber: true, isDevanagari: true);
 
-    final Map<String, String> devanagariPlanets = {
-      'Sun': 'सूर्य', 'Moon': 'चन्द्र', 'Mars': 'मंगल', 'Mercury': 'बुध',
-      'Jupiter': 'गुरु', 'Venus': 'शुक्र', 'Saturn': 'शनि', 'Rahu': 'राहु', 'Ketu': 'केतु'
-    };
-
-    // Group planets by house
-    final Map<int, List<String>> planetsByHouse = {};
-    chartModel!.chartData.planets.forEach((planetName, planetData) {
-      if (!planetsByHouse.containsKey(planetData.house)) {
-        planetsByHouse[planetData.house] = [];
+          if (house.planets.isNotEmpty) {
+            String planetsStr = house.planets.map((p) => p.nameDevanagari).join(', ');
+            drawText(planetsStr, housePositions[houseNum]!, isDevanagari: true);
+          }
+        }
       }
-      String pName = planetName.substring(0, 1).toUpperCase() + planetName.substring(1).toLowerCase();
-      
-      if (!showEnglish) {
-        pName = devanagariPlanets[pName] ?? pName;
-      } else {
+    } else {
+      // Use the standard English chart model
+      final Map<int, List<String>> planetsByHouse = {};
+      chartModel!.chartData.planets.forEach((planetName, planetData) {
+        if (!planetsByHouse.containsKey(planetData.house)) {
+          planetsByHouse[planetData.house] = [];
+        }
+        String pName = planetName.substring(0, 1).toUpperCase() + planetName.substring(1).toLowerCase();
+        
         // Abbreviate for English (e.g., Sun -> Su, Venus -> Ve)
         pName = pName.substring(0, 2);
-      }
-      
-      planetsByHouse[planetData.house]!.add(pName);
-    });
-
-    for (var house in chartModel!.chartData.houses) {
-      int houseNum = house.house;
-      if (houseNum >= 1 && houseNum <= 12) {
-        // Draw House Number/Sign
-        String signLabel;
-        if (showEnglish) {
-          signLabel = house.sign.substring(0, 3).toUpperCase();
-        } else {
-          // Find the capitalized sign name to match map (e.g., "leo" -> "Leo")
-          String capitalizedSign = house.sign.substring(0, 1).toUpperCase() + house.sign.substring(1).toLowerCase();
-          signLabel = devanagariNumbers[capitalizedSign] ?? house.sign;
-        }
         
-        drawText(signLabel, numberPositions[houseNum]!, isNumber: true, isDevanagari: !showEnglish);
+        planetsByHouse[planetData.house]!.add(pName);
+      });
 
-        // Draw Planets
-        if (planetsByHouse.containsKey(houseNum)) {
-          String planetsStr = planetsByHouse[houseNum]!.join(', ');
-          drawText(planetsStr, housePositions[houseNum]!, isDevanagari: !showEnglish);
+      for (var house in chartModel!.chartData.houses) {
+        int houseNum = house.house;
+        if (houseNum >= 1 && houseNum <= 12) {
+          String signLabel = house.sign.substring(0, 3).toUpperCase();
+          drawText(signLabel, numberPositions[houseNum]!, isNumber: true, isDevanagari: false);
+
+          if (planetsByHouse.containsKey(houseNum)) {
+            String planetsStr = planetsByHouse[houseNum]!.join(', ');
+            drawText(planetsStr, housePositions[houseNum]!, isDevanagari: false);
+          }
         }
       }
     }

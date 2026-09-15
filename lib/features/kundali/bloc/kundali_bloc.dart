@@ -2,6 +2,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'kundali_event.dart';
 import 'kundali_state.dart';
 import '../data/chart_service.dart';
+import '../models/chart_model.dart';
 
 class KundaliBloc extends Bloc<KundaliEvent, KundaliState> {
   KundaliBloc() : super(KundaliInitial()) {
@@ -17,16 +18,27 @@ class KundaliBloc extends Bloc<KundaliEvent, KundaliState> {
       final String fullName = event.profileData['full_name'] ?? 'Unknown';
       final int profileId = event.profileData['id'] ?? fullName.hashCode.abs();
       
-      final chartResponse = await ChartService.getChart(profileId);
-      final nepaliKundaliResponse = await ChartService.getNepaliKundali(profileId);
+      final chartResponse = event.forceRefresh 
+          ? await ChartService.generateChart(profileId)
+          : await ChartService.getChart(profileId);
+          
+      int chartId = profileId; // Fallback
+      if (chartResponse['success']) {
+        final chartModel = chartResponse['data'] as ChartModel;
+        chartId = chartModel.id;
+      }
       
-      if (chartResponse['success'] && nepaliKundaliResponse['success']) {
+      final nepaliKundaliResponse = await ChartService.getNepaliKundali(chartId);
+      
+      if (chartResponse['success']) {
         emit(KundaliLoaded(
           chartData: chartResponse['data'],
-          nepaliData: nepaliKundaliResponse['data'],
+          nepaliData: nepaliKundaliResponse['success'] ? nepaliKundaliResponse['data'] : null,
+          nepaliStatusCode: nepaliKundaliResponse['statusCode'],
+          nepaliErrorMessage: nepaliKundaliResponse['message'],
         ));
       } else {
-        emit(KundaliError(message: 'Failed to load Kundali data'));
+        emit(KundaliError(message: chartResponse['message'] ?? 'Failed to load Kundali data'));
       }
     } catch (e) {
       emit(KundaliError(message: 'Failed to generate chart. Please try again.'));

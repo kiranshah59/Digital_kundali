@@ -15,15 +15,19 @@ class KundaliLoading extends KundaliState {}
 
 class KundaliLoaded extends KundaliState {
   final ChartModel chartData;
-  final NepaliKundaliModel nepaliData;
+  final NepaliKundaliModel? nepaliData;
+  final int? nepaliStatusCode;
+  final String? nepaliErrorMessage;
 
   const KundaliLoaded({
     required this.chartData,
-    required this.nepaliData,
+    this.nepaliData,
+    this.nepaliStatusCode,
+    this.nepaliErrorMessage,
   });
 
   @override
-  List<Object?> get props => [chartData, nepaliData];
+  List<Object?> get props => [chartData, nepaliData, nepaliStatusCode, nepaliErrorMessage];
 }
 
 class KundaliError extends KundaliState {

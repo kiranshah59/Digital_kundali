@@ -9,9 +9,10 @@ abstract class KundaliEvent extends Equatable {
 
 class LoadKundaliData extends KundaliEvent {
   final Map<String, dynamic> profileData;
+  final bool forceRefresh;
 
-  const LoadKundaliData({required this.profileData});
+  const LoadKundaliData({required this.profileData, this.forceRefresh = false});
 
   @override
-  List<Object?> get props => [profileData];
+  List<Object?> get props => [profileData, forceRefresh];
 }

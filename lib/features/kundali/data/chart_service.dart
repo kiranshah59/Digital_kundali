@@ -119,17 +119,20 @@ class ChartService {
         return {
           'success': true,
           'data': NepaliKundaliModel.fromJson(decodedData['data']),
+          'statusCode': response.statusCode,
         };
       } else {
         return {
           'success': false,
           'message': decodedData['message'] ?? 'Failed to load Nepali Kundali',
+          'statusCode': response.statusCode,
         };
       }
     } catch (e) {
       return {
         'success': false,
         'message': e.toString(),
+        'statusCode': 500,
       };
     }
   }
@@ -261,6 +264,72 @@ class ChartService {
         'success': false,
         'message': e.toString(),
       };
+    }
+  }
+
+  static Future<Map<String, dynamic>> getInsightTopics() async {
+    final url = Uri.parse('$baseUrl/insight-topics');
+    try {
+      final response = await http.get(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          if (AuthService.token != null) 'Authorization': 'Bearer ${AuthService.token}',
+        },
+      ).timeout(const Duration(seconds: 30));
+
+      final decodedData = jsonDecode(response.body);
+
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        return {
+          'success': true,
+          'data': decodedData['data'], // Assume it returns a list in data
+        };
+      } else {
+        return {
+          'success': false,
+          'message': decodedData['message'] ?? 'Failed to load insight topics',
+        };
+      }
+    } catch (e) {
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
+  static Future<Map<String, dynamic>> getDailyPrediction(
+    String rashiSlug, {
+    String language = 'en',
+    String style = 'technical',
+  }) async {
+    final url = Uri.parse(
+      '$baseUrl/rashis/$rashiSlug/predictions?period=daily&language=$language&style=$style',
+    );
+    try {
+      final response = await http.get(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          if (AuthService.token != null) 'Authorization': 'Bearer ${AuthService.token}',
+        },
+      ).timeout(const Duration(seconds: 30));
+
+      final decodedData = jsonDecode(response.body);
+
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        return {
+          'success': true,
+          'data': decodedData['data'],
+        };
+      } else {
+        return {
+          'success': false,
+          'message': decodedData['message'] ?? 'Failed to load daily prediction',
+        };
+      }
+    } catch (e) {
+      return {'success': false, 'message': e.toString()};
     }
   }
 }

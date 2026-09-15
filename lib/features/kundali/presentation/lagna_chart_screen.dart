@@ -165,6 +165,8 @@ class _LagnaChartScreenState extends State<LagnaChartScreen> {
           } else if (state is KundaliLoaded) {
             final _chartModel = state.chartData;
             final _nepaliKundaliModel = state.nepaliData;
+            final _nepaliStatusCode = state.nepaliStatusCode;
+            final _nepaliErrorMessage = state.nepaliErrorMessage;
 
             final risingSign = _chartModel.chartData.ascendant.sign;
             final moonSign =
@@ -173,6 +175,27 @@ class _LagnaChartScreenState extends State<LagnaChartScreen> {
                 ? risingSign.substring(0, 1).toUpperCase() +
                       risingSign.substring(1)
                 : '';
+
+            Widget nepaliViewContent;
+            if (_nepaliKundaliModel != null) {
+              nepaliViewContent = CustomPaint(
+                painter: KundaliPainter(
+                  chartModel: _chartModel,
+                  nepaliModel: _nepaliKundaliModel,
+                  showEnglish: _showEnglish,
+                ),
+              );
+            } else if (_nepaliStatusCode == 402) {
+              nepaliViewContent = const PaidPlanWidget(featureName: 'Nepali Kundali View');
+            } else if (_nepaliStatusCode == 403) {
+              nepaliViewContent = const Center(
+                child: Text('You do not have permission to view this chart.', textAlign: TextAlign.center),
+              );
+            } else {
+              nepaliViewContent = Center(
+                child: Text(_nepaliErrorMessage ?? 'Failed to load Nepali Kundali', textAlign: TextAlign.center),
+              );
+            }
 
             return SingleChildScrollView(
               physics: const BouncingScrollPhysics(),
@@ -288,13 +311,15 @@ class _LagnaChartScreenState extends State<LagnaChartScreen> {
                             child: SizedBox(
                               width: 250.w,
                               height: 250.w,
-                              child: CustomPaint(
-                                painter: KundaliPainter(
-                                  chartModel: _chartModel,
-                                  nepaliModel: _nepaliKundaliModel,
-                                  showEnglish: _showEnglish,
-                                ),
-                              ),
+                              child: _showEnglish
+                                ? CustomPaint(
+                                  painter: KundaliPainter(
+                                    chartModel: _chartModel,
+                                    nepaliModel: _nepaliKundaliModel,
+                                    showEnglish: _showEnglish,
+                                  ),
+                                )
+                                : nepaliViewContent,
                             ),
                           ),
                         ],

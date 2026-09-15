@@ -1,108 +1,137 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
+import '../features/home/bloc/dashboard_bloc.dart';
+import '../features/home/bloc/dashboard_state.dart';
+
 class DailyGuidanceCard extends StatelessWidget {
   const DailyGuidanceCard({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.symmetric(horizontal: 24.w),
-      padding: EdgeInsets.all(24.w),
-      decoration: BoxDecoration(
-        color: const Color(0xFFFDFCF9),
-        borderRadius: BorderRadius.circular(16.r),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.03),
-            blurRadius: 20,
-            offset: const Offset(0, 10),
-          ),
-        ],
-      ),
-      child: Stack(
-        children: [
+    return BlocBuilder<DashboardBloc, DashboardState>(
+      builder: (context, state) {
+        String rashi = '...';
+        String predictionText = 'Gathering the stars for your daily guidance...';
+        String date = DateFormat.yMMMMd().format(DateTime.now());
+        bool isLoading = state is DashboardLoading || state is DashboardInitial;
 
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Daily Guidance',
-                style: TextStyle(
-                  fontFamily: 'Georgia',
-                  fontSize: 22.sp,
-                  fontWeight: FontWeight.w600,
-                  color: const Color(0xFF11141A),
-                ),
+        if (state is DashboardLoaded && state.dailyPrediction != null) {
+          final pred = state.dailyPrediction!;
+          rashi = (pred['rashi'] ?? 'YOUR SIGN').toUpperCase();
+          predictionText = '"${pred['content'] ?? ''}"';
+          if (pred['period_start_date'] != null) {
+            try {
+              final parsedDate = DateTime.parse(pred['period_start_date']);
+              date = DateFormat.yMMMMd().format(parsedDate);
+            } catch (_) {}
+          }
+        }
+
+        return Container(
+          margin: EdgeInsets.symmetric(horizontal: 24.w),
+          padding: EdgeInsets.all(24.w),
+          decoration: BoxDecoration(
+            color: const Color(0xFFFDFCF9),
+            borderRadius: BorderRadius.circular(16.r),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.03),
+                blurRadius: 20,
+                offset: const Offset(0, 10),
               ),
-              SizedBox(height: 12.h),
-              Row(
+            ],
+          ),
+          child: Stack(
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Container(
-                    padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFF3EFE7),
-                      borderRadius: BorderRadius.circular(20.r),
-                    ),
-                    child: Text(
-                      'MOON IN SCORPIO',
-                      style: TextStyle(
-                        fontFamily: 'Inter',
-                        fontSize: 8.sp,
-                        fontWeight: FontWeight.w700,
-                        color: const Color(0xFFA88143),
-                        letterSpacing: 1.0,
-                      ),
+                  Text(
+                    'Daily Guidance',
+                    style: TextStyle(
+                      fontFamily: 'Georgia',
+                      fontSize: 22.sp,
+                      fontWeight: FontWeight.w600,
+                      color: const Color(0xFF11141A),
                     ),
                   ),
-                  SizedBox(width: 12.w),
-                  Text(
-                    'September 24, 2024',
-                    style: TextStyle(
-                      fontFamily: 'Inter',
-                      fontSize: 10.sp,
-                      fontWeight: FontWeight.w600,
-                      color: const Color(0xFF8A8A8A),
+                  SizedBox(height: 12.h),
+                  Row(
+                    children: [
+                      Container(
+                        padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFF3EFE7),
+                          borderRadius: BorderRadius.circular(20.r),
+                        ),
+                        child: Text(
+                          'MOON IN $rashi',
+                          style: TextStyle(
+                            fontFamily: 'Inter',
+                            fontSize: 8.sp,
+                            fontWeight: FontWeight.w700,
+                            color: const Color(0xFFA88143),
+                            letterSpacing: 1.0,
+                          ),
+                        ),
+                      ),
+                      SizedBox(width: 12.w),
+                      Text(
+                        date,
+                        style: TextStyle(
+                          fontFamily: 'Inter',
+                          fontSize: 10.sp,
+                          fontWeight: FontWeight.w600,
+                          color: const Color(0xFF8A8A8A),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 16.h),
+                  isLoading
+                      ? const Center(
+                          child: CircularProgressIndicator(color: Color(0xFFA88143)),
+                        )
+                      : Text(
+                          predictionText,
+                          style: TextStyle(
+                            fontFamily: 'Inter',
+                            fontStyle: FontStyle.italic,
+                            fontSize: 13.sp,
+                            color: const Color(0xFF4A4A4A),
+                            height: 1.6,
+                          ),
+                        ),
+                  SizedBox(height: 24.h),
+                  InkWell(
+                    onTap: () {},
+                    borderRadius: BorderRadius.circular(8.r),
+                    child: Container(
+                      padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF0A0A0C),
+                        borderRadius: BorderRadius.circular(8.r),
+                      ),
+                      child: Text(
+                        'View Full Mahadasha',
+                        style: TextStyle(
+                          fontFamily: 'Inter',
+                          fontSize: 12.sp,
+                          fontWeight: FontWeight.w700,
+                          color: Colors.white,
+                        ),
+                      ),
                     ),
                   ),
                 ],
               ),
-              SizedBox(height: 16.h),
-              Text(
-                '"The celestial alignments today suggest a deep introspection. As Mars influences your house of expression, maintain clarity in communication. A hidden opportunity in professional circles may reveal itself before sunset."',
-                style: TextStyle(
-                  fontFamily: 'Inter',
-                  fontStyle: FontStyle.italic,
-                  fontSize: 13.sp,
-                  color: const Color(0xFF4A4A4A),
-                  height: 1.6,
-                ),
-              ),
-              SizedBox(height: 24.h),
-              InkWell(
-                onTap: () {},
-                borderRadius: BorderRadius.circular(8.r),
-                child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF0A0A0C),
-                    borderRadius: BorderRadius.circular(8.r),
-                  ),
-                  child: Text(
-                    'View Full Mahadasha',
-                    style: TextStyle(
-                      fontFamily: 'Inter',
-                      fontSize: 12.sp,
-                      fontWeight: FontWeight.w700,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-              ),
             ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 }

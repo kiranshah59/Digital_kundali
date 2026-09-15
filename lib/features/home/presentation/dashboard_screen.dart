@@ -6,7 +6,12 @@ import '../../profile/bloc/profile_event.dart';
 import '../../profile/bloc/profile_state.dart';
 import '../../auth/data/auth_service.dart';
 import '../../auth/presentation/login_screen.dart';
-
+import '../../kundali/bloc/kundali_bloc.dart';
+import '../../kundali/bloc/kundali_event.dart';
+import '../../kundali/bloc/kundali_state.dart';
+import '../bloc/dashboard_bloc.dart';
+import '../bloc/dashboard_event.dart';
+import '../bloc/dashboard_state.dart';
 import '../../../widgets/birth_profiles_section.dart';
 import '../../../widgets/transit_status_section.dart';
 import '../../../widgets/daily_guidance_card.dart';
@@ -30,6 +35,17 @@ class _DashboardScreenState extends State<DashboardScreen> {
   void initState() {
     super.initState();
     context.read<ProfileBloc>().add(LoadProfiles());
+    
+    final kundaliState = context.read<KundaliBloc>().state;
+    if (kundaliState is KundaliLoaded) {
+      final moonPlanet = kundaliState.chartData.chartData.planets['moon'];
+      if (moonPlanet != null) {
+        final moonSign = moonPlanet.sign.toLowerCase();
+        context.read<DashboardBloc>().add(LoadDashboardData(rashiSlug: moonSign));
+        return;
+      }
+    }
+    context.read<DashboardBloc>().add(const LoadDashboardData());
   }
 
   @override
@@ -37,9 +53,19 @@ class _DashboardScreenState extends State<DashboardScreen> {
     return Scaffold(
       backgroundColor: const Color(0xFFFAF9F5),
       body: SafeArea(
-        child: CustomScrollView(
-          physics: const BouncingScrollPhysics(),
-          slivers: [
+        child: BlocListener<KundaliBloc, KundaliState>(
+          listener: (context, state) {
+            if (state is KundaliLoaded) {
+              final moonPlanet = state.chartData.chartData.planets['moon'];
+              if (moonPlanet != null) {
+                final moonSign = moonPlanet.sign.toLowerCase();
+                context.read<DashboardBloc>().add(LoadDashboardData(rashiSlug: moonSign));
+              }
+            }
+          },
+          child: CustomScrollView(
+            physics: const BouncingScrollPhysics(),
+            slivers: [
             _buildAppBar(),
             SliverPadding(
               padding: EdgeInsets.symmetric(vertical: 16.h),
@@ -51,6 +77,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       
                       if (state is ProfileLoaded) {
                         _cachedProfiles = state.profiles;
+                        // Fetch the chart for the first profile to use its planets for Transit Status
+                        if (_cachedProfiles.isNotEmpty) {
+                          final kundaliState = context.read<KundaliBloc>().state;
+                          if (kundaliState is KundaliInitial || kundaliState is KundaliError) {
+                            context.read<KundaliBloc>().add(LoadKundaliData(profileData: _cachedProfiles.first));
+                          }
+                        }
                       }
                       
                       return BirthProfilesSection(
@@ -89,6 +122,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               ),
             ),
           ],
+        ),
         ),
       ),
     );
