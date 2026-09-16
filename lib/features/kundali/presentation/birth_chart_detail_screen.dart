@@ -16,6 +16,7 @@ import '../models/nepali_kundali_model.dart';
 import '../data/chart_service.dart';
 import '../../../widgets/kundali_painter.dart';
 import '../../../widgets/paid_plan_widget.dart';
+import '../utils/kundali_pdf_helper.dart';
 
 class BirthChartDetailScreen extends StatefulWidget {
   final dynamic profileData;
