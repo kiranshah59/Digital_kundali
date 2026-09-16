@@ -1003,9 +1003,8 @@ class _BirthChartDetailScreenState extends State<BirthChartDetailScreen> {
             children: [
               GestureDetector(
                 onTap: () {
-                  final profileData = widget.profileData;
-                  if (profileData != null && profileData['id'] != null) {
-                    KundaliPdfHelper.generateAndDownloadPdf(context, profileData['id']);
+                  if (_currentProfileData != null && _currentProfileData['id'] != null) {
+                    KundaliPdfHelper.generateAndDownloadPdf(context, _currentProfileData['id']);
                   }
                 },
                 child: Container(

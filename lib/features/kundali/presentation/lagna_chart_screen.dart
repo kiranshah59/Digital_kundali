@@ -401,8 +401,8 @@ class _LagnaChartScreenState extends State<LagnaChartScreen> {
                           SizedBox(height: 24.h),
                           GestureDetector(
                             onTap: () {
-                              if (widget.profileData != null && widget.profileData!['id'] != null) {
-                                KundaliPdfHelper.generateAndDownloadPdf(context, widget.profileData!['id']);
+                              if (_currentProfileData != null && _currentProfileData!['id'] != null) {
+                                KundaliPdfHelper.generateAndDownloadPdf(context, _currentProfileData!['id']);
                               }
                             },
                             child: Container(
