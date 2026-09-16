@@ -12,6 +12,8 @@ import '../../profile/bloc/profile_state.dart';
 import '../../../widgets/paid_plan_widget.dart';
 import 'insights_main_screen.dart';
 import 'rashi_screen.dart';
+import '../data/chart_service.dart';
+import '../utils/kundali_pdf_helper.dart';
 
 class LagnaChartScreen extends StatefulWidget {
   final dynamic profileData;
@@ -397,32 +399,39 @@ class _LagnaChartScreenState extends State<LagnaChartScreen> {
                             ),
 
                           SizedBox(height: 24.h),
-                          Container(
-                            width: double.infinity,
-                            padding: EdgeInsets.symmetric(vertical: 16.h),
-                            decoration: BoxDecoration(
-                              color: const Color(0xFF0A0A0C),
-                              borderRadius: BorderRadius.circular(8.r),
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                  'Generate Full Planetary Report',
-                                  style: TextStyle(
-                                    fontFamily: 'Inter',
-                                    fontSize: 12.sp,
-                                    fontWeight: FontWeight.w600,
-                                    color: Colors.white,
+                          GestureDetector(
+                            onTap: () {
+                              if (widget.profileData != null && widget.profileData!['id'] != null) {
+                                KundaliPdfHelper.generateAndDownloadPdf(context, widget.profileData!['id']);
+                              }
+                            },
+                            child: Container(
+                              width: double.infinity,
+                              padding: EdgeInsets.symmetric(vertical: 16.h),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFF0A0A0C),
+                                borderRadius: BorderRadius.circular(8.r),
+                              ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    'Generate Full Planetary Report',
+                                    style: TextStyle(
+                                      fontFamily: 'Inter',
+                                      fontSize: 12.sp,
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.white,
+                                    ),
                                   ),
-                                ),
-                                SizedBox(width: 8.w),
-                                Icon(
-                                  Icons.auto_awesome,
-                                  color: Colors.white,
-                                  size: 16.sp,
-                                ),
-                              ],
+                                  SizedBox(width: 8.w),
+                                  Icon(
+                                    Icons.auto_awesome,
+                                    color: Colors.white,
+                                    size: 16.sp,
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         ],

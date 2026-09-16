@@ -137,6 +137,97 @@ class ChartService {
     }
   }
 
+  // --- PDF REPORT ---
+
+  static Future<Map<String, dynamic>> generateKundaliPdf(int profileId) async {
+    final url = Uri.parse('$baseUrl/birth-profiles/$profileId/kundali-report');
+    try {
+      final response = await http
+          .post(
+            url,
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json',
+              if (AuthService.token != null)
+                'Authorization': 'Bearer ${AuthService.token}',
+            },
+          )
+          .timeout(const Duration(seconds: 30));
+
+      final decodedData = jsonDecode(response.body);
+
+      // 202 Accepted for queue generation
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        return {
+          'success': true,
+          'status': decodedData['status'] ?? 'pending',
+        };
+      } else if (response.statusCode == 402) {
+        return {
+          'success': false,
+          'statusCode': 402,
+          'message': 'Premium feature. Please upgrade your plan.',
+        };
+      } else {
+        return {
+          'success': false,
+          'message': decodedData['message'] ?? 'Failed to queue PDF generation',
+          'statusCode': response.statusCode,
+        };
+      }
+    } catch (e) {
+      return {
+        'success': false,
+        'message': e.toString(),
+      };
+    }
+  }
+
+  static Future<Map<String, dynamic>> pollKundaliPdfStatus(
+      int profileId, {String language = 'en'}) async {
+    final url = Uri.parse(
+        '$baseUrl/birth-profiles/$profileId/kundali-report?language=$language');
+    try {
+      final response = await http
+          .get(
+            url,
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json',
+              if (AuthService.token != null)
+                'Authorization': 'Bearer ${AuthService.token}',
+            },
+          )
+          .timeout(const Duration(seconds: 30));
+
+      final decodedData = jsonDecode(response.body);
+
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        return {
+          'success': true,
+          'data': decodedData,
+        };
+      } else if (response.statusCode == 402) {
+        return {
+          'success': false,
+          'statusCode': 402,
+          'message': 'Premium feature. Please upgrade your plan.',
+        };
+      } else {
+        return {
+          'success': false,
+          'message': decodedData['message'] ?? 'Failed to poll PDF status',
+          'statusCode': response.statusCode,
+        };
+      }
+    } catch (e) {
+      return {
+        'success': false,
+        'message': e.toString(),
+      };
+    }
+  }
+
   // --- INSIGHTS ---
 
   static Future<Map<String, dynamic>> getInsight(

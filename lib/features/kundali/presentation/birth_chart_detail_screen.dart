@@ -1000,20 +1000,28 @@ class _BirthChartDetailScreenState extends State<BirthChartDetailScreen> {
           SizedBox(height: 24.h),
           Row(
             children: [
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-                decoration: BoxDecoration(
-                  color: const Color(0xFFFDE0AD), // Light gold
-                  borderRadius: BorderRadius.circular(4.r),
-                ),
-                child: Text(
-                  'Generate\nFull Report',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontFamily: 'Inter',
-                    fontSize: 12.sp,
-                    fontWeight: FontWeight.w600,
-                    color: const Color(0xFF11141A),
+              GestureDetector(
+                onTap: () {
+                  final profileData = widget.profileData;
+                  if (profileData != null && profileData['id'] != null) {
+                    KundaliPdfHelper.generateAndDownloadPdf(context, profileData['id']);
+                  }
+                },
+                child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFFDE0AD), // Light gold
+                    borderRadius: BorderRadius.circular(4.r),
+                  ),
+                  child: Text(
+                    'Generate\nFull Report',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontFamily: 'Inter',
+                      fontSize: 12.sp,
+                      fontWeight: FontWeight.w600,
+                      color: const Color(0xFF11141A),
+                    ),
                   ),
                 ),
               ),
