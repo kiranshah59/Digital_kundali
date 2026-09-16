@@ -33,7 +33,7 @@ class KundaliPdfHelper {
       // Step 1: Queue generation
       final response = await ChartService.generateKundaliPdf(profileId);
       if (!response['success']) {
-        Navigator.pop(context); // Close dialog
+        if (context.mounted) Navigator.of(context, rootNavigator: true).pop(); // Close dialog
         _showError(context, response['message'] ?? 'Failed to queue generation');
         return;
       }
@@ -58,24 +58,24 @@ class KundaliPdfHelper {
               ? decoded['data'] 
               : decoded;
               
-          if (payload['status'] == 'completed') {
+          if (payload != null && payload['status'] == 'completed') {
             isReady = true;
             downloadUrl = payload['download_url'];
-          } else if (payload['status'] == 'failed') {
-            Navigator.pop(context); // Close dialog
+          } else if (payload != null && payload['status'] == 'failed') {
+            if (context.mounted) Navigator.of(context, rootNavigator: true).pop(); // Close dialog
             _showError(context, 'PDF generation failed. Please try again later.');
             return;
           }
         } else {
           // If poll fails (e.g. network issue), we could stop or keep retrying. We will stop to be safe.
-          Navigator.pop(context); // Close dialog
+          if (context.mounted) Navigator.of(context, rootNavigator: true).pop(); // Close dialog
           _showError(context, pollResponse['message'] ?? 'Failed to check status');
           return;
         }
       }
 
       if (context.mounted) {
-        Navigator.pop(context); // Close dialog
+        Navigator.of(context, rootNavigator: true).pop(); // Close dialog
       }
 
       if (isReady && downloadUrl != null && downloadUrl.isNotEmpty) {
@@ -95,7 +95,7 @@ class KundaliPdfHelper {
       }
     } catch (e) {
       if (context.mounted) {
-        Navigator.pop(context); // Close dialog
+        Navigator.of(context, rootNavigator: true).pop(); // Close dialog
         _showError(context, 'An unexpected error occurred: $e');
       }
     }
