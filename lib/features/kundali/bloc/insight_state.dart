@@ -14,18 +14,21 @@ class InsightLoading extends InsightState {}
 
 class InsightLoaded extends InsightState {
   final InsightModel insightData;
+  final int? statusCode;
 
-  const InsightLoaded({required this.insightData});
+  const InsightLoaded({required this.insightData, this.statusCode});
 
   @override
-  List<Object?> get props => [insightData];
+  List<Object?> get props => [insightData, statusCode];
 }
 
 class InsightError extends InsightState {
   final String message;
+  final int? statusCode;
 
-  const InsightError({required this.message});
+  const InsightError({required this.message, this.statusCode});
 
   @override
-  List<Object?> get props => [message];
+  List<Object?> get props => [message, statusCode];
 }
+

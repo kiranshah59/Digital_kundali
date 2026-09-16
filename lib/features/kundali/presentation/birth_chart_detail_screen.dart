@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../profile/bloc/profile_bloc.dart';
+import '../../profile/bloc/profile_state.dart';
 import 'lagna_chart_screen.dart';
-import 'insights_screen.dart';
+import 'insights_main_screen.dart';
 import 'rashi_screen.dart';
 import '../../profile/presentation/edit_profile_screen.dart';
 import '../../profile/data/profile_service.dart';
@@ -35,12 +38,20 @@ class _BirthChartDetailScreenState extends State<BirthChartDetailScreen> {
   void initState() {
     super.initState();
     _currentProfileData = widget.profileData;
+    if (_currentProfileData == null) {
+      final profileState = context.read<ProfileBloc>().state;
+      if (profileState is ProfileLoaded && profileState.profiles.isNotEmpty) {
+        _currentProfileData = profileState.profiles.first;
+      }
+    }
     _fetchChartData();
   }
 
   Future<void> _fetchChartData() async {
-    final String fullName = _currentProfileData?['full_name'] ?? 'Unknown';
-    final profileId = _currentProfileData?['id'] ?? fullName.hashCode.abs();
+    if (_currentProfileData == null) return;
+    
+    final String fullName = _currentProfileData!['full_name'] ?? 'Unknown User';
+    final profileId = _currentProfileData!['id'] ?? fullName.hashCode.abs();
 
     if (profileId == null) {
       if (mounted) {
@@ -100,6 +111,21 @@ class _BirthChartDetailScreenState extends State<BirthChartDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
+    if (_currentProfileData == null) {
+      final profileState = context.watch<ProfileBloc>().state;
+      if (profileState is ProfileLoaded && profileState.profiles.isNotEmpty) {
+        _currentProfileData = profileState.profiles.first;
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          _fetchChartData();
+        });
+      } else {
+        return const Scaffold(
+          backgroundColor: Color(0xFFFAF9F5),
+          body: Center(child: CircularProgressIndicator(color: Color(0xFFA88143))),
+        );
+      }
+    }
+
     final String fullName = _currentProfileData?['full_name'] ?? 'Unknown User';
     final String firstName = fullName.split(' ').first;
 
@@ -131,14 +157,16 @@ class _BirthChartDetailScreenState extends State<BirthChartDetailScreen> {
       appBar: AppBar(
         backgroundColor: const Color(0xFFFAF9F5),
         elevation: 0,
-        leading: IconButton(
+        automaticallyImplyLeading: false, // Prevent default back button
+        titleSpacing: widget.profileData != null ? NavigationToolbar.kMiddleSpacing : 24.w,
+        leading: widget.profileData != null ? IconButton(
           icon: Icon(
             Icons.arrow_back,
             color: const Color(0xFF11141A),
             size: 24.sp,
           ),
           onPressed: () => Navigator.pop(context),
-        ),
+        ) : null,
         title: Text(
           fullName,
           style: TextStyle(
@@ -172,12 +200,14 @@ class _BirthChartDetailScreenState extends State<BirthChartDetailScreen> {
                       ),
                     ),
                   ),
-                  SizedBox(width: 4.w),
-                  Icon(
-                    Icons.keyboard_arrow_down,
-                    size: 16.sp,
-                    color: Colors.grey,
-                  ),
+                  if (widget.profileData != null) ...[
+                    SizedBox(width: 4.w),
+                    Icon(
+                      Icons.keyboard_arrow_down,
+                      size: 16.sp,
+                      color: Colors.grey,
+                    ),
+                  ],
                 ],
               ),
             ),
@@ -335,9 +365,7 @@ class _BirthChartDetailScreenState extends State<BirthChartDetailScreen> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => InsightsScreen(
-                                  profileData: _currentProfileData,
-                                ),
+                                builder: (context) => const InsightsMainScreen(),
                               ),
                             );
                           },
@@ -451,62 +479,10 @@ class _BirthChartDetailScreenState extends State<BirthChartDetailScreen> {
                     // Celestial Persona Card
                     _buildPersonaCard(firstName, risingSign, sunSign, moonSign),
                   ],
-                ),
-              ),
-            ),
-      bottomNavigationBar: Container(
-        decoration: BoxDecoration(
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.05),
-              blurRadius: 20,
-              offset: const Offset(0, -5),
-            ),
-          ],
-        ),
-        child: BottomNavigationBar(
-          currentIndex: 1, // Charts
-          onTap: (index) {
-            if (index == 0) {
-              Navigator.pop(context); // Go back to dashboard
-            }
-          },
-          backgroundColor: const Color(0xFFFAF9F5),
-          type: BottomNavigationBarType.fixed,
-          selectedItemColor: const Color(0xFFA88143),
-          unselectedItemColor: const Color(0xFF8A8A8A),
-          elevation: 0,
-          selectedLabelStyle: TextStyle(
-            fontFamily: 'Inter',
-            fontSize: 10.sp,
-            fontWeight: FontWeight.w600,
-          ),
-          unselectedLabelStyle: TextStyle(
-            fontFamily: 'Inter',
-            fontSize: 10.sp,
-            fontWeight: FontWeight.w500,
-          ),
-          items: const [
-            BottomNavigationBarItem(
-              icon: Icon(Icons.grid_view_rounded),
-              label: 'Dashboard',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.auto_graph_rounded),
-              label: 'Charts',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.lightbulb_outline_rounded),
-              label: 'Insights',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.school_outlined),
-              label: 'Guru',
-            ),
-          ],
-        ),
-      ),
-    );
+                ), // Column
+              ), // Padding
+            ), // SingleChildScrollView
+    ); // Scaffold
   }
 
   Widget _buildTab(String text, bool isActive) {

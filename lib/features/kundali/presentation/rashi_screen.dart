@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'insights_screen.dart';
+import 'insights_main_screen.dart';
 import '../data/chart_service.dart';
 import 'package:intl/intl.dart';
 
@@ -175,8 +175,7 @@ class _RashiScreenState extends State<RashiScreen> {
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
-                        builder: (context) =>
-                            InsightsScreen(profileData: widget.profileData),
+                        builder: (context) => const InsightsMainScreen(),
                       ),
                     );
                   }),
@@ -662,61 +661,6 @@ class _RashiScreenState extends State<RashiScreen> {
               ),
             ),
             SizedBox(height: 32.h),
-          ],
-        ),
-      ),
-      bottomNavigationBar: Container(
-        decoration: BoxDecoration(
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.05),
-              blurRadius: 20,
-              offset: const Offset(0, -5),
-            ),
-          ],
-        ),
-        child: BottomNavigationBar(
-          currentIndex:
-              2, // Insights (Rashi is under Insights in the bottom nav usually? The user didn't specify. Let's keep index 2 selected)
-          onTap: (index) {
-            if (index == 0) {
-              Navigator.popUntil(context, (route) => route.isFirst);
-            } else if (index == 1) {
-              Navigator.pop(context); // Usually goes back to Charts
-            }
-          },
-          backgroundColor: const Color(0xFFFAF9F5),
-          type: BottomNavigationBarType.fixed,
-          selectedItemColor: const Color(0xFFA88143),
-          unselectedItemColor: const Color(0xFF8A8A8A),
-          elevation: 0,
-          selectedLabelStyle: TextStyle(
-            fontFamily: 'Inter',
-            fontSize: 10.sp,
-            fontWeight: FontWeight.w600,
-          ),
-          unselectedLabelStyle: TextStyle(
-            fontFamily: 'Inter',
-            fontSize: 10.sp,
-            fontWeight: FontWeight.w500,
-          ),
-          items: const [
-            BottomNavigationBarItem(
-              icon: Icon(Icons.grid_view_rounded),
-              label: 'Dashboard',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.auto_graph_rounded),
-              label: 'Charts',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.lightbulb),
-              label: 'Insights',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.school_outlined),
-              label: 'Guru',
-            ),
           ],
         ),
       ),

@@ -10,40 +10,29 @@ import '../models/insight_model.dart';
 import '../data/chart_service.dart';
 import '../../../widgets/paid_plan_widget.dart';
 
-class InsightsScreen extends StatefulWidget {
+class InsightDetailScreen extends StatefulWidget {
   final dynamic profileData;
-  final String? initialTopicSlug;
+  final String topicTitle;
+  final String topicSlug;
 
-  const InsightsScreen({super.key, this.profileData, this.initialTopicSlug});
+  const InsightDetailScreen({
+    super.key, 
+    required this.profileData, 
+    required this.topicTitle, 
+    required this.topicSlug,
+  });
 
   @override
-  State<InsightsScreen> createState() => _InsightsScreenState();
+  State<InsightDetailScreen> createState() => _InsightDetailScreenState();
 }
 
-class _InsightsScreenState extends State<InsightsScreen> {
+class _InsightDetailScreenState extends State<InsightDetailScreen> {
   bool _isDetailed = false;
   bool _showEnglish = true;
   int? _chartId;
-  late String _selectedTopicSlug;
-
-  final List<Map<String, String>> _topics = [
-    {'title': 'Health', 'slug': 'health'},
-    {'title': 'Career', 'slug': 'career'},
-    {'title': 'Education', 'slug': 'education'},
-    {'title': 'Marriage', 'slug': 'marriage'},
-    {'title': 'Wealth', 'slug': 'wealth'},
-    {'title': 'Love', 'slug': 'love'},
-  ];
-
-  String _getCapitalizedTopic(String slug) {
-    if (slug.isEmpty) return 'Insight';
-    return slug[0].toUpperCase() + slug.substring(1);
-  }
-
   @override
   void initState() {
     super.initState();
-    _selectedTopicSlug = widget.initialTopicSlug ?? 'health';
     _fetchInsightData();
   }
 
@@ -67,7 +56,7 @@ class _InsightsScreenState extends State<InsightsScreen> {
     context.read<InsightBloc>().add(
       LoadInsight(
         chartId: _chartId!,
-        topicSlug: _selectedTopicSlug,
+        topicSlug: widget.topicSlug,
         language: lang,
         style: apiStyle,
       ),
@@ -82,7 +71,7 @@ class _InsightsScreenState extends State<InsightsScreen> {
     context.read<InsightBloc>().add(
       RegenerateInsight(
         chartId: _chartId!,
-        topicSlug: _selectedTopicSlug,
+        topicSlug: widget.topicSlug,
         language: lang,
         style: apiStyle,
       ),
@@ -123,7 +112,7 @@ class _InsightsScreenState extends State<InsightsScreen> {
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          fullName,
+          widget.topicTitle,
           style: TextStyle(
             fontFamily: 'Georgia',
             fontSize: 18.sp,
@@ -131,103 +120,14 @@ class _InsightsScreenState extends State<InsightsScreen> {
             color: const Color(0xFF11141A),
           ),
         ),
-        actions: [
-          Padding(
-            padding: EdgeInsets.only(right: 16.w),
-            child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(16.r),
-                border: Border.all(color: const Color(0xFFEAE6DF)),
-              ),
-              child: Row(
-                children: [
-                  CircleAvatar(
-                    radius: 12.r,
-                    backgroundColor: const Color(0xFF11141A),
-                    child: Text(
-                      initials,
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 10.sp,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                  SizedBox(width: 4.w),
-                  Icon(
-                    Icons.keyboard_arrow_down,
-                    size: 16.sp,
-                    color: Colors.grey,
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
       ),
       body: SingleChildScrollView(
         physics: const BouncingScrollPhysics(),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Top Tab Bar
-            Container(
-              decoration: const BoxDecoration(
-                border: Border(bottom: BorderSide(color: Color(0xFFEAE6DF))),
-              ),
-              child: Row(
-                children: [
-                  SizedBox(width: 24.w),
-                  _buildTopTab('Charts', false, () {
-                    Navigator.pop(context);
-                  }),
-                  SizedBox(width: 24.w),
-                  _buildTopTab('Insights', true, () {}),
-                  SizedBox(width: 24.w),
-                  _buildTopTab('Rashi', false, () {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) =>
-                            RashiScreen(profileData: widget.profileData),
-                      ),
-                    );
-                  }),
-                ],
-              ),
-            ),
-            SizedBox(height: 24.h),
+            SizedBox(height: 16.h),
 
-            // Category Pills
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              padding: EdgeInsets.symmetric(horizontal: 24.w),
-              physics: const BouncingScrollPhysics(),
-              child: Row(
-                children: [
-                  ..._topics.map((topic) {
-                    final bool isActive = _selectedTopicSlug == topic['slug'];
-                    return Padding(
-                      padding: EdgeInsets.only(right: 12.w),
-                      child: GestureDetector(
-                        onTap: () {
-                          if (!isActive) {
-                            setState(() {
-                              _selectedTopicSlug = topic['slug']!;
-                            });
-                            _fetchInsightData();
-                          }
-                        },
-                        child: _buildCategoryPill(topic['title']!, isActive),
-                      ),
-                    );
-                  }).toList(),
-                ],
-              ),
-            ),
-            SizedBox(height: 24.h),
 
             // Toggles Row
             Padding(
@@ -298,7 +198,7 @@ class _InsightsScreenState extends State<InsightsScreen> {
                     ),
                   );
                 } else if (state is InsightError) {
-                  if (state.message.toLowerCase().contains('paid plan')) {
+                  if (state.statusCode == 402 || state.message.toLowerCase().contains('paid plan')) {
                     return const PaidPlanWidget(featureName: 'Topic insights');
                   }
                   return Center(
@@ -335,7 +235,7 @@ class _InsightsScreenState extends State<InsightsScreen> {
                               ),
                               SizedBox(width: 8.w),
                               Text(
-                                _getCapitalizedTopic(_insightModel.topicSlug),
+                                widget.topicTitle,
                                 style: TextStyle(
                                   fontFamily: 'Georgia',
                                   fontSize: 18.sp,
@@ -477,61 +377,6 @@ class _InsightsScreenState extends State<InsightsScreen> {
               ),
             ),
             SizedBox(height: 32.h),
-          ],
-        ),
-      ),
-      bottomNavigationBar: Container(
-        decoration: BoxDecoration(
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.05),
-              blurRadius: 20,
-              offset: const Offset(0, -5),
-            ),
-          ],
-        ),
-        child: BottomNavigationBar(
-          currentIndex: 2, // Insights
-          onTap: (index) {
-            if (index == 0) {
-              // Go back to dashboard
-              Navigator.popUntil(context, (route) => route.isFirst);
-            } else if (index == 1) {
-              Navigator.pop(context); // Usually goes back to Charts
-            }
-          },
-          backgroundColor: const Color(0xFFFAF9F5),
-          type: BottomNavigationBarType.fixed,
-          selectedItemColor: const Color(0xFFA88143),
-          unselectedItemColor: const Color(0xFF8A8A8A),
-          elevation: 0,
-          selectedLabelStyle: TextStyle(
-            fontFamily: 'Inter',
-            fontSize: 10.sp,
-            fontWeight: FontWeight.w600,
-          ),
-          unselectedLabelStyle: TextStyle(
-            fontFamily: 'Inter',
-            fontSize: 10.sp,
-            fontWeight: FontWeight.w500,
-          ),
-          items: const [
-            BottomNavigationBarItem(
-              icon: Icon(Icons.grid_view_rounded),
-              label: 'Dashboard',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.auto_graph_rounded),
-              label: 'Charts',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.lightbulb), // Filled icon for selected
-              label: 'Insights',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.school_outlined),
-              label: 'Guru',
-            ),
           ],
         ),
       ),

@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'dashboard_screen.dart';
 import '../../guru/presentation/guru_screen.dart';
-import '../../kundali/presentation/charts_tab_screen.dart';
+import '../../kundali/presentation/lagna_chart_screen.dart';
+import '../../kundali/presentation/insights_main_screen.dart';
 
 class MainLayoutScreen extends StatefulWidget {
   final String? userName;
@@ -16,68 +17,122 @@ class MainLayoutScreen extends StatefulWidget {
 class _MainLayoutScreenState extends State<MainLayoutScreen> {
   int _currentIndex = 0;
 
-  List<Widget> get _screens => [
-    DashboardScreen(userName: widget.userName),
-    const ChartsTabScreen(),
-    const Scaffold(body: Center(child: Text('Insights'))),
-    GuruScreen(userName: widget.userName),
+  final List<GlobalKey<NavigatorState>> _navigatorKeys = [
+    GlobalKey<NavigatorState>(),
+    GlobalKey<NavigatorState>(),
+    GlobalKey<NavigatorState>(),
+    GlobalKey<NavigatorState>(),
   ];
+
+  late final List<Widget> _screens;
+
+  @override
+  void initState() {
+    super.initState();
+    _screens = [
+      DashboardScreen(userName: widget.userName),
+      const LagnaChartScreen(),
+      const InsightsMainScreen(),
+      GuruScreen(userName: widget.userName),
+    ];
+  }
+
+  Widget _buildTabNavigator(int index) {
+    return Navigator(
+      key: _navigatorKeys[index],
+      onGenerateRoute: (routeSettings) {
+        return MaterialPageRoute(
+          builder: (context) => _screens[index],
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFFFAF9F5),
-      body: IndexedStack(index: _currentIndex, children: _screens),
-      bottomNavigationBar: Container(
-        decoration: BoxDecoration(
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.05),
-              blurRadius: 20,
-              offset: const Offset(0, -5),
-            ),
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) {
+        if (didPop) return;
+
+        final navigator = _navigatorKeys[_currentIndex].currentState;
+        if (navigator != null && navigator.canPop()) {
+          navigator.pop();
+        } else {
+          if (_currentIndex != 0) {
+            setState(() {
+              _currentIndex = 0;
+            });
+          }
+        }
+      },
+      child: Scaffold(
+        backgroundColor: const Color(0xFFFAF9F5),
+        body: IndexedStack(
+          index: _currentIndex,
+          children: [
+            _buildTabNavigator(0),
+            _buildTabNavigator(1),
+            _buildTabNavigator(2),
+            _buildTabNavigator(3),
           ],
         ),
-        child: BottomNavigationBar(
-          currentIndex: _currentIndex,
-          onTap: (index) {
-            setState(() {
-              _currentIndex = index;
-            });
-          },
-          backgroundColor: const Color(0xFFFAF9F5),
-          type: BottomNavigationBarType.fixed,
-          selectedItemColor: const Color(0xFFA88143),
-          unselectedItemColor: const Color(0xFF8A8A8A),
-          elevation: 0,
-          selectedLabelStyle: TextStyle(
-            fontFamily: 'Inter',
-            fontSize: 10.sp,
-            fontWeight: FontWeight.w600,
+        bottomNavigationBar: Container(
+          decoration: BoxDecoration(
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.05),
+                blurRadius: 20,
+                offset: const Offset(0, -5),
+              ),
+            ],
           ),
-          unselectedLabelStyle: TextStyle(
-            fontFamily: 'Inter',
-            fontSize: 10.sp,
-            fontWeight: FontWeight.w500,
+          child: BottomNavigationBar(
+            currentIndex: _currentIndex,
+            onTap: (index) {
+              if (_currentIndex == index) {
+                // Pop to first route if tapping the same tab
+                _navigatorKeys[index].currentState?.popUntil((route) => route.isFirst);
+              } else {
+                setState(() {
+                  _currentIndex = index;
+                });
+              }
+            },
+            backgroundColor: const Color(0xFFFAF9F5),
+            type: BottomNavigationBarType.fixed,
+            selectedItemColor: const Color(0xFFA88143),
+            unselectedItemColor: const Color(0xFF8A8A8A),
+            elevation: 0,
+            selectedLabelStyle: TextStyle(
+              fontFamily: 'Inter',
+              fontSize: 10.sp,
+              fontWeight: FontWeight.w600,
+            ),
+            unselectedLabelStyle: TextStyle(
+              fontFamily: 'Inter',
+              fontSize: 10.sp,
+              fontWeight: FontWeight.w500,
+            ),
+            items: const [
+              BottomNavigationBarItem(
+                icon: Icon(Icons.grid_view_rounded),
+                label: 'Dashboard',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.auto_graph_rounded),
+                label: 'Charts',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.lightbulb_outline_rounded),
+                label: 'Insights',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.school_outlined),
+                label: 'Guru',
+              ),
+            ],
           ),
-          items: const [
-            BottomNavigationBarItem(
-              icon: Icon(Icons.grid_view_rounded),
-              label: 'Dashboard',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.auto_graph_rounded),
-              label: 'Charts',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.lightbulb_outline_rounded),
-              label: 'Insights',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.school_outlined),
-              label: 'Guru',
-            ),
-          ],
         ),
       ),
     );

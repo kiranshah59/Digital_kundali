@@ -22,9 +22,12 @@ class InsightBloc extends Bloc<InsightEvent, InsightState> {
         style: event.style,
       );
       if (response['success']) {
-        emit(InsightLoaded(insightData: response['data']));
+        emit(InsightLoaded(insightData: response['data'], statusCode: response['statusCode']));
       } else {
-        emit(InsightError(message: response['message'] ?? 'Failed to load insight'));
+        emit(InsightError(
+          message: response['message'] ?? 'Failed to load insight',
+          statusCode: response['statusCode'],
+        ));
       }
     } catch (e) {
       emit(InsightError(message: 'Failed to generate insight. Please try again.'));
@@ -44,9 +47,12 @@ class InsightBloc extends Bloc<InsightEvent, InsightState> {
         style: event.style,
       );
       if (response['success']) {
-        emit(InsightLoaded(insightData: response['data']));
+        emit(InsightLoaded(insightData: response['data'], statusCode: response['statusCode']));
       } else {
-        emit(InsightError(message: response['message'] ?? 'Failed to regenerate insight'));
+        emit(InsightError(
+          message: response['message'] ?? 'Failed to regenerate insight',
+          statusCode: response['statusCode'],
+        ));
       }
     } catch (e) {
       emit(InsightError(message: 'Failed to regenerate insight. Please try again.'));

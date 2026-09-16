@@ -167,17 +167,20 @@ class ChartService {
         return {
           'success': true,
           'data': InsightModel.fromJson(decodedData['data']),
+          'statusCode': response.statusCode,
         };
       } else {
         return {
           'success': false,
           'message': decodedData['message'] ?? 'Failed to load insight',
+          'statusCode': response.statusCode,
         };
       }
     } catch (e) {
       return {
         'success': false,
         'message': e.toString(),
+        'statusCode': 500,
       };
     }
   }
@@ -210,17 +213,20 @@ class ChartService {
         return {
           'success': true,
           'data': InsightModel.fromJson(decodedData['data']),
+          'statusCode': response.statusCode,
         };
       } else {
         return {
           'success': false,
           'message': decodedData['message'] ?? 'Failed to regenerate insight',
+          'statusCode': response.statusCode,
         };
       }
     } catch (e) {
       return {
         'success': false,
         'message': e.toString(),
+        'statusCode': 500,
       };
     }
   }

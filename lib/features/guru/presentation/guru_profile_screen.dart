@@ -520,35 +520,6 @@ class GuruProfileScreen extends StatelessWidget {
           ],
         ),
       ),
-      
-      // Bottom Navigation Bar
-      bottomNavigationBar: Container(
-        decoration: BoxDecoration(
-          color: const Color(0xFFFAF9F5),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.05),
-              blurRadius: 10,
-              offset: const Offset(0, -5),
-            ),
-          ],
-        ),
-        child: SafeArea(
-          child: Padding(
-            padding: EdgeInsets.symmetric(vertical: 8.h),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                _buildNavItem(Icons.dashboard_outlined, 'Dashboard', false),
-                _buildNavItem(Icons.show_chart, 'Charts', false),
-                _buildNavItem(Icons.lightbulb_outline, 'Insights', false),
-                _buildNavItem(Icons.people_outline, 'Profiles', false),
-                _buildNavItem(Icons.school, 'Guru', true),
-              ],
-            ),
-          ),
-        ),
-      ),
     );
   }
 

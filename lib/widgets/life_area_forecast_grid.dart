@@ -6,7 +6,7 @@ import '../features/home/bloc/dashboard_bloc.dart';
 import '../features/home/bloc/dashboard_state.dart';
 
 class LifeAreaForecastGrid extends StatelessWidget {
-  final void Function(String)? onTopicTap;
+  final void Function(String, String)? onTopicTap;
 
   const LifeAreaForecastGrid({super.key, this.onTopicTap});
 
@@ -99,7 +99,7 @@ class LifeAreaForecastGrid extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         if (onTopicTap != null) {
-          onTopicTap!(slug);
+          onTopicTap!(slug, title);
         }
       },
       child: Container(
