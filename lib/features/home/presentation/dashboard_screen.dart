@@ -17,6 +17,7 @@ import '../../../widgets/transit_status_section.dart';
 import '../../../widgets/daily_guidance_card.dart';
 import '../../../widgets/life_area_forecast_grid.dart';
 import '../../../widgets/ask_guru_banner.dart';
+import '../../../widgets/upgrade_to_paid_banner.dart';
 import '../../kundali/presentation/insight_detail_screen.dart';
 
 class DashboardScreen extends StatefulWidget {
@@ -118,6 +119,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   ),
                   SizedBox(height: 32.h),
                   const AskGuruBanner(),
+                  SizedBox(height: 16.h),
+                  const UpgradeToPaidBanner(),
                   SizedBox(height: 48.h),
                 ]),
               ),
