@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import '../features/home/presentation/upgrade_to_paid_screen.dart';
 
 class UpgradeToPaidBanner extends StatelessWidget {
   const UpgradeToPaidBanner({super.key});
@@ -21,7 +22,12 @@ class UpgradeToPaidBanner extends StatelessWidget {
         child: InkWell(
           borderRadius: BorderRadius.circular(8.r),
           onTap: () {
-            // Upgrade action here
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const UpgradeToPaidScreen(),
+              ),
+            );
           },
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
