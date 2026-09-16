@@ -52,11 +52,16 @@ class KundaliPdfHelper {
 
         final pollResponse = await ChartService.pollKundaliPdfStatus(profileId);
         if (pollResponse['success']) {
-          final data = pollResponse['data'];
-          if (data['status'] == 'completed') {
+          final decoded = pollResponse['data'];
+          // Handle both wrapped and unwrapped responses
+          final payload = (decoded is Map && decoded.containsKey('data') && decoded['data'] is Map) 
+              ? decoded['data'] 
+              : decoded;
+              
+          if (payload['status'] == 'completed') {
             isReady = true;
-            downloadUrl = data['download_url'];
-          } else if (data['status'] == 'failed') {
+            downloadUrl = payload['download_url'];
+          } else if (payload['status'] == 'failed') {
             Navigator.pop(context); // Close dialog
             _showError(context, 'PDF generation failed. Please try again later.');
             return;
