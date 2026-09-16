@@ -71,3 +71,14 @@ lib/
 ---
 
 
+
+---
+
+## 💳 Payment Integration (eSewa v2)
+
+The application features a robust and highly secure integration with **eSewa ePay v2** for unlocking premium features (Lagna Charts, Detailed Insights).
+
+### Architecture Highlights
+*   **Server-Side Security**: To prevent exposing the eSewa Secret Key, the mobile app never generates the `HMAC-SHA256` signature locally. Instead, the Flutter app fetches a pre-signed, ready-to-use payload (amount, unique transaction UUID, signature) from the backend (`/payments/esewa/initiate`).
+*   **Javascript Injection Workaround**: eSewa requires a strict HTML Form `POST` request to launch their portal. Because native Android WebViews are notorious for blocking local HTML strings and cross-origin `POST` requests, we implemented a custom workaround. The app loads a fast, blank webpage (`example.com`) and instantly uses Javascript Injection to dynamically build and submit the hidden eSewa form, bypassing all Android security blocks.
+*   **Seamless Callbacks**: The WebView utilizes a `NavigationDelegate` to silently monitor URL changes. The moment eSewa attempts to redirect back to our backend's success or failure endpoints, the Flutter app intercepts the URL, securely closes the WebView, and instantly triggers the `PaymentBloc` to unlock premium content in real-time without requiring complex deep-linking.
