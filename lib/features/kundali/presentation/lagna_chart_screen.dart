@@ -13,6 +13,7 @@ import '../../../widgets/paid_plan_widget.dart';
 import 'insights_main_screen.dart';
 import 'rashi_screen.dart';
 import '../data/chart_service.dart';
+import '../../home/presentation/upgrade_to_paid_screen.dart';
 import '../utils/kundali_pdf_helper.dart';
 
 class LagnaChartScreen extends StatefulWidget {
@@ -223,7 +224,19 @@ class _LagnaChartScreenState extends State<LagnaChartScreen> {
                 ),
               );
             } else if (_nepaliStatusCode == 402) {
-              nepaliViewContent = const PaidPlanWidget(featureName: 'Nepali Kundali View');
+              nepaliViewContent = Center(
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const UpgradeToPaidScreen(),
+                      ),
+                    );
+                  },
+                  child: const Text('Upgrade to Paid'),
+                ),
+              );
             } else if (_nepaliStatusCode == 403) {
               nepaliViewContent = const Center(
                 child: Text('You do not have permission to view this chart.', textAlign: TextAlign.center),

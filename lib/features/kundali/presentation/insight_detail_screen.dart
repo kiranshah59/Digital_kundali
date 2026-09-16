@@ -9,6 +9,7 @@ import '../models/chart_model.dart';
 import '../models/insight_model.dart';
 import '../data/chart_service.dart';
 import '../../../widgets/paid_plan_widget.dart';
+import '../../home/presentation/upgrade_to_paid_screen.dart';
 
 class InsightDetailScreen extends StatefulWidget {
   final dynamic profileData;
@@ -199,7 +200,19 @@ class _InsightDetailScreenState extends State<InsightDetailScreen> {
                   );
                 } else if (state is InsightError) {
                   if (state.statusCode == 402 || state.message.toLowerCase().contains('paid plan')) {
-                    return const PaidPlanWidget(featureName: 'Topic insights');
+                    return Center(
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const UpgradeToPaidScreen(),
+                            ),
+                          );
+                        },
+                        child: const Text('Upgrade to Paid'),
+                      ),
+                    );
                   }
                   return Center(
                     child: Padding(

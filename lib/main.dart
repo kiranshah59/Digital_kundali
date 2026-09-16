@@ -8,6 +8,9 @@ import 'features/kundali/bloc/kundali_bloc.dart';
 import 'features/kundali/bloc/insight_bloc.dart';
 import 'features/home/bloc/dashboard_bloc.dart';
 
+import 'features/payment/bloc/payment_bloc.dart';
+import 'features/payment/bloc/payment_event.dart';
+
 void main() {
 
   // widgetsFlutterBinding.ensureInitialized();
@@ -32,6 +35,7 @@ class DigitalKundaliApp extends StatelessWidget {
             BlocProvider<KundaliBloc>(create: (_) => KundaliBloc()),
             BlocProvider<InsightBloc>(create: (_) => InsightBloc()),
             BlocProvider<DashboardBloc>(create: (_) => DashboardBloc()),
+            BlocProvider<PaymentBloc>(create: (_) => PaymentBloc()..add(LoadPlans())),
           ],
           child: MaterialApp(
             title: 'Digital Kundali',

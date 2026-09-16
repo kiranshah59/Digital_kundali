@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'dart:convert';
 import '../data/chart_service.dart';
+import '../../home/presentation/upgrade_to_paid_screen.dart';
 
 class KundaliPdfHelper {
   static Future<void> generateAndDownloadPdf(BuildContext context, int profileId) async {
@@ -34,6 +36,19 @@ class KundaliPdfHelper {
       final response = await ChartService.generateKundaliPdf(profileId);
       if (!response['success']) {
         if (context.mounted) Navigator.of(context, rootNavigator: true).pop(); // Close dialog
+        
+        if (response['statusCode'] == 402) {
+          if (context.mounted) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const UpgradeToPaidScreen(),
+              ),
+            );
+          }
+          return;
+        }
+
         _showError(context, response['message'] ?? 'Failed to queue generation');
         return;
       }
