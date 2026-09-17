@@ -523,13 +523,7 @@ class _BirthChartDetailScreenState extends State<BirthChartDetailScreen> {
                         SizedBox(width: 12.w),
                         Expanded(
                           child: OutlinedButton(
-                            onPressed: () {
-                              Navigator.of(context, rootNavigator: true).push(
-                                MaterialPageRoute(
-                                  builder: (context) => const InsightsMainScreen(),
-                                ),
-                              );
-                            },
+                            onPressed: () {},
                             style: OutlinedButton.styleFrom(
                               padding: EdgeInsets.symmetric(vertical: 16.h),
                               side: const BorderSide(color: Color(0xFFEAE6DF)),
