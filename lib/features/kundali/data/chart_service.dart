@@ -255,9 +255,12 @@ class ChartService {
       final decodedData = jsonDecode(response.body);
 
       if (response.statusCode >= 200 && response.statusCode < 300) {
+        final dataPayload = decodedData['data'] is Map && decodedData['data'].containsKey('data') 
+            ? decodedData['data']['data'] 
+            : decodedData['data'] ?? decodedData;
         return {
           'success': true,
-          'data': InsightModel.fromJson(decodedData['data']),
+          'data': InsightModel.fromJson(dataPayload),
           'statusCode': response.statusCode,
         };
       } else {
@@ -301,9 +304,12 @@ class ChartService {
       final decodedData = jsonDecode(response.body);
 
       if (response.statusCode >= 200 && response.statusCode < 300) {
+        final dataPayload = decodedData['data'] is Map && decodedData['data'].containsKey('data') 
+            ? decodedData['data']['data'] 
+            : decodedData['data'] ?? decodedData;
         return {
           'success': true,
-          'data': InsightModel.fromJson(decodedData['data']),
+          'data': InsightModel.fromJson(dataPayload),
           'statusCode': response.statusCode,
         };
       } else {

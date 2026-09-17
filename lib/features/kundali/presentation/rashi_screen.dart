@@ -500,8 +500,8 @@ class _RashiScreenState extends State<RashiScreen> {
                       ),
                       child: Row(
                         children: [
-                          _buildMiniToggle('EN', true),
-                          _buildMiniToggle('NE', false),
+                          _buildMiniToggle('EN', _showEnglish, onTap: () => setState(() => _showEnglish = true)),
+                          _buildMiniToggle('NE', !_showEnglish, onTap: () => setState(() => _showEnglish = false)),
                         ],
                       ),
                     ),

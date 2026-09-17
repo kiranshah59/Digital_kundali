@@ -47,7 +47,13 @@ class _InsightDetailScreenState extends State<InsightDetailScreen> {
       if (chartRes['success']) {
         _chartId = (chartRes['data'] as ChartModel).id;
       } else {
-        _chartId = profileId;
+        // If it doesn't exist yet, we must generate it because the insights API requires a valid chartId
+        final genRes = await ChartService.generateChart(profileId);
+        if (genRes['success']) {
+          _chartId = (genRes['data'] as ChartModel).id;
+        } else {
+          _chartId = profileId; // fallback
+        }
       }
     }
 
