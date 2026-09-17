@@ -13,34 +13,8 @@ class GuruScreen extends StatefulWidget {
 }
 
 class _GuruScreenState extends State<GuruScreen> {
-  bool _showChat = false;
-
   @override
   Widget build(BuildContext context) {
-    if (_showChat) {
-      return PopScope(
-        canPop: false,
-        onPopInvoked: (didPop) {
-          if (didPop) return;
-          setState(() {
-            _showChat = false;
-          });
-        },
-        child: Scaffold(
-          backgroundColor: const Color(0xFFFAF9F5),
-          body: SafeArea(
-            child: AIGuruChatView(
-              onBack: () {
-                setState(() {
-                  _showChat = false;
-                });
-              },
-            ),
-          ),
-        ),
-      );
-    }
-
     return Scaffold(
       backgroundColor: const Color(0xFFFAF9F5),
       body: SafeArea(
@@ -197,9 +171,18 @@ class _GuruScreenState extends State<GuruScreen> {
           SizedBox(height: 24.h),
           ElevatedButton(
             onPressed: () {
-              setState(() {
-                _showChat = true;
-              });
+              Navigator.of(context, rootNavigator: true).push(
+                MaterialPageRoute(
+                  builder: (context) => Scaffold(
+                    backgroundColor: const Color(0xFFFAF9F5),
+                    body: SafeArea(
+                      child: AIGuruChatView(
+                        onBack: () => Navigator.pop(context),
+                      ),
+                    ),
+                  ),
+                ),
+              );
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFFF6D69F),
