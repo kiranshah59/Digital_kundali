@@ -429,8 +429,7 @@ class _GuruScreenState extends State<GuruScreen> {
             height: 44.h,
             child: OutlinedButton(
               onPressed: () {
-                Navigator.push(
-                  context,
+                Navigator.of(context, rootNavigator: true).push(
                   MaterialPageRoute(builder: (context) => GuruProfileScreen(
                     name: name,
                     imageUrl: imageUrl,

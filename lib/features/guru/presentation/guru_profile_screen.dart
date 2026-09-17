@@ -23,9 +23,9 @@ class GuruProfileScreen extends StatelessWidget {
         backgroundColor: const Color(0xFFFAF9F5),
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.menu, color: const Color(0xFF11141A), size: 24.sp),
+          icon: Icon(Icons.arrow_back, color: const Color(0xFF11141A), size: 24.sp),
           onPressed: () {
-            Navigator.pop(context); // Fallback to back action
+            Navigator.pop(context);
           },
         ),
         title: Text(
