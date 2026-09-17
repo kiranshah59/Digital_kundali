@@ -210,8 +210,7 @@ class _InsightsMainScreenState extends State<InsightsMainScreen> {
                             final topic = _topics[index];
                             return GestureDetector(
                               onTap: () {
-                                Navigator.push(
-                                  context,
+                                Navigator.of(context, rootNavigator: true).push(
                                   MaterialPageRoute(
                                     builder: (context) => InsightDetailScreen(
                                       profileData: currentProfile,
