@@ -101,14 +101,15 @@ class _RashiScreenState extends State<RashiScreen> {
       appBar: AppBar(
         backgroundColor: const Color(0xFFFAF9F5),
         elevation: 0,
-        leading: IconButton(
+        automaticallyImplyLeading: false,
+        leading: Navigator.canPop(context) ? IconButton(
           icon: Icon(
             Icons.arrow_back,
             color: const Color(0xFF11141A),
             size: 24.sp,
           ),
           onPressed: () => Navigator.pop(context),
-        ),
+        ) : null,
         title: Text(
           fullName,
           style: TextStyle(

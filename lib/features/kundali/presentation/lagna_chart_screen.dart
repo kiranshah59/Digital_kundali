@@ -93,7 +93,7 @@ class _LagnaChartScreenState extends State<LagnaChartScreen> {
         elevation: 0,
         automaticallyImplyLeading: false, // Prevent default back button
         titleSpacing: widget.profileData != null ? NavigationToolbar.kMiddleSpacing : 24.w,
-        leading: widget.profileData != null ? IconButton(
+        leading: Navigator.canPop(context) ? IconButton(
           icon: Icon(
             Icons.arrow_back,
             color: const Color(0xFF11141A),
@@ -559,7 +559,7 @@ class _LagnaChartScreenState extends State<LagnaChartScreen> {
                               Navigator.of(context, rootNavigator: true).push(
                                 MaterialPageRoute(
                                   builder: (context) => RashiScreen(
-                                    profileData: widget.profileData,
+                                    profileData: _currentProfileData,
                                   ),
                                 ),
                               );
@@ -590,7 +590,7 @@ class _LagnaChartScreenState extends State<LagnaChartScreen> {
                               Navigator.of(context, rootNavigator: true).push(
                                 MaterialPageRoute(
                                   builder: (context) => BirthChartDetailScreen(
-                                    profileData: widget.profileData,
+                                    profileData: _currentProfileData,
                                   ),
                                 ),
                               );

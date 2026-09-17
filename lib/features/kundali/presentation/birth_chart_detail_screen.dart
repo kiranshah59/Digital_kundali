@@ -164,7 +164,7 @@ class _BirthChartDetailScreenState extends State<BirthChartDetailScreen> {
         titleSpacing: widget.profileData != null
             ? NavigationToolbar.kMiddleSpacing
             : 24.w,
-        leading: widget.profileData != null
+        leading: Navigator.canPop(context)
             ? IconButton(
                 icon: Icon(
                   Icons.arrow_back,
