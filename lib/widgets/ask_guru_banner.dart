@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import '../features/guru/presentation/ai_guru_chat_view.dart';
 
 class AskGuruBanner extends StatelessWidget {
   const AskGuruBanner({super.key});
@@ -71,7 +72,21 @@ class AskGuruBanner extends StatelessWidget {
               ),
             ),
             ElevatedButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => Scaffold(
+                      backgroundColor: const Color(0xFFFAF9F5),
+                      body: SafeArea(
+                        child: AIGuruChatView(
+                          onBack: () => Navigator.pop(context),
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              },
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF8B6420), // Darker gold for button
                 foregroundColor: Colors.white,
