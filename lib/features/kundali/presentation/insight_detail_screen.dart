@@ -203,8 +203,7 @@ class _InsightDetailScreenState extends State<InsightDetailScreen> {
                     return Center(
                       child: ElevatedButton(
                         onPressed: () {
-                          Navigator.push(
-                            context,
+                          Navigator.of(context, rootNavigator: true).push(
                             MaterialPageRoute(
                               builder: (context) => const UpgradeToPaidScreen(),
                             ),

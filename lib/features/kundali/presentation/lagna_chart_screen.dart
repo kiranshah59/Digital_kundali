@@ -227,8 +227,7 @@ class _LagnaChartScreenState extends State<LagnaChartScreen> {
               nepaliViewContent = Center(
                 child: ElevatedButton(
                   onPressed: () {
-                    Navigator.push(
-                      context,
+                    Navigator.of(context, rootNavigator: true).push(
                       MaterialPageRoute(
                         builder: (context) => const UpgradeToPaidScreen(),
                       ),

@@ -39,8 +39,7 @@ class KundaliPdfHelper {
         
         if (response['statusCode'] == 402) {
           if (context.mounted) {
-            Navigator.push(
-              context,
+            Navigator.of(context, rootNavigator: true).push(
               MaterialPageRoute(
                 builder: (context) => const UpgradeToPaidScreen(),
               ),
