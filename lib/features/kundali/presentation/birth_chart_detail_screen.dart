@@ -17,6 +17,7 @@ import '../data/chart_service.dart';
 import '../../../widgets/kundali_painter.dart';
 import '../../../widgets/paid_plan_widget.dart';
 import '../utils/kundali_pdf_helper.dart';
+import 'astrology_details_screen.dart';
 import '../../naming_assistant/presentation/naming_assistant_screen.dart';
 
 class BirthChartDetailScreen extends StatefulWidget {
@@ -523,7 +524,16 @@ class _BirthChartDetailScreenState extends State<BirthChartDetailScreen> {
                         SizedBox(width: 12.w),
                         Expanded(
                           child: OutlinedButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              Navigator.of(context, rootNavigator: true).push(
+                                MaterialPageRoute(
+                                  builder: (context) => AstrologyDetailsScreen(
+                                    profileData: _currentProfileData,
+                                    initialTabIndex: 0,
+                                  ),
+                                ),
+                              );
+                            },
                             style: OutlinedButton.styleFrom(
                               padding: EdgeInsets.symmetric(vertical: 16.h),
                               side: const BorderSide(color: Color(0xFFEAE6DF)),

@@ -350,16 +350,162 @@ class ChartService {
           'success': true,
           'data': decodedData,
         };
+      } else if (response.statusCode == 402) {
+        return {
+          'success': false,
+          'statusCode': 402,
+          'message': 'Premium feature. Please upgrade your plan.',
+        };
       } else {
         return {
           'success': false,
           'message': decodedData['message'] ?? 'Failed to load dasha',
+          'statusCode': response.statusCode,
         };
       }
     } catch (e) {
       return {
         'success': false,
         'message': e.toString(),
+        'statusCode': 500,
+      };
+    }
+  }
+
+  static Future<Map<String, dynamic>> getPersonality(
+    int profileId, {
+    String language = 'en',
+    String style = 'technical',
+  }) async {
+    final url = Uri.parse(
+      '$baseUrl/birth-profiles/$profileId/personality?language=$language&style=$style',
+    );
+    try {
+      final response = await http
+          .get(
+            url,
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json',
+              if (AuthService.token != null)
+                'Authorization': 'Bearer ${AuthService.token}',
+            },
+          )
+          .timeout(const Duration(seconds: 30));
+
+      final decodedData = jsonDecode(response.body);
+
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        return {
+          'success': true,
+          'data': decodedData, // Shape: {status: "completed"|"processing", summary, strengths, weaknesses, generated_at}
+        };
+      } else {
+        return {
+          'success': false,
+          'message': decodedData['message'] ?? 'Failed to load personality',
+          'statusCode': response.statusCode,
+        };
+      }
+    } catch (e) {
+      return {
+        'success': false,
+        'message': e.toString(),
+        'statusCode': 500,
+      };
+    }
+  }
+
+  static Future<Map<String, dynamic>> getDoshaFlags(
+    int profileId, {
+    String language = 'en',
+    String style = 'technical',
+  }) async {
+    final url = Uri.parse(
+      '$baseUrl/birth-profiles/$profileId/dosha-flags?language=$language&style=$style',
+    );
+    try {
+      final response = await http
+          .get(
+            url,
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json',
+              if (AuthService.token != null)
+                'Authorization': 'Bearer ${AuthService.token}',
+            },
+          )
+          .timeout(const Duration(seconds: 30));
+
+      final decodedData = jsonDecode(response.body);
+
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        return {
+          'success': true,
+          'data': decodedData,
+        };
+      } else if (response.statusCode == 402) {
+        return {
+          'success': false,
+          'statusCode': 402,
+          'message': 'Premium feature. Please upgrade your plan.',
+        };
+      } else {
+        return {
+          'success': false,
+          'message': decodedData['message'] ?? 'Failed to load dosha flags',
+          'statusCode': response.statusCode,
+        };
+      }
+    } catch (e) {
+      return {
+        'success': false,
+        'message': e.toString(),
+        'statusCode': 500,
+      };
+    }
+  }
+
+  static Future<Map<String, dynamic>> getRashi(int profileId) async {
+    final url = Uri.parse('$baseUrl/birth-profiles/$profileId/rashi');
+    try {
+      final response = await http
+          .get(
+            url,
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json',
+              if (AuthService.token != null)
+                'Authorization': 'Bearer ${AuthService.token}',
+            },
+          )
+          .timeout(const Duration(seconds: 30));
+
+      final decodedData = jsonDecode(response.body);
+
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        return {
+          'success': true,
+          'data': decodedData,
+        };
+      } else if (response.statusCode == 404) {
+        return {
+          'success': false,
+          'statusCode': 404,
+          'message': decodedData['message'] ?? 'Chart not found',
+        };
+      } else {
+        return {
+          'success': false,
+          'message': decodedData['message'] ?? 'Failed to load rashi',
+          'statusCode': response.statusCode,
+        };
+      }
+    } catch (e) {
+      return {
+        'success': false,
+        'message': e.toString(),
+        'statusCode': 500,
       };
     }
   }

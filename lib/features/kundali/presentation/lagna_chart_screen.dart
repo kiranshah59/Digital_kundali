@@ -14,7 +14,9 @@ import 'insights_main_screen.dart';
 import 'rashi_screen.dart';
 import 'birth_chart_detail_screen.dart';
 import '../data/chart_service.dart';
+import 'astrology_details_screen.dart';
 import '../../home/presentation/upgrade_to_paid_screen.dart';
+import '../../naming_assistant/presentation/naming_assistant_screen.dart';
 import '../utils/kundali_pdf_helper.dart';
 
 class LagnaChartScreen extends StatefulWidget {
@@ -555,7 +557,16 @@ class _LagnaChartScreenState extends State<LagnaChartScreen> {
                       children: [
                         Expanded(
                           child: OutlinedButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              Navigator.of(context, rootNavigator: true).push(
+                                MaterialPageRoute(
+                                  builder: (context) => AstrologyDetailsScreen(
+                                    profileData: _currentProfileData,
+                                    initialTabIndex: 0,
+                                  ),
+                                ),
+                              );
+                            },
                             style: OutlinedButton.styleFrom(
                               padding: EdgeInsets.symmetric(vertical: 16.h),
                               side: const BorderSide(color: Color(0xFFEAE6DF)),

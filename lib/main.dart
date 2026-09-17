@@ -11,6 +11,7 @@ import 'features/home/bloc/dashboard_bloc.dart';
 import 'features/payment/bloc/payment_bloc.dart';
 import 'features/payment/bloc/payment_event.dart';
 import 'features/naming_assistant/bloc/naming_cubit.dart';
+import 'features/kundali/bloc/astrology_cubit.dart';
 
 void main() {
 
@@ -38,6 +39,7 @@ class DigitalKundaliApp extends StatelessWidget {
             BlocProvider<DashboardBloc>(create: (_) => DashboardBloc()),
             BlocProvider<PaymentBloc>(create: (_) => PaymentBloc()..add(LoadPlans())),
             BlocProvider<NamingCubit>(create: (_) => NamingCubit()),
+            BlocProvider<AstrologyCubit>(create: (_) => AstrologyCubit()),
           ],
           child: MaterialApp(
             title: 'Digital Kundali',
