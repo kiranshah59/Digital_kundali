@@ -41,9 +41,7 @@ class _MainLayoutScreenState extends State<MainLayoutScreen> {
     return Navigator(
       key: _navigatorKeys[index],
       onGenerateRoute: (routeSettings) {
-        return MaterialPageRoute(
-          builder: (context) => _screens[index],
-        );
+        return MaterialPageRoute(builder: (context) => _screens[index]);
       },
     );
   }
@@ -92,7 +90,9 @@ class _MainLayoutScreenState extends State<MainLayoutScreen> {
             onTap: (index) {
               if (_currentIndex == index) {
                 // Pop to first route if tapping the same tab
-                _navigatorKeys[index].currentState?.popUntil((route) => route.isFirst);
+                _navigatorKeys[index].currentState?.popUntil(
+                  (route) => route.isFirst,
+                );
               } else {
                 setState(() {
                   _currentIndex = index;

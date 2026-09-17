@@ -50,7 +50,7 @@ class _BirthChartDetailScreenState extends State<BirthChartDetailScreen> {
 
   Future<void> _fetchChartData() async {
     if (_currentProfileData == null) return;
-    
+
     final String fullName = _currentProfileData!['full_name'] ?? 'Unknown User';
     final profileId = _currentProfileData!['id'] ?? fullName.hashCode.abs();
 
@@ -122,7 +122,9 @@ class _BirthChartDetailScreenState extends State<BirthChartDetailScreen> {
       } else {
         return const Scaffold(
           backgroundColor: Color(0xFFFAF9F5),
-          body: Center(child: CircularProgressIndicator(color: Color(0xFFA88143))),
+          body: Center(
+            child: CircularProgressIndicator(color: Color(0xFFA88143)),
+          ),
         );
       }
     }
@@ -159,15 +161,19 @@ class _BirthChartDetailScreenState extends State<BirthChartDetailScreen> {
         backgroundColor: const Color(0xFFFAF9F5),
         elevation: 0,
         automaticallyImplyLeading: false, // Prevent default back button
-        titleSpacing: widget.profileData != null ? NavigationToolbar.kMiddleSpacing : 24.w,
-        leading: widget.profileData != null ? IconButton(
-          icon: Icon(
-            Icons.arrow_back,
-            color: const Color(0xFF11141A),
-            size: 24.sp,
-          ),
-          onPressed: () => Navigator.pop(context),
-        ) : null,
+        titleSpacing: widget.profileData != null
+            ? NavigationToolbar.kMiddleSpacing
+            : 24.w,
+        leading: widget.profileData != null
+            ? IconButton(
+                icon: Icon(
+                  Icons.arrow_back,
+                  color: const Color(0xFF11141A),
+                  size: 24.sp,
+                ),
+                onPressed: () => Navigator.pop(context),
+              )
+            : null,
         title: Text(
           fullName,
           style: TextStyle(
@@ -366,7 +372,8 @@ class _BirthChartDetailScreenState extends State<BirthChartDetailScreen> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => const InsightsMainScreen(),
+                                builder: (context) =>
+                                    const InsightsMainScreen(),
                               ),
                             );
                           },
@@ -1003,12 +1010,19 @@ class _BirthChartDetailScreenState extends State<BirthChartDetailScreen> {
             children: [
               GestureDetector(
                 onTap: () {
-                  if (_currentProfileData != null && _currentProfileData['id'] != null) {
-                    KundaliPdfHelper.generateAndDownloadPdf(context, _currentProfileData['id']);
+                  if (_currentProfileData != null &&
+                      _currentProfileData['id'] != null) {
+                    KundaliPdfHelper.generateAndDownloadPdf(
+                      context,
+                      _currentProfileData['id'],
+                    );
                   }
                 },
                 child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 16.w,
+                    vertical: 12.h,
+                  ),
                   decoration: BoxDecoration(
                     color: const Color(0xFFFDE0AD), // Light gold
                     borderRadius: BorderRadius.circular(4.r),

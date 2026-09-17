@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import '../features/home/presentation/upgrade_to_paid_screen.dart';
 
 class PaidPlanWidget extends StatelessWidget {
   final String featureName;
@@ -45,7 +46,11 @@ class PaidPlanWidget extends StatelessWidget {
             SizedBox(height: 24.h),
             ElevatedButton(
               onPressed: () {
-                // Add your upgrade navigation here
+                Navigator.of(context, rootNavigator: true).push(
+                  MaterialPageRoute(
+                    builder: (context) => const UpgradeToPaidScreen(),
+                  ),
+                );
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF0A0A0C),

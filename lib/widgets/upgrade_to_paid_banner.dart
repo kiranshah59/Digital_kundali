@@ -22,8 +22,7 @@ class UpgradeToPaidBanner extends StatelessWidget {
         child: InkWell(
           borderRadius: BorderRadius.circular(8.r),
           onTap: () {
-            Navigator.push(
-              context,
+            Navigator.of(context, rootNavigator: true).push(
               MaterialPageRoute(
                 builder: (context) => const UpgradeToPaidScreen(),
               ),

@@ -44,8 +44,7 @@ class _BirthProfilesSectionState extends State<BirthProfilesSection> {
               ),
               InkWell(
                 onTap: () async {
-                  final result = await Navigator.push(
-                    context,
+                  final result = await Navigator.of(context, rootNavigator: true).push(
                     MaterialPageRoute(
                       builder: (context) => const AddProfileScreen(),
                     ),
@@ -144,8 +143,7 @@ class _BirthProfilesSectionState extends State<BirthProfilesSection> {
         setState(() {
           _selectedIndex = index;
         });
-        await Navigator.push(
-          context,
+        await Navigator.of(context, rootNavigator: true).push(
           MaterialPageRoute(
             builder: (context) => BirthChartDetailScreen(profileData: profile),
           ),

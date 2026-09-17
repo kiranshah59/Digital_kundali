@@ -105,8 +105,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   LifeAreaForecastGrid(
                     onTopicTap: (slug, title) {
                       final defaultProfile = _cachedProfiles.isNotEmpty ? _cachedProfiles.first : null;
-                      Navigator.push(
-                        context,
+                      Navigator.of(context, rootNavigator: true).push(
                         MaterialPageRoute(
                           builder: (context) => InsightDetailScreen(
                             profileData: defaultProfile,

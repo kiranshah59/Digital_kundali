@@ -84,7 +84,10 @@ class _InsightsMainScreenState extends State<InsightsMainScreen> {
                         children: [
                           if (Navigator.canPop(context)) ...[
                             IconButton(
-                              icon: Icon(Icons.arrow_back, color: const Color(0xFF11141A)),
+                              icon: Icon(
+                                Icons.arrow_back,
+                                color: const Color(0xFF11141A),
+                              ),
                               padding: EdgeInsets.zero,
                               constraints: const BoxConstraints(),
                               onPressed: () => Navigator.pop(context),
@@ -111,7 +114,10 @@ class _InsightsMainScreenState extends State<InsightsMainScreen> {
                       ),
                       SizedBox(height: 12.h),
                       Container(
-                        padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 12.w,
+                          vertical: 6.h,
+                        ),
                         decoration: BoxDecoration(
                           color: const Color(0xFFFDFCF9),
                           borderRadius: BorderRadius.circular(20.r),
@@ -145,119 +151,136 @@ class _InsightsMainScreenState extends State<InsightsMainScreen> {
                   child: _isLoading
                       ? const Center(
                           child: CircularProgressIndicator(
-                            valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFA88143)),
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              Color(0xFFA88143),
+                            ),
                           ),
                         )
                       : _errorMessage != null
-                          ? Center(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(
-                                    Icons.error_outline,
-                                    color: const Color(0xFFD35555),
-                                    size: 48.sp,
-                                  ),
-                                  SizedBox(height: 16.h),
-                                  Text(
-                                    _errorMessage!,
-                                    style: TextStyle(
-                                      fontFamily: 'Inter',
-                                      fontSize: 14.sp,
-                                      color: const Color(0xFF11141A),
-                                    ),
-                                  ),
-                                  SizedBox(height: 24.h),
-                                  ElevatedButton(
-                                    onPressed: _fetchTopics,
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: const Color(0xFFA88143),
-                                    ),
-                                    child: const Text('Retry'),
-                                  ),
-                                ],
+                      ? Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.error_outline,
+                                color: const Color(0xFFD35555),
+                                size: 48.sp,
                               ),
-                            )
-                          : _topics.isEmpty
-                              ? Center(
-                                  child: Text(
-                                    'No insights found.',
-                                    style: TextStyle(
-                                      fontFamily: 'Inter',
-                                      fontSize: 14.sp,
-                                      color: const Color(0xFF5A5A5A),
+                              SizedBox(height: 16.h),
+                              Text(
+                                _errorMessage!,
+                                style: TextStyle(
+                                  fontFamily: 'Inter',
+                                  fontSize: 14.sp,
+                                  color: const Color(0xFF11141A),
+                                ),
+                              ),
+                              SizedBox(height: 24.h),
+                              ElevatedButton(
+                                onPressed: _fetchTopics,
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: const Color(0xFFA88143),
+                                ),
+                                child: const Text('Retry'),
+                              ),
+                            ],
+                          ),
+                        )
+                      : _topics.isEmpty
+                      ? Center(
+                          child: Text(
+                            'No insights found.',
+                            style: TextStyle(
+                              fontFamily: 'Inter',
+                              fontSize: 14.sp,
+                              color: const Color(0xFF5A5A5A),
+                            ),
+                          ),
+                        )
+                      : ListView.separated(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 24.w,
+                            vertical: 8.h,
+                          ),
+                          physics: const BouncingScrollPhysics(),
+                          itemCount: _topics.length,
+                          separatorBuilder: (context, index) =>
+                              SizedBox(height: 16.h),
+                          itemBuilder: (context, index) {
+                            final topic = _topics[index];
+                            return GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => InsightDetailScreen(
+                                      profileData: currentProfile,
+                                      topicTitle:
+                                          topic['title'] ??
+                                          topic['name'] ??
+                                          'Insight',
+                                      topicSlug: topic['slug'] ?? '',
                                     ),
                                   ),
-                                )
-                              : ListView.separated(
-                                  padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 8.h),
-                                  physics: const BouncingScrollPhysics(),
-                                  itemCount: _topics.length,
-                                  separatorBuilder: (context, index) => SizedBox(height: 16.h),
-                                  itemBuilder: (context, index) {
-                                    final topic = _topics[index];
-                                    return GestureDetector(
-                                      onTap: () {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) => InsightDetailScreen(
-                                              profileData: currentProfile,
-                                              topicTitle: topic['title'] ?? topic['name'] ?? 'Insight',
-                                              topicSlug: topic['slug'] ?? '',
+                                );
+                              },
+                              child: Container(
+                                padding: EdgeInsets.all(20.w),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFFFAF9F5),
+                                  borderRadius: BorderRadius.circular(8.r),
+                                  border: Border.all(
+                                    color: const Color(0xFFEAE6DF),
+                                  ),
+                                ),
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            topic['title'] ??
+                                                topic['name'] ??
+                                                'Unknown Topic',
+                                            style: TextStyle(
+                                              fontFamily: 'Georgia',
+                                              fontSize: 18.sp,
+                                              fontWeight: FontWeight.w600,
+                                              color: const Color(0xFF11141A),
                                             ),
                                           ),
-                                        );
-                                      },
-                                      child: Container(
-                                        padding: EdgeInsets.all(20.w),
-                                        decoration: BoxDecoration(
-                                          color: const Color(0xFFFAF9F5),
-                                          borderRadius: BorderRadius.circular(8.r),
-                                          border: Border.all(color: const Color(0xFFEAE6DF)),
-                                        ),
-                                        child: Row(
-                                          crossAxisAlignment: CrossAxisAlignment.center,
-                                          children: [
-                                            Expanded(
-                                              child: Column(
-                                                crossAxisAlignment: CrossAxisAlignment.start,
-                                                children: [
-                                                  Text(
-                                                    topic['title'] ?? topic['name'] ?? 'Unknown Topic',
-                                                    style: TextStyle(
-                                                      fontFamily: 'Georgia',
-                                                      fontSize: 18.sp,
-                                                      fontWeight: FontWeight.w600,
-                                                      color: const Color(0xFF11141A),
-                                                    ),
-                                                  ),
-                                                  SizedBox(height: 8.h),
-                                                  if (topic['description'] != null || topic['desc'] != null)
-                                                    Text(
-                                                      topic['description'] ?? topic['desc'] ?? '',
-                                                      style: TextStyle(
-                                                        fontFamily: 'Inter',
-                                                        fontSize: 12.sp,
-                                                        height: 1.4,
-                                                        color: const Color(0xFF5A5A5A),
-                                                      ),
-                                                    ),
-                                                ],
+                                          SizedBox(height: 8.h),
+                                          if (topic['description'] != null ||
+                                              topic['desc'] != null)
+                                            Text(
+                                              topic['description'] ??
+                                                  topic['desc'] ??
+                                                  '',
+                                              style: TextStyle(
+                                                fontFamily: 'Inter',
+                                                fontSize: 12.sp,
+                                                height: 1.4,
+                                                color: const Color(0xFF5A5A5A),
                                               ),
                                             ),
-                                            SizedBox(width: 16.w),
-                                            Icon(
-                                              Icons.chevron_right_rounded,
-                                              color: const Color(0xFF11141A),
-                                              size: 20.sp,
-                                            ),
-                                          ],
-                                        ),
+                                        ],
                                       ),
-                                    );
-                                  },
+                                    ),
+                                    SizedBox(width: 16.w),
+                                    Icon(
+                                      Icons.chevron_right_rounded,
+                                      color: const Color(0xFF11141A),
+                                      size: 20.sp,
+                                    ),
+                                  ],
                                 ),
+                              ),
+                            );
+                          },
+                        ),
                 ),
               ],
             ),
@@ -267,4 +290,3 @@ class _InsightsMainScreenState extends State<InsightsMainScreen> {
     );
   }
 }
-
