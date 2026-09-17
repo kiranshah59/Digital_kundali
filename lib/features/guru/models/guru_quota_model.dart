@@ -14,8 +14,10 @@ class GuruQuotaModel {
   factory GuruQuotaModel.fromJson(Map<String, dynamic> json) {
     return GuruQuotaModel(
       plan: json['plan'] ?? 'free',
-      used: json['used'] ?? 0,
-      limit: json['limit'] ?? 0,
+      used: int.tryParse(json['used']?.toString() ?? '0') ?? 0,
+      limit: json['limit'] != null 
+          ? (int.tryParse(json['limit'].toString()) ?? 0) 
+          : (json['plan'] == 'paid' ? 99999 : 3),
       resets: json['resets'] ?? 'never',
     );
   }

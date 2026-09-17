@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import '../features/guru/presentation/ai_guru_chat_view.dart';
+import '../features/profile/bloc/profile_bloc.dart';
+import '../features/profile/bloc/profile_state.dart';
 
 class AskGuruBanner extends StatelessWidget {
-  final int profileId;
-
-  const AskGuruBanner({super.key, required this.profileId});
+  const AskGuruBanner({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -75,13 +76,26 @@ class AskGuruBanner extends StatelessWidget {
             ),
             ElevatedButton(
               onPressed: () {
+                final profileState = context.read<ProfileBloc>().state;
+                int? currentProfileId;
+                if (profileState is ProfileLoaded && profileState.profiles.isNotEmpty) {
+                  currentProfileId = profileState.profiles.first['id'];
+                }
+
+                if (currentProfileId == null) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Please select a profile first.')),
+                  );
+                  return;
+                }
+
                 Navigator.of(context, rootNavigator: true).push(
                   MaterialPageRoute(
                     builder: (context) => Scaffold(
                       backgroundColor: const Color(0xFFFAF9F5),
                       body: SafeArea(
                         child: AIGuruChatView(
-                          profileId: profileId,
+                          profileId: currentProfileId!,
                           onBack: () => Navigator.pop(context),
                         ),
                       ),

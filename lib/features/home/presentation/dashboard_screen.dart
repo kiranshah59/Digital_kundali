@@ -117,7 +117,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     },
                   ),
                   SizedBox(height: 32.h),
-                  AskGuruBanner(profileId: _cachedProfiles.isNotEmpty ? _cachedProfiles.first['id'] : 0),
+                  const AskGuruBanner(),
                   SizedBox(height: 16.h),
                   const UpgradeToPaidBanner(),
                   SizedBox(height: 48.h),

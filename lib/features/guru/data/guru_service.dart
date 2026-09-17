@@ -25,9 +25,13 @@ class GuruService {
       final decodedData = jsonDecode(response.body);
 
       if (response.statusCode >= 200 && response.statusCode < 300) {
+        var payload = decodedData['data'] ?? decodedData;
+        if (payload is Map<String, dynamic> && payload.containsKey('data')) {
+          payload = payload['data'];
+        }
         return {
           'success': true,
-          'data': GuruQuotaModel.fromJson(decodedData),
+          'data': GuruQuotaModel.fromJson(payload),
         };
       } else {
         return {
