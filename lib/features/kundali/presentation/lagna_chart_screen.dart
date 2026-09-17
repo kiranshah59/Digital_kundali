@@ -12,6 +12,7 @@ import '../../profile/bloc/profile_state.dart';
 import '../../../widgets/paid_plan_widget.dart';
 import 'insights_main_screen.dart';
 import 'rashi_screen.dart';
+import 'birth_chart_detail_screen.dart';
 import '../data/chart_service.dart';
 import '../../home/presentation/upgrade_to_paid_screen.dart';
 import '../utils/kundali_pdf_helper.dart';
