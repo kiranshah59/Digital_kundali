@@ -540,7 +540,7 @@ class _BirthChartDetailScreenState extends State<BirthChartDetailScreen> {
                               ),
                             ),
                             child: Text(
-                              'VIEW RASHI',
+                              'VIEW PERSONALITY',
                               style: TextStyle(
                                 fontFamily: 'Inter',
                                 fontSize: 12.sp,
