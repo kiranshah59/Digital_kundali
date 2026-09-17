@@ -558,9 +558,7 @@ class _LagnaChartScreenState extends State<LagnaChartScreen> {
                             onPressed: () {
                               Navigator.of(context, rootNavigator: true).push(
                                 MaterialPageRoute(
-                                  builder: (context) => RashiScreen(
-                                    profileData: _currentProfileData,
-                                  ),
+                                  builder: (context) => const InsightsMainScreen(),
                                 ),
                               );
                             },
