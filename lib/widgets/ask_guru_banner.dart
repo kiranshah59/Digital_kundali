@@ -3,7 +3,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../features/guru/presentation/ai_guru_chat_view.dart';
 
 class AskGuruBanner extends StatelessWidget {
-  const AskGuruBanner({super.key});
+  final int profileId;
+
+  const AskGuruBanner({super.key, required this.profileId});
 
   @override
   Widget build(BuildContext context) {
@@ -79,6 +81,7 @@ class AskGuruBanner extends StatelessWidget {
                       backgroundColor: const Color(0xFFFAF9F5),
                       body: SafeArea(
                         child: AIGuruChatView(
+                          profileId: profileId,
                           onBack: () => Navigator.pop(context),
                         ),
                       ),

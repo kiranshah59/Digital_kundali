@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'ai_guru_chat_view.dart';
 import 'guru_profile_screen.dart';
-
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../profile/bloc/profile_bloc.dart';
+import '../../profile/bloc/profile_state.dart';
 
 class GuruScreen extends StatefulWidget {
   final String? userName;
@@ -171,12 +173,26 @@ class _GuruScreenState extends State<GuruScreen> {
           SizedBox(height: 24.h),
           ElevatedButton(
             onPressed: () {
+              final profileState = context.read<ProfileBloc>().state;
+              int? currentProfileId;
+              if (profileState is ProfileLoaded && profileState.profiles.isNotEmpty) {
+                currentProfileId = profileState.profiles.first['id'];
+              }
+
+              if (currentProfileId == null) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Please select a profile first.')),
+                );
+                return;
+              }
+
               Navigator.of(context, rootNavigator: true).push(
                 MaterialPageRoute(
                   builder: (context) => Scaffold(
                     backgroundColor: const Color(0xFFFAF9F5),
                     body: SafeArea(
                       child: AIGuruChatView(
+                        profileId: currentProfileId!,
                         onBack: () => Navigator.pop(context),
                       ),
                     ),
