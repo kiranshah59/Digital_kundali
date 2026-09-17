@@ -348,7 +348,7 @@ class ChartService {
       if (response.statusCode >= 200 && response.statusCode < 300) {
         return {
           'success': true,
-          'data': decodedData,
+          'data': decodedData['data'] ?? decodedData,
         };
       } else if (response.statusCode == 402) {
         return {
@@ -398,7 +398,7 @@ class ChartService {
       if (response.statusCode >= 200 && response.statusCode < 300) {
         return {
           'success': true,
-          'data': decodedData, // Shape: {status: "completed"|"processing", summary, strengths, weaknesses, generated_at}
+          'data': decodedData['data'] ?? decodedData, // Shape: {status: "completed"|"processing", summary, strengths, weaknesses, generated_at}
         };
       } else {
         return {
@@ -466,6 +466,44 @@ class ChartService {
     }
   }
 
+  static Future<Map<String, dynamic>> getRashiDetails(String rashiSlug) async {
+    final url = Uri.parse('$baseUrl/rashis/$rashiSlug');
+    try {
+      final response = await http
+          .get(
+            url,
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json',
+              if (AuthService.token != null)
+                'Authorization': 'Bearer ${AuthService.token}',
+            },
+          )
+          .timeout(const Duration(seconds: 30));
+
+      final decodedData = jsonDecode(response.body);
+
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        return {
+          'success': true,
+          'data': decodedData['data'] ?? decodedData,
+        };
+      } else {
+        return {
+          'success': false,
+          'message': decodedData['message'] ?? 'Failed to load rashi details',
+          'statusCode': response.statusCode,
+        };
+      }
+    } catch (e) {
+      return {
+        'success': false,
+        'message': e.toString(),
+        'statusCode': 500,
+      };
+    }
+  }
+
   static Future<Map<String, dynamic>> getRashi(int profileId) async {
     final url = Uri.parse('$baseUrl/birth-profiles/$profileId/rashi');
     try {
@@ -486,7 +524,7 @@ class ChartService {
       if (response.statusCode >= 200 && response.statusCode < 300) {
         return {
           'success': true,
-          'data': decodedData,
+          'data': decodedData['data'] ?? decodedData,
         };
       } else if (response.statusCode == 404) {
         return {

@@ -17,7 +17,7 @@ import '../data/chart_service.dart';
 import '../../../widgets/kundali_painter.dart';
 import '../../../widgets/paid_plan_widget.dart';
 import '../utils/kundali_pdf_helper.dart';
-import 'astrology_details_screen.dart';
+import 'personality_screen.dart';
 import '../../naming_assistant/presentation/naming_assistant_screen.dart';
 
 class BirthChartDetailScreen extends StatefulWidget {
@@ -527,9 +527,8 @@ class _BirthChartDetailScreenState extends State<BirthChartDetailScreen> {
                             onPressed: () {
                               Navigator.of(context, rootNavigator: true).push(
                                 MaterialPageRoute(
-                                  builder: (context) => AstrologyDetailsScreen(
+                                  builder: (context) => PersonalityScreen(
                                     profileData: _currentProfileData,
-                                    initialTabIndex: 0,
                                   ),
                                 ),
                               );
