@@ -73,8 +73,7 @@ class AskGuruBanner extends StatelessWidget {
             ),
             ElevatedButton(
               onPressed: () {
-                Navigator.push(
-                  context,
+                Navigator.of(context, rootNavigator: true).push(
                   MaterialPageRoute(
                     builder: (context) => Scaffold(
                       backgroundColor: const Color(0xFFFAF9F5),
