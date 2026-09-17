@@ -49,7 +49,7 @@ class _PersonalityScreenState extends State<PersonalityScreen> {
           '$fullName\'s Personality',
           style: TextStyle(
             fontFamily: 'Georgia',
-            fontSize: 18.sp,
+            fontSize: 16.sp,
             fontWeight: FontWeight.w600,
             color: const Color(0xFF11141A),
           ),
