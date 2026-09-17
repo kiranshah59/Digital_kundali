@@ -17,6 +17,7 @@ import '../data/chart_service.dart';
 import '../../../widgets/kundali_painter.dart';
 import '../../../widgets/paid_plan_widget.dart';
 import '../utils/kundali_pdf_helper.dart';
+import '../../naming_assistant/presentation/naming_assistant_screen.dart';
 
 class BirthChartDetailScreen extends StatefulWidget {
   final dynamic profileData;
@@ -491,7 +492,15 @@ class _BirthChartDetailScreenState extends State<BirthChartDetailScreen> {
                       children: [
                         Expanded(
                           child: OutlinedButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              Navigator.of(context, rootNavigator: true).push(
+                                MaterialPageRoute(
+                                  builder: (context) => NamingAssistantScreen(
+                                    profileData: _currentProfileData,
+                                  ),
+                                ),
+                              );
+                            },
                             style: OutlinedButton.styleFrom(
                               padding: EdgeInsets.symmetric(vertical: 16.h),
                               side: const BorderSide(color: Color(0xFFEAE6DF)),
