@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
-import '../../../../widgets/upgrade_to_paid_banner.dart';
+import '../../../../widgets/paid_plan_widget.dart';
 import '../data/chart_service.dart';
 
 class FullMahadashaScreen extends StatefulWidget {
@@ -91,7 +91,7 @@ class _FullMahadashaScreenState extends State<FullMahadashaScreen> {
         return const Center(
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 24.0),
-            child: UpgradeToPaidBanner(),
+            child: PaidPlanWidget(featureName: 'Mahadasha Timeline'),
           ),
         );
       }
