@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
+import '../../../../widgets/upgrade_to_paid_banner.dart';
 import '../data/chart_service.dart';
 
 class FullMahadashaScreen extends StatefulWidget {
@@ -18,6 +19,8 @@ class _FullMahadashaScreenState extends State<FullMahadashaScreen> {
   List<dynamic> _sequence = [];
   Map<String, dynamic>? _currentMahadasha;
 
+  int? _statusCode;
+
   @override
   void initState() {
     super.initState();
@@ -28,6 +31,7 @@ class _FullMahadashaScreenState extends State<FullMahadashaScreen> {
     setState(() {
       _isLoading = true;
       _error = null;
+      _statusCode = null;
     });
 
     final res = await ChartService.getDasha(widget.profileId);
@@ -35,6 +39,7 @@ class _FullMahadashaScreenState extends State<FullMahadashaScreen> {
     if (mounted) {
       setState(() {
         _isLoading = false;
+        _statusCode = res['statusCode'];
         if (res['success'] == true) {
           final data = res['data'] ?? {};
           _sequence = data['sequence'] ?? [];
@@ -82,6 +87,14 @@ class _FullMahadashaScreenState extends State<FullMahadashaScreen> {
     }
 
     if (_error != null) {
+      if (_statusCode == 402) {
+        return const Center(
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 24.0),
+            child: UpgradeToPaidBanner(),
+          ),
+        );
+      }
       return Center(
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 24.w),
