@@ -365,35 +365,6 @@ class _InsightDetailScreenState extends State<InsightDetailScreen> {
                 return const SizedBox.shrink();
               },
             ),
-            SizedBox(height: 16.h),
-
-            // Mini Cards List
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 24.w),
-              child: _buildMiniCard(
-                Icons.star_border,
-                'Daily Dasha',
-                'Jupiter Mahadasha continues to favor mental clarity and internal growth.',
-              ),
-            ),
-            SizedBox(height: 16.h),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 24.w),
-              child: _buildMiniCard(
-                Icons.cloud_outlined,
-                'Transit Impact',
-                'Saturn\'s transit suggests a need for structural changes in your work-life balance.',
-              ),
-            ),
-            SizedBox(height: 16.h),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 24.w),
-              child: _buildMiniCard(
-                Icons.shield_outlined,
-                'Moons Influence',
-                'Waning crescent phase indicates a good time for introspection and detoxification.',
-              ),
-            ),
             SizedBox(height: 32.h),
           ],
         ),
@@ -516,39 +487,4 @@ class _InsightDetailScreenState extends State<InsightDetailScreen> {
   }
 
   Widget _buildMiniCard(IconData icon, String title, String description) {
-    return Container(
-      padding: EdgeInsets.all(20.w),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: const Color(0xFFEAE6DF)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Icon(icon, size: 20.sp, color: const Color(0xFF0F172A)),
-          SizedBox(height: 16.h),
-          Text(
-            title,
-            style: TextStyle(
-              fontFamily: 'Georgia',
-              fontSize: 16.sp,
-              fontWeight: FontWeight.w600,
-              color: const Color(0xFF0F172A),
-            ),
-          ),
-          SizedBox(height: 8.h),
-          Text(
-            description,
-            style: TextStyle(
-              fontFamily: 'Inter',
-              fontSize: 12.sp,
-              color: const Color(0xFF64748B),
-              height: 1.5,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 }
