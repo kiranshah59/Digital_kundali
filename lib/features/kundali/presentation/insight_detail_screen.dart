@@ -486,5 +486,4 @@ class _InsightDetailScreenState extends State<InsightDetailScreen> {
     );
   }
 
-  Widget _buildMiniCard(IconData icon, String title, String description) {
 }
