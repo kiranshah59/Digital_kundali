@@ -5,6 +5,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import '../features/home/bloc/dashboard_bloc.dart';
 import '../features/home/bloc/dashboard_state.dart';
+import '../features/profile/bloc/profile_bloc.dart';
+import '../features/profile/bloc/profile_state.dart';
+import '../features/kundali/presentation/full_mahadasha_screen.dart';
 
 class DailyGuidanceCard extends StatelessWidget {
   const DailyGuidanceCard({super.key});
@@ -107,7 +110,25 @@ class DailyGuidanceCard extends StatelessWidget {
                         ),
                   SizedBox(height: 24.h),
                   InkWell(
-                    onTap: () {},
+                    onTap: () {
+                      final profileState = context.read<ProfileBloc>().state;
+                      int? currentProfileId;
+                      if (profileState is ProfileLoaded && profileState.profiles.isNotEmpty) {
+                        currentProfileId = profileState.profiles.first['id'];
+                      }
+                      
+                      if (currentProfileId != null) {
+                        Navigator.of(context, rootNavigator: true).push(
+                          MaterialPageRoute(
+                            builder: (context) => FullMahadashaScreen(profileId: currentProfileId!),
+                          ),
+                        );
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Please select a profile first.')),
+                        );
+                      }
+                    },
                     borderRadius: BorderRadius.circular(8.r),
                     child: Container(
                       padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
