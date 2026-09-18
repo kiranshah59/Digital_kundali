@@ -206,18 +206,7 @@ class _InsightDetailScreenState extends State<InsightDetailScreen> {
                   );
                 } else if (state is InsightError) {
                   if (state.statusCode == 402 || state.message.toLowerCase().contains('paid plan')) {
-                    return Center(
-                      child: ElevatedButton(
-                        onPressed: () {
-                          Navigator.of(context, rootNavigator: true).push(
-                            MaterialPageRoute(
-                              builder: (context) => const UpgradeToPaidScreen(),
-                            ),
-                          );
-                        },
-                        child: const Text('Upgrade to Paid'),
-                      ),
-                    );
+                    return const PaidPlanWidget(featureName: 'Topic insights');
                   }
                   return Center(
                     child: Padding(
