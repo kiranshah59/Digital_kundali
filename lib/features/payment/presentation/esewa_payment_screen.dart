@@ -94,6 +94,14 @@ class _EsewaPaymentScreenState extends State<EsewaPaymentScreen> {
               Navigator.of(context).pop(false);
             }
           },
+          onUrlChange: (UrlChange change) {
+            final url = change.url ?? '';
+            if (url.contains('/dashboard/payment/success') || url.contains('google.com/success')) {
+              _handleSuccess();
+            } else if (url.contains('/dashboard/payment/failure') || url.contains('google.com/failure')) {
+              _handleFailure();
+            }
+          },
           onNavigationRequest: (NavigationRequest request) {
             if (request.url.contains('/dashboard/payment/success') || request.url.contains('google.com/success')) {
               _handleSuccess();
@@ -109,7 +117,12 @@ class _EsewaPaymentScreenState extends State<EsewaPaymentScreen> {
       ..loadRequest(Uri.parse('https://example.com'));
   }
 
+  bool _isNavigating = false;
+
   void _handleSuccess() {
+    if (_isNavigating) return;
+    _isNavigating = true;
+
     context.read<PaymentBloc>().add(LoadPlans());
     Navigator.of(context).pop(true);
     
@@ -124,6 +137,9 @@ class _EsewaPaymentScreenState extends State<EsewaPaymentScreen> {
   }
 
   void _handleFailure() {
+    if (_isNavigating) return;
+    _isNavigating = true;
+
     Navigator.of(context).pop(false);
     
     if (mounted) {
